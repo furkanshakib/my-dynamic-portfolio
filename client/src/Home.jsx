@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
+import Experience from './Experience';
 
 function Home() {
   const [projects, setProjects] = useState([]);
@@ -137,6 +138,7 @@ function Home() {
           ))}
         </div>
       </section>
+      <Experience />
 
       {/* 4. CONTACT SECTION */}
       <section id="contact" style={{ padding: '80px 20px', background: '#1e293b', color: 'white', marginTop: '60px', width: '100%', boxSizing: 'border-box' }}>
