@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
+import { useTheme } from './ThemeContext'; // 👈 Import the Brain
 
 function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("All");
   
+  const { theme } = useTheme(); // 👈 Ask the Brain
+  const isDark = theme === 'dark';
+
   // Live Server Link
   const API_URL = "https://furkanshakib.onrender.com/api/projects";
 
@@ -20,21 +24,36 @@ function ProjectsPage() {
     ? projects 
     : projects.filter(p => p.category === filter);
 
+  // Dynamic Styles
+  const pageBg = isDark ? '#0f172a' : '#f8f9fa';
+  const textColor = isDark ? '#f1f5f9' : '#333';
+  const headingColor = isDark ? '#e2e8f0' : '#1e293b';
+  const filterBtnNormal = isDark ? '#334155' : '#e2e8f0';
+  const filterTextNormal = isDark ? '#cbd5e1' : '#64748b';
+
   return (
-    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: '#333', background: '#f8f9fa', minHeight: '100vh' }}>
+    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: textColor, background: pageBg, minHeight: '100vh' }}>
       
-      {/* 1. NAVBAR */}
       <Navbar />
 
       {/* 2. PROJECT GRID */}
       <div style={{ maxWidth: '1280px', width: '90%', margin: '40px auto' }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '40px', color: '#1e293b' }}>My Portfolio</h1>
+        <h1 style={{ textAlign: 'center', marginBottom: '40px', color: headingColor }}>My Portfolio</h1>
         
         {/* Filter Buttons */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '40px', flexWrap: 'wrap' }}>
           {['All', 'Web Dev', 'Research', 'Video', 'Articles'].map(cat => (
             <button key={cat} onClick={() => setFilter(cat)}
-              style={{ padding: '8px 20px', borderRadius: '25px', border: 'none', cursor: 'pointer', background: filter === cat ? '#2563eb' : '#e2e8f0', color: filter === cat ? 'white' : '#64748b', fontWeight: 'bold', transition: '0.3s' }}>
+              style={{ 
+                padding: '8px 20px', 
+                borderRadius: '25px', 
+                border: 'none', 
+                cursor: 'pointer', 
+                background: filter === cat ? '#2563eb' : filterBtnNormal, 
+                color: filter === cat ? 'white' : filterTextNormal, 
+                fontWeight: 'bold', 
+                transition: '0.3s' 
+              }}>
               {cat}
             </button>
           ))}
@@ -47,7 +66,7 @@ function ProjectsPage() {
               {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />}
               <div style={{ padding: '20px' }}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px'}}>
-                  <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{p.title}</h3>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#333' }}>{p.title}</h3>
                   <span style={{ fontSize: '0.75rem', background: '#eff6ff', color: '#2563eb', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>{p.category}</span>
                 </div>
                 <p style={{ color: '#666', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '15px' }}>{p.description}</p>

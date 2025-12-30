@@ -1,13 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Experience from './Experience';
 import Navbar from './Navbar';
+import Experience from './Experience';
+import { useTheme } from './ThemeContext'; // 👈 Import the Brain
 
 function ExperiencePage() {
+  const { theme } = useTheme(); // 👈 Ask the Brain for the theme
+  const isDark = theme === 'dark';
+
+  // Dynamic Styles
+  const pageBg = isDark ? '#0f172a' : '#f8f9fa';
+  const textColor = isDark ? '#f1f5f9' : '#333';
+  const buttonBg = isDark ? '#334155' : '#1e293b';
+
   return (
-    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: '#333', background: '#f8f9fa', minHeight: '100vh' }}>
+    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: textColor, background: pageBg, minHeight: '100vh' }}>
       
-      {/* 1. NAVBAR (Reuse same style as Home) */}
       <Navbar />
 
       {/* 2. THE TIMELINE CONTENT */}
@@ -17,7 +25,7 @@ function ExperiencePage() {
 
       {/* 3. FOOTER BUTTON */}
       <div style={{ textAlign: 'center', padding: '40px' }}>
-        <Link to="/#contact" style={{ padding: '12px 24px', background: '#1e293b', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
+        <Link to="/#contact" style={{ padding: '12px 24px', background: buttonBg, color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold', transition: '0.3s' }}>
             Get in Touch →
         </Link>
       </div>

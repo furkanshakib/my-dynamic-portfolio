@@ -1,7 +1,15 @@
 import React from 'react';
+import { useTheme } from './ThemeContext'; // 👈 Import the Brain
 
 function Experience() {
-  // 💼 JOB EXPERIENCE (Kept same as before)
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  // Title color flips based on theme
+  const titleColor = isDark ? '#e2e8f0' : '#1e293b';
+  const dotBorder = isDark ? '#0f172a' : 'white'; // Matches background
+
+  // 💼 JOB EXPERIENCE
   const experienceData = [
     {
       year: "July 2025 - Sept 2025",
@@ -23,7 +31,7 @@ function Experience() {
     },
   ];
 
-  // 🎓 EDUCATION (Updated with 4 levels)
+  // 🎓 EDUCATION
   const educationData = [
     {
       year: "2023 - Present",
@@ -55,14 +63,14 @@ function Experience() {
     <section id="experience" style={{ maxWidth: '800px', margin: '60px auto', padding: '0 20px' }}>
       
       {/* --- SECTION 1: EXPERIENCE --- */}
-      <h2 style={{ textAlign: 'center', borderBottom: '2px solid #ddd', paddingBottom: '10px', marginBottom: '40px', color: '#1e293b' }}>
+      <h2 style={{ textAlign: 'center', borderBottom: '2px solid #ddd', paddingBottom: '10px', marginBottom: '40px', color: titleColor }}>
         Professional Experience
       </h2>
       
       <div style={{ position: 'relative', borderLeft: '3px solid #e5e7eb', marginLeft: '20px', marginBottom: '80px' }}>
         {experienceData.map((item, index) => (
           <div key={index} style={{ marginBottom: '40px', paddingLeft: '30px', position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-11px', top: '5px', width: '20px', height: '20px', background: '#2563eb', borderRadius: '50%', border: '4px solid white', boxShadow: '0 0 0 2px #2563eb' }}></div>
+            <div style={{ position: 'absolute', left: '-11px', top: '5px', width: '20px', height: '20px', background: '#2563eb', borderRadius: '50%', border: `4px solid ${dotBorder}`, boxShadow: '0 0 0 2px #2563eb' }}></div>
             <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -70,7 +78,7 @@ function Experience() {
               <span style={{ background: '#eff6ff', color: '#2563eb', padding: '4px 10px', borderRadius: '15px', fontSize: '0.85rem', fontWeight: 'bold', display: 'inline-block', marginBottom: '10px' }}>
                 {item.year}
               </span>
-              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.25rem' }}>{item.title}</h3>
+              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.25rem', color: '#333' }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 10px 0', color: '#666', fontWeight: 'normal' }}>{item.company}</h4>
               <p style={{ margin: 0, color: '#555', lineHeight: '1.6' }}>{item.description}</p>
             </div>
@@ -79,15 +87,14 @@ function Experience() {
       </div>
 
       {/* --- SECTION 2: EDUCATION --- */}
-      <h2 style={{ textAlign: 'center', borderBottom: '2px solid #ddd', paddingBottom: '10px', marginBottom: '40px', color: '#1e293b' }}>
+      <h2 style={{ textAlign: 'center', borderBottom: '2px solid #ddd', paddingBottom: '10px', marginBottom: '40px', color: titleColor }}>
         Education
       </h2>
       
       <div style={{ position: 'relative', borderLeft: '3px solid #e5e7eb', marginLeft: '20px' }}>
         {educationData.map((item, index) => (
           <div key={index} style={{ marginBottom: '40px', paddingLeft: '30px', position: 'relative' }}>
-            {/* Green Dot for Education */}
-            <div style={{ position: 'absolute', left: '-11px', top: '5px', width: '20px', height: '20px', background: '#10b981', borderRadius: '50%', border: '4px solid white', boxShadow: '0 0 0 2px #10b981' }}></div>
+            <div style={{ position: 'absolute', left: '-11px', top: '5px', width: '20px', height: '20px', background: '#10b981', borderRadius: '50%', border: `4px solid ${dotBorder}`, boxShadow: '0 0 0 2px #10b981' }}></div>
             
             <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
@@ -96,7 +103,7 @@ function Experience() {
               <span style={{ background: '#ecfdf5', color: '#059669', padding: '4px 10px', borderRadius: '15px', fontSize: '0.85rem', fontWeight: 'bold', display: 'inline-block', marginBottom: '10px' }}>
                 {item.year}
               </span>
-              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.25rem' }}>{item.title}</h3>
+              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.25rem', color: '#333' }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 10px 0', color: '#666', fontWeight: 'normal' }}>{item.company}</h4>
               <p style={{ margin: 0, color: '#555', lineHeight: '1.6' }}>{item.description}</p>
             </div>
