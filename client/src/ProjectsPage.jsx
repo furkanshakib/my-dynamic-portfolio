@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import Navbar from './Navbar';
 
 function ProjectsPage() {
   const [projects, setProjects] = useState([]);
@@ -23,17 +24,7 @@ function ProjectsPage() {
     <div style={{ fontFamily: "'Segoe UI', sans-serif", color: '#333', background: '#f8f9fa', minHeight: '100vh' }}>
       
       {/* 1. NAVBAR */}
-      <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 5%', background: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 100 }}>
-        <Link to="/" style={{ textDecoration: 'none' }}>
-            <h2 style={{ margin: 0, color: '#2563eb' }}>Furkan Shakib</h2>
-        </Link>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <Link to="/" style={{ textDecoration: 'none', color: '#555' }}>Home</Link>
-          <Link to="/experience" style={{ textDecoration: 'none', color: '#555' }}>Experience</Link>
-          <Link to="/projects" style={{ textDecoration: 'none', color: '#2563eb', fontWeight: 'bold' }}>Projects</Link>
-          <Link to="/#contact" style={{ textDecoration: 'none', color: '#555' }}>Contact</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* 2. PROJECT GRID */}
       <div style={{ maxWidth: '1280px', width: '90%', margin: '40px auto' }}>

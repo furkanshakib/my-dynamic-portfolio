@@ -1,22 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Experience from './Experience';
+import Navbar from './Navbar';
 
 function ExperiencePage() {
   return (
     <div style={{ fontFamily: "'Segoe UI', sans-serif", color: '#333', background: '#f8f9fa', minHeight: '100vh' }}>
       
       {/* 1. NAVBAR (Reuse same style as Home) */}
-      <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 5%', background: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 100 }}>
-        <Link to="/" style={{ textDecoration: 'none' }}>
-            <h2 style={{ margin: 0, color: '#2563eb' }}>Furkan Shakib</h2>
-        </Link>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <Link to="/" style={{ textDecoration: 'none', color: '#555' }}>Home</Link>
-          <Link to="/#projects" style={{ textDecoration: 'none', color: '#555' }}>Projects</Link>
-          <Link to="/#contact" style={{ textDecoration: 'none', color: '#555' }}>Contact</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* 2. THE TIMELINE CONTENT */}
       <div style={{ paddingTop: '40px' }}>

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
+import Navbar from './Navbar';
 
 // --- HELPER COMPONENT FOR CIRCULAR CONTACT ICONS ---
 // This handles the hover effect and styling for each icon.
@@ -68,16 +69,7 @@ function Home() {
   return (
     <div style={{ fontFamily: "'Segoe UI', sans-serif", color: '#333', background: '#f8f9fa', minHeight: '100vh', width: '100%' }}>
       
-      {/* 1. NAVBAR */}
-      <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 5%', background: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 100, width: '100%', boxSizing: 'border-box' }}>
-        <h2 style={{ margin: 0, color: '#2563eb' }}>Furkan Shakib</h2>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <Link to="/experience" style={{ textDecoration: 'none', color: '#555', fontWeight: '500' }}>Experience</Link>
-          <Link to="/projects" style={{ textDecoration: 'none', color: '#555', fontWeight: '500' }}>Projects</Link>
-          <a href="#contact" style={{ textDecoration: 'none', color: '#555' }}>Contact</a>
-          <Link to="/admin" style={{ textDecoration: 'none', color: '#2563eb', fontWeight: 'bold' }}>Admin Login</Link>
-        </div>
-      </nav>
+     <Navbar />
 
       {/* 2. HERO SECTION */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: '1280px', width: '90%', margin: '60px auto', flexWrap: 'wrap-reverse' }}>
