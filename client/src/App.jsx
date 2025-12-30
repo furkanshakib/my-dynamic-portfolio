@@ -1,38 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Home from './Home';
-import PortfolioManager from './PortfolioManager';
-import Login from './Login';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// A special component that acts like a Security Guard 👮‍♂️
-const ProtectedRoute = ({ isLoggedIn, children }) => {
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
+// Import your pages
+import Home from './Home';
+import Login from './Login';
+import PortfolioManager from './PortfolioManager';
+import ExperiencePage from './ExperiencePage'; // 👈 1. WE IMPORT THE NEW FILE HERE
 
 function App() {
-  // Check if the user already has the key in their pocket (Local Storage)
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("adminAuth") === "true"
-  );
-
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Home Page */}
+        {/* Define the addresses (URLs) for your site */}
+        
+        {/* When user goes to mysite.com/ -> Show Home */}
         <Route path="/" element={<Home />} />
 
-        {/* Login Page */}
-        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-        
-        {/* Protected Admin Page */}
-        <Route path="/admin" element={
-          <ProtectedRoute isLoggedIn={isLoggedIn}>
-            <PortfolioManager />
-          </ProtectedRoute>
-        } />
+        {/* When user goes to mysite.com/admin -> Show Login */}
+        <Route path="/admin" element={<Login />} />
+
+        {/* When user goes to mysite.com/dashboard -> Show Manager */}
+        <Route path="/dashboard" element={<PortfolioManager />} />
+
+        {/* When user goes to mysite.com/experience -> Show ExperiencePage */}
+        <Route path="/experience" element={<ExperiencePage />} /> {/* 👈 2. WE ADD THE NEW ROUTE HERE */}
+
       </Routes>
     </BrowserRouter>
   );

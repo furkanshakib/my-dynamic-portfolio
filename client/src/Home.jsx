@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
-import Experience from './Experience';
+
 
 function Home() {
   const [projects, setProjects] = useState([]);
@@ -65,10 +65,11 @@ function Home() {
       <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 5%', background: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 100, width: '100%', boxSizing: 'border-box' }}>
         <h2 style={{ margin: 0, color: '#2563eb' }}>Furkan Shakib</h2>
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <a href="#projects" style={{ textDecoration: 'none', color: '#555' }}>Projects</a>
-          <a href="#contact" style={{ textDecoration: 'none', color: '#555' }}>Contact</a>
-          <Link to="/admin" style={{ textDecoration: 'none', color: '#2563eb', fontWeight: 'bold' }}>Admin Login</Link>
-        </div>
+  <Link to="/experience" style={{ textDecoration: 'none', color: '#555', fontWeight: '500' }}>Experience</Link>
+  <a href="#projects" style={{ textDecoration: 'none', color: '#555' }}>Projects</a>
+  <a href="#contact" style={{ textDecoration: 'none', color: '#555' }}>Contact</a>
+  <Link to="/admin" style={{ textDecoration: 'none', color: '#2563eb', fontWeight: 'bold' }}>Admin Login</Link>
+</div>
       </nav>
 
       {/* 2. HERO SECTION */}
@@ -127,7 +128,6 @@ function Home() {
         </div>
       </section>
 
-      <Experience />
 
       {/* 4. CONTACT SECTION (UPDATED) */}
       <section id="contact" style={{ padding: '80px 20px', background: '#1e293b', color: 'white', marginTop: '60px', width: '100%', boxSizing: 'border-box' }}>
