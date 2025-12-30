@@ -7,12 +7,13 @@ function Home() {
   const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("All");
   
-  // 📸 YOUR PHOTO (Make sure this matches your file name: .jpg, .png, etc.)
-  const myPhoto = "/profile.png"; 
+  // 📸 YOUR PHOTO (Make sure this matches your file name in public folder)
+  const myPhoto = "/profile.jpg"; 
   
   const form = useRef();
   const [isSending, setIsSending] = useState(false);
 
+  // Live Server Link
   const API_URL = "https://furkanshakib.onrender.com/api/projects";
 
   useEffect(() => {
@@ -25,7 +26,7 @@ function Home() {
     e.preventDefault();
     setIsSending(true);
 
-    // 👇 YOUR REAL KEYS ARE CONNECTED HERE!
+    // 👇 Your Email Keys
     emailjs.sendForm('service_y65owe5', 'template_kygrxid', form.current, '1HTfvq6f969VEiM88')
       .then(() => {
           alert("Message Sent to Furkan! 🚀");
@@ -43,11 +44,24 @@ function Home() {
     : projects.filter(p => p.category === filter);
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: '#333', background: '#f8f9fa', minHeight: '100vh' }}>
+    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: '#333', background: '#f8f9fa', minHeight: '100vh', width: '100%' }}>
       
-      {/* 1. NAVBAR */}
-      <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 40px', background: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 100 }}>
+      {/* 1. NAVBAR - Full Width */}
+      <nav style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        padding: '20px 5%', /* 5% padding on sides */
+        background: '#fff', 
+        boxShadow: '0 2px 5px rgba(0,0,0,0.05)', 
+        position: 'sticky', 
+        top: 0, 
+        zIndex: 100,
+        width: '100%',
+        boxSizing: 'border-box'
+      }}>
+        {/* UPDATED LOGO NAME */}
         <h2 style={{ margin: 0, color: '#2563eb' }}>Furkan Shakib</h2>
+        
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <a href="#projects" style={{ textDecoration: 'none', color: '#555' }}>Projects</a>
           <a href="#contact" style={{ textDecoration: 'none', color: '#555' }}>Contact</a>
@@ -55,9 +69,17 @@ function Home() {
         </div>
       </nav>
 
-      {/* 2. HERO SECTION */}
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: '1000px', margin: '60px auto', padding: '0 20px', flexWrap: 'wrap-reverse' }}>
-        <div style={{ flex: '1', minWidth: '300px' }}>
+      {/* 2. HERO SECTION - Wider Layout */}
+      <header style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        maxWidth: '1280px', /* Wider max width for large screens */
+        width: '90%', 
+        margin: '60px auto', 
+        flexWrap: 'wrap-reverse' 
+      }}>
+        <div style={{ flex: '1', minWidth: '300px', paddingRight: '20px' }}>
           
           <h1 style={{ fontSize: '3rem', margin: '0 0 10px 0', color: '#111' }}>Furkan Azad Shakib</h1>
           
@@ -65,7 +87,7 @@ function Home() {
             Peace & Conflict Student | <span style={{ color: '#2563eb', fontWeight: 'bold' }}>Researcher</span>
           </h2>
           
-          <p style={{ lineHeight: '1.6', color: '#555', fontSize: '1.1rem', maxWidth: '500px' }}>
+          <p style={{ lineHeight: '1.6', color: '#555', fontSize: '1.1rem', maxWidth: '600px' }}>
             Detail-oriented professional pursuing a Master's in Peace and Conflict Studies at the University of Dhaka. 
             Experienced in administration, documentation, and data management with a passion for digital solutions.
           </p>
@@ -79,13 +101,12 @@ function Home() {
         </div>
         
         <div style={{ flex: '1', display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-          {/* Ensure this path matches exactly what you fixed earlier! */}
           <img src={myPhoto} alt="Furkan Shakib" style={{ width: '280px', height: '280px', borderRadius: '50%', objectFit: 'cover', border: '5px solid white', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
         </div>
       </header>
 
       {/* 3. PROJECTS SECTION */}
-      <section id="projects" style={{ maxWidth: '1000px', margin: '0 auto', padding: '40px 20px' }}>
+      <section id="projects" style={{ maxWidth: '1280px', width: '90%', margin: '0 auto', padding: '40px 0' }}>
         <h2 style={{ borderBottom: '2px solid #ddd', paddingBottom: '10px', marginBottom: '30px' }}>Recent Work</h2>
         
         <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
@@ -97,10 +118,10 @@ function Home() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '25px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '25px' }}>
           {filteredProjects.map(p => (
             <div key={p._id} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
-              {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />}
+              {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />}
               <div style={{ padding: '20px' }}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px'}}>
                   <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{p.title}</h3>
@@ -118,7 +139,7 @@ function Home() {
       </section>
 
       {/* 4. CONTACT SECTION */}
-      <section id="contact" style={{ padding: '80px 20px', background: '#1e293b', color: 'white', marginTop: '60px' }}>
+      <section id="contact" style={{ padding: '80px 20px', background: '#1e293b', color: 'white', marginTop: '60px', width: '100%', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
           <h2 style={{ fontSize: '2rem', marginBottom: '10px' }}>Let's Connect</h2>
           <p style={{ color: '#94a3b8', marginBottom: '40px' }}>
