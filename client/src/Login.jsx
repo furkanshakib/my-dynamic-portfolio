@@ -13,7 +13,7 @@ function Login() {
       localStorage.setItem("isAdmin", "true"); // Save the login "key" in the browser
       navigate("/dashboard"); // 🚀 Go to the dashboard
     } else {
-      alert("Incorrect Password! Try 'admin123' ❌");
+      alert("Incorrect Password!");
     }
   };
 
