@@ -1,51 +1,58 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-// If you haven't created the 'models' folder yet, comment out the next line by adding // at the start
-const Project = require('./models/Project'); 
+require('dotenv').config();
+
+// Models
+const Project = require('./models/Project');
+const Experience = require('./models/Experience'); // 👈 Import new model
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected to Portfolio Database!"))
-  .catch(err => console.error("❌ Connection Error:", err));
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log("✅ MongoDB Connected"))
+  .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
 // --- ROUTES ---
 
-// 1. GET all projects
+// 1. PROJECTS
 app.get('/api/projects', async (req, res) => {
-    try {
-        const projects = await Project.find().sort({ date: -1 }); 
-        res.json(projects);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  const projects = await Project.find();
+  res.json(projects);
 });
 
-// 2. POST a new project
 app.post('/api/projects', async (req, res) => {
-    try {
-        const newProject = new Project(req.body);
-        const savedProject = await newProject.save();
-        res.json(savedProject);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  const newProject = new Project(req.body);
+  await newProject.save();
+  res.json(newProject);
 });
 
-// 3. DELETE a project
 app.delete('/api/projects/:id', async (req, res) => {
-    try {
-        await Project.findByIdAndDelete(req.params.id);
-        res.json({ message: "Project deleted!" });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  await Project.findByIdAndDelete(req.params.id);
+  res.json({ message: "Project deleted" });
 });
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// 2. EXPERIENCE (New!)
+app.get('/api/experience', async (req, res) => {
+  const experiences = await Experience.find();
+  res.json(experiences);
+});
+
+app.post('/api/experience', async (req, res) => {
+  const newExp = new Experience(req.body);
+  await newExp.save();
+  res.json(newExp);
+});
+
+app.delete('/api/experience/:id', async (req, res) => {
+  await Experience.findByIdAndDelete(req.params.id);
+  res.json({ message: "Experience deleted" });
+});
+
+// Start Server
+app.listen(5000, () => console.log("🚀 Server running on port 5000"));
