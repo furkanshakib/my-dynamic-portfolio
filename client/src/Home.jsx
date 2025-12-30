@@ -8,7 +8,7 @@ function Home() {
   const [filter, setFilter] = useState("All");
   
   // 📸 YOUR PHOTO (Make sure this matches your file name in public folder)
-  const myPhoto = "/profile.jpg"; 
+  const myPhoto = "/profile.png"; 
   
   const form = useRef();
   const [isSending, setIsSending] = useState(false);
