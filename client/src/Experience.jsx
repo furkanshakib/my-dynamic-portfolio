@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Experience() {
-  // 💼 JOB EXPERIENCE
+  // 💼 JOB EXPERIENCE (Kept same as before)
   const experienceData = [
     {
       year: "July 2025 - Sept 2025",
@@ -23,19 +23,31 @@ function Experience() {
     },
   ];
 
-  // 🎓 EDUCATION
+  // 🎓 EDUCATION (Updated with 4 levels)
   const educationData = [
     {
-      year: "2025 - Present",
-      title: "Master's Student (MSS)",
+      year: "2023 - Present",
+      title: "Master of Social Science (MSS)",
       company: "University of Dhaka",
-      description: "Department of Peace and Conflict Studies. Specializing in security studies, conflict resolution, and geopolitical analysis.",
+      description: "Department of Peace and Conflict Studies. Status: Course Running.",
     },
     {
-      year: "2020 - 2024",
-      title: "B.S.S. (Honours)",
+      year: "2020 - 2023",
+      title: "Bachelor of Social Science (BSS)",
       company: "University of Dhaka",
-      description: "Graduated from the Department of Peace and Conflict Studies. Developed a strong foundation in sociological research, political science, and data analysis.",
+      description: "Graduated from the Department of Peace and Conflict Studies. CGPA: 3.54 / 4.00.",
+    },
+    {
+      year: "2017 - 2019",
+      title: "HSC (Humanities)",
+      company: "Government Rajendra College, Faridpur",
+      description: "Dhaka Board. GPA: 4.45 / 5.00.",
+    },
+    {
+      year: "2017",
+      title: "SSC (Humanities)",
+      company: "Molamer Dangi High School",
+      description: "Dhaka Board. GPA: 4.67 / 5.00.",
     }
   ];
 
@@ -50,9 +62,7 @@ function Experience() {
       <div style={{ position: 'relative', borderLeft: '3px solid #e5e7eb', marginLeft: '20px', marginBottom: '80px' }}>
         {experienceData.map((item, index) => (
           <div key={index} style={{ marginBottom: '40px', paddingLeft: '30px', position: 'relative' }}>
-            {/* Dot */}
             <div style={{ position: 'absolute', left: '-11px', top: '5px', width: '20px', height: '20px', background: '#2563eb', borderRadius: '50%', border: '4px solid white', boxShadow: '0 0 0 2px #2563eb' }}></div>
-            {/* Card */}
             <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -76,9 +86,9 @@ function Experience() {
       <div style={{ position: 'relative', borderLeft: '3px solid #e5e7eb', marginLeft: '20px' }}>
         {educationData.map((item, index) => (
           <div key={index} style={{ marginBottom: '40px', paddingLeft: '30px', position: 'relative' }}>
-            {/* Dot (Different Color for Education - Greenish) */}
+            {/* Green Dot for Education */}
             <div style={{ position: 'absolute', left: '-11px', top: '5px', width: '20px', height: '20px', background: '#10b981', borderRadius: '50%', border: '4px solid white', boxShadow: '0 0 0 2px #10b981' }}></div>
-            {/* Card */}
+            
             <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
