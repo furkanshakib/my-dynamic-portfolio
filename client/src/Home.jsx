@@ -47,7 +47,7 @@ function Home() {
       
       {/* 1. NAVBAR */}
       <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 40px', background: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 100 }}>
-        <h2 style={{ margin: 0, color: '#2563eb' }}>Furkan.dev</h2>
+        <h2 style={{ margin: 0, color: '#2563eb' }}>Furkan Shakib</h2>
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <a href="#projects" style={{ textDecoration: 'none', color: '#555' }}>Projects</a>
           <a href="#contact" style={{ textDecoration: 'none', color: '#555' }}>Contact</a>
