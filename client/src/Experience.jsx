@@ -1,13 +1,22 @@
 import React from 'react';
-import { useTheme } from './ThemeContext'; // 👈 Import the Brain
+import { useTheme } from './ThemeContext';
 
 function Experience() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  // Title color flips based on theme
+  // --- DYNAMIC COLORS ---
   const titleColor = isDark ? '#e2e8f0' : '#1e293b';
-  const dotBorder = isDark ? '#0f172a' : 'white'; // Matches background
+  const dotBorder = isDark ? '#0f172a' : 'white'; 
+  
+  // 🎴 Card Colors
+  const cardBg = isDark ? '#1e293b' : 'white'; // Dark blue in dark mode
+  const cardTextColor = isDark ? '#f1f5f9' : '#333';
+  const subTextColor = isDark ? '#94a3b8' : '#666';
+  const descColor = isDark ? '#cbd5e1' : '#555';
+  const badgeBg = isDark ? '#334155' : '#eff6ff';
+  const badgeText = isDark ? '#60a5fa' : '#2563eb';
+
 
   // 💼 JOB EXPERIENCE
   const experienceData = [
@@ -59,11 +68,16 @@ function Experience() {
     }
   ];
 
+  // Education Badge Colors (Greenish)
+  const eduBadgeBg = isDark ? '#064e3b' : '#ecfdf5';
+  const eduBadgeText = isDark ? '#34d399' : '#059669';
+
+
   return (
     <section id="experience" style={{ maxWidth: '800px', margin: '60px auto', padding: '0 20px' }}>
       
       {/* --- SECTION 1: EXPERIENCE --- */}
-      <h2 style={{ textAlign: 'center', borderBottom: '2px solid #ddd', paddingBottom: '10px', marginBottom: '40px', color: titleColor }}>
+      <h2 style={{ textAlign: 'center', borderBottom: `2px solid ${isDark ? '#334155' : '#ddd'}`, paddingBottom: '10px', marginBottom: '40px', color: titleColor }}>
         Professional Experience
       </h2>
       
@@ -71,23 +85,23 @@ function Experience() {
         {experienceData.map((item, index) => (
           <div key={index} style={{ marginBottom: '40px', paddingLeft: '30px', position: 'relative' }}>
             <div style={{ position: 'absolute', left: '-11px', top: '5px', width: '20px', height: '20px', background: '#2563eb', borderRadius: '50%', border: `4px solid ${dotBorder}`, boxShadow: '0 0 0 2px #2563eb' }}></div>
-            <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}
+            <div style={{ background: cardBg, padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
-              <span style={{ background: '#eff6ff', color: '#2563eb', padding: '4px 10px', borderRadius: '15px', fontSize: '0.85rem', fontWeight: 'bold', display: 'inline-block', marginBottom: '10px' }}>
+              <span style={{ background: badgeBg, color: badgeText, padding: '4px 10px', borderRadius: '15px', fontSize: '0.85rem', fontWeight: 'bold', display: 'inline-block', marginBottom: '10px' }}>
                 {item.year}
               </span>
-              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.25rem', color: '#333' }}>{item.title}</h3>
-              <h4 style={{ margin: '0 0 10px 0', color: '#666', fontWeight: 'normal' }}>{item.company}</h4>
-              <p style={{ margin: 0, color: '#555', lineHeight: '1.6' }}>{item.description}</p>
+              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.25rem', color: cardTextColor }}>{item.title}</h3>
+              <h4 style={{ margin: '0 0 10px 0', color: subTextColor, fontWeight: 'normal' }}>{item.company}</h4>
+              <p style={{ margin: 0, color: descColor, lineHeight: '1.6' }}>{item.description}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* --- SECTION 2: EDUCATION --- */}
-      <h2 style={{ textAlign: 'center', borderBottom: '2px solid #ddd', paddingBottom: '10px', marginBottom: '40px', color: titleColor }}>
+      <h2 style={{ textAlign: 'center', borderBottom: `2px solid ${isDark ? '#334155' : '#ddd'}`, paddingBottom: '10px', marginBottom: '40px', color: titleColor }}>
         Education
       </h2>
       
@@ -96,16 +110,16 @@ function Experience() {
           <div key={index} style={{ marginBottom: '40px', paddingLeft: '30px', position: 'relative' }}>
             <div style={{ position: 'absolute', left: '-11px', top: '5px', width: '20px', height: '20px', background: '#10b981', borderRadius: '50%', border: `4px solid ${dotBorder}`, boxShadow: '0 0 0 2px #10b981' }}></div>
             
-            <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}
+            <div style={{ background: cardBg, padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
-              <span style={{ background: '#ecfdf5', color: '#059669', padding: '4px 10px', borderRadius: '15px', fontSize: '0.85rem', fontWeight: 'bold', display: 'inline-block', marginBottom: '10px' }}>
+              <span style={{ background: eduBadgeBg, color: eduBadgeText, padding: '4px 10px', borderRadius: '15px', fontSize: '0.85rem', fontWeight: 'bold', display: 'inline-block', marginBottom: '10px' }}>
                 {item.year}
               </span>
-              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.25rem', color: '#333' }}>{item.title}</h3>
-              <h4 style={{ margin: '0 0 10px 0', color: '#666', fontWeight: 'normal' }}>{item.company}</h4>
-              <p style={{ margin: 0, color: '#555', lineHeight: '1.6' }}>{item.description}</p>
+              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.25rem', color: cardTextColor }}>{item.title}</h3>
+              <h4 style={{ margin: '0 0 10px 0', color: subTextColor, fontWeight: 'normal' }}>{item.company}</h4>
+              <p style={{ margin: 0, color: descColor, lineHeight: '1.6' }}>{item.description}</p>
             </div>
           </div>
         ))}
