@@ -1,114 +1,140 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function PortfolioManager() {
+  const [activeTab, setActiveTab] = useState('projects');
+  const navigate = useNavigate();
+
+  // --- PROJECTS STATE ---
   const [projects, setProjects] = useState([]);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    image: "",
-    link: "",
-    tags: "",
-    category: "Web Dev" // Default value
-  });
+  const [newProject, setNewProject] = useState({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
+  
+  // --- EXPERIENCE STATE ---
+  const [experiences, setExperiences] = useState([]);
+  const [newExp, setNewExp] = useState({ title: '', company: '', year: '', description: '', type: 'job' });
 
-  const API_URL = "https://furkanshakib.onrender.com/api/projects";
+  // API URLs
+  const API_PROJECTS = "https://furkanshakib.onrender.com/api/projects";
+  const API_EXP = "https://furkanshakib.onrender.com/api/experience";
 
+  // Check Login
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    const isAdmin = localStorage.getItem("isAdmin");
+    if (!isAdmin) navigate("/admin");
+    fetchData();
+  }, [navigate]);
 
-  const fetchProjects = async () => {
-    try {
-      const response = await axios.get(API_URL);
-      setProjects(response.data);
-    } catch (error) {
-      console.error("Error fetching projects:", error);
+  const fetchData = () => {
+    axios.get(API_PROJECTS).then(res => setProjects(res.data));
+    axios.get(API_EXP).then(res => setExperiences(res.data));
+  };
+
+  // --- HANDLERS ---
+  const handleAddProject = () => {
+    axios.post(API_PROJECTS, newProject).then(() => {
+      alert("Project Added!");
+      setNewProject({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
+      fetchData();
+    });
+  };
+
+  const handleDeleteProject = (id) => {
+    if(window.confirm("Delete this project?")) {
+      axios.delete(`${API_PROJECTS}/${id}`).then(() => fetchData());
     }
   };
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleAddExp = () => {
+    axios.post(API_EXP, newExp).then(() => {
+      alert("Experience Added!");
+      setNewExp({ title: '', company: '', year: '', description: '', type: 'job' });
+      fetchData();
+    });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(API_URL, form);
-      alert("Project Added! 🚀");
-      // Reset form
-      setForm({ title: "", description: "", image: "", link: "", tags: "", category: "Web Dev" }); 
-      fetchProjects(); 
-    } catch (error) {
-      console.error("Error adding project:", error);
+  const handleDeleteExp = (id) => {
+    if(window.confirm("Delete this item?")) {
+      axios.delete(`${API_EXP}/${id}`).then(() => fetchData());
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this project?")) return;
-    try {
-      await axios.delete(`${API_URL}/${id}`);
-      fetchProjects();
-    } catch (error) {
-      console.error("Error deleting:", error);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("adminAuth");
-    window.location.href = "/";
-  };
+  const inputStyle = { padding: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '100%', marginBottom: '10px' };
+  const buttonStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
-      
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>📂 Portfolio Manager</h1>
-        <div style={{ display: 'flex', gap: '10px'}}>
-             <Link to="/" style={{ textDecoration: 'none', color: '#2563eb', padding: '10px' }}>View Home 🏠</Link>
-             <button onClick={handleLogout} style={{ background: '#333', color: 'white', padding: '10px', border: 'none', cursor: 'pointer', borderRadius: '5px' }}>Log Out 🔒</button>
-        </div>
-      </div>
-      
-      {/* --- ADD PROJECT FORM --- */}
-      <div style={{ background: '#f4f4f5', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
-        <h3>Add New Project</h3>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          
-          <input name="title" placeholder="Project Title" value={form.title} onChange={handleChange} required style={{ padding: '10px' }} />
-          
-          {/* 👇 NEW CATEGORY DROPDOWN */}
-          <select name="category" value={form.category} onChange={handleChange} style={{ padding: '10px' }}>
-            <option value="Web Dev">Web Dev</option>
-            <option value="Research">Research (Peace & Conflict)</option>
-            <option value="Video">Video Production</option>
-            <option value="Articles">Articles/Op-Eds</option>
-          </select>
-
-          <textarea name="description" placeholder="Description..." value={form.description} onChange={handleChange} required style={{ padding: '10px', height: '80px' }} />
-          <input name="image" placeholder="Image URL" value={form.image} onChange={handleChange} style={{ padding: '10px' }} />
-          <input name="link" placeholder="Live Link" value={form.link} onChange={handleChange} style={{ padding: '10px' }} />
-          <input name="tags" placeholder="Tags (e.g. React, Qualitative Analysis)" value={form.tags} onChange={handleChange} style={{ padding: '10px' }} />
-          
-          <button type="submit" style={{ padding: '10px', background: '#2563eb', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '5px' }}>Add Project ➕</button>
-        </form>
+    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <h1>👑 Admin Dashboard</h1>
+        <button onClick={() => { localStorage.removeItem("isAdmin"); navigate("/"); }} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer' }}>Logout</button>
       </div>
 
-      {/* --- PROJECT LIST --- */}
-      <div>
-        <h3>Your Projects ({projects.length})</h3>
-        {projects.map(p => (
-          <div key={p._id} style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '10px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <h4 style={{ margin: '0 0 5px 0' }}>{p.title} <span style={{fontSize: '12px', background: '#eee', padding: '2px 6px', borderRadius: '4px'}}>{p.category || "No Category"}</span></h4>
-              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>{p.description}</p>
+      {/* TABS */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
+        <button onClick={() => setActiveTab('projects')} style={{ padding: '10px 20px', background: activeTab === 'projects' ? '#2563eb' : '#ddd', color: activeTab === 'projects' ? 'white' : 'black', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Projects</button>
+        <button onClick={() => setActiveTab('experience')} style={{ padding: '10px 20px', background: activeTab === 'experience' ? '#2563eb' : '#ddd', color: activeTab === 'experience' ? 'white' : 'black', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Experience & Education</button>
+      </div>
+
+      {/* --- PROJECTS TAB --- */}
+      {activeTab === 'projects' && (
+        <div>
+          <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '10px', marginBottom: '30px' }}>
+            <h3>➕ Add New Project</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <input placeholder="Title" value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} style={inputStyle} />
+              <select value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})} style={inputStyle}>
+                <option>Research</option><option>Web Dev</option><option>Video</option><option>Articles</option>
+              </select>
+              <input placeholder="Image URL" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} style={inputStyle} />
+              <input placeholder="Link URL" value={newProject.link} onChange={e => setNewProject({...newProject, link: e.target.value})} style={inputStyle} />
+              <input placeholder="Tags (e.g. React, SPSS)" value={newProject.tags} onChange={e => setNewProject({...newProject, tags: e.target.value})} style={inputStyle} />
             </div>
-            <button onClick={() => handleDelete(p._id)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>Delete 🗑️</button>
+            <textarea placeholder="Description" value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} style={{ ...inputStyle, height: '80px' }} />
+            <button onClick={handleAddProject} style={buttonStyle}>Add Project</button>
           </div>
-        ))}
-      </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
+            {projects.map(p => (
+              <div key={p._id} style={{ border: '1px solid #ddd', padding: '10px', borderRadius: '8px', background: 'white' }}>
+                <h4>{p.title}</h4>
+                <button onClick={() => handleDeleteProject(p._id)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '3px', cursor: 'pointer' }}>Delete</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* --- EXPERIENCE TAB --- */}
+      {activeTab === 'experience' && (
+        <div>
+          <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '10px', marginBottom: '30px' }}>
+            <h3>➕ Add Experience / Education</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <input placeholder="Title (e.g. Office Assistant)" value={newExp.title} onChange={e => setNewExp({...newExp, title: e.target.value})} style={inputStyle} />
+              <input placeholder="Company / University" value={newExp.company} onChange={e => setNewExp({...newExp, company: e.target.value})} style={inputStyle} />
+              <input placeholder="Year (e.g. 2024 - 2025)" value={newExp.year} onChange={e => setNewExp({...newExp, year: e.target.value})} style={inputStyle} />
+              <select value={newExp.type} onChange={e => setNewExp({...newExp, type: e.target.value})} style={inputStyle}>
+                <option value="job">Job Experience</option>
+                <option value="education">Education</option>
+              </select>
+            </div>
+            <textarea placeholder="Description" value={newExp.description} onChange={e => setNewExp({...newExp, description: e.target.value})} style={{ ...inputStyle, height: '80px' }} />
+            <button onClick={handleAddExp} style={buttonStyle}>Add Item</button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            {experiences.map(e => (
+              <div key={e._id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px', background: 'white' }}>
+                <span style={{ fontSize: '0.8rem', background: '#eee', padding: '2px 6px', borderRadius: '4px' }}>{e.type.toUpperCase()}</span>
+                <h4 style={{ margin: '5px 0' }}>{e.title}</h4>
+                <p style={{ margin: '0 0 10px 0', color: '#666' }}>{e.company}</p>
+                <button onClick={() => handleDeleteExp(e._id)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '3px', cursor: 'pointer' }}>Delete</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
