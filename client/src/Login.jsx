@@ -1,38 +1,68 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function Login({ setIsLoggedIn }) {
+function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // 🔒 THE SECRET PASSWORD (Change this to whatever you want!)
-  const secretKey = "admin123"; 
-
-  const handleLogin = () => {
-    if (password === secretKey) {
-      localStorage.setItem("adminAuth", "true"); // Save the "Key" in the browser pocket
-      setIsLoggedIn(true);
-      navigate("/admin"); // Send them to the dashboard
+  const handleLogin = (e) => {
+    e.preventDefault(); // 🛑 Prevents the page from reloading
+    
+    // 🔐 PASSWORD CHECK
+    if (password === "admin123") {
+      localStorage.setItem("isAdmin", "true"); // Save the login "key" in the browser
+      navigate("/dashboard"); // 🚀 Go to the dashboard
     } else {
-      alert("Wrong Password! Access Denied.");
+      alert("Incorrect Password! Try 'admin123' ❌");
     }
   };
 
   return (
-    <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f3f4f6' }}>
-      <div style={{ background: 'white', padding: '40px', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', textAlign: 'center' }}>
-        <h2>🔐 Admin Login</h2>
+    <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f8f9fa' }}>
+      
+      {/* 📝 The <form> tag makes the 'Enter' key work! */}
+      <form onSubmit={handleLogin} style={{ background: 'white', padding: '40px', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', textAlign: 'center', width: '300px' }}>
+        
+        <h2 style={{ marginBottom: '20px', color: '#1e293b' }}>🔐 Admin Login</h2>
+        
         <input 
           type="password" 
-          placeholder="Enter Secret Password" 
+          placeholder="Enter Password" 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: '10px', width: '200px', marginBottom: '20px', display: 'block', margin: '10px auto' }}
+          autoFocus
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            marginBottom: '20px', 
+            borderRadius: '6px', 
+            border: '1px solid #cbd5e1',
+            boxSizing: 'border-box',
+            fontSize: '1rem'
+          }}
         />
-        <button onClick={handleLogin} style={{ padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-          Unlock Dashboard
+        
+        <button 
+          type="submit" 
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            background: '#2563eb', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '6px', 
+            cursor: 'pointer', 
+            fontWeight: 'bold',
+            fontSize: '1rem',
+            transition: 'background 0.3s'
+          }}
+          onMouseOver={(e) => e.target.style.background = '#1d4ed8'}
+          onMouseOut={(e) => e.target.style.background = '#2563eb'}
+        >
+          Unlock Dashboard 🔓
         </button>
-      </div>
+
+      </form>
     </div>
   );
 }
