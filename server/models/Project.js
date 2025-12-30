@@ -6,6 +6,7 @@ const ProjectSchema = new mongoose.Schema({
   image: { type: String },
   link: { type: String },
   tags: { type: String },
+  category: { type: String, required: true, enum: ['Web Dev', 'Research', 'Video', 'Articles'] },
   date: { type: Date, default: Date.now }
 });
 
