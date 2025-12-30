@@ -13,7 +13,7 @@ function PortfolioManager() {
     category: "Web Dev" // Default value
   });
 
-  const API_URL = "http://localhost:5000/api/projects";
+  const API_URL = "https://furkanshakib.onrender.com/api/projects";
 
   useEffect(() => {
     fetchProjects();

@@ -13,7 +13,7 @@ function Home() {
   const form = useRef();
   const [isSending, setIsSending] = useState(false);
 
-  const API_URL = "http://localhost:5000/api/projects";
+  const API_URL = "https://furkanshakib.onrender.com/api/projects";
 
   useEffect(() => {
     axios.get(API_URL)
