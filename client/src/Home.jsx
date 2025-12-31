@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import Navbar from './Navbar';
-import TechStack from './TechStack'; // 👈 1. Import New Component
+import TechStack from './TechStack';
 import { useTheme } from './ThemeContext';
 
 function ContactIcon({ href, color, iconPath, label }) {
@@ -30,16 +30,28 @@ function Home() {
   const form = useRef();
   const [isSending, setIsSending] = useState(false);
 
+  // Dynamic Styles
   const textColor = isDark ? '#e2e8f0' : '#333';
   const subTextColor = isDark ? '#94a3b8' : '#555';
   const contactBg = isDark ? '#0f172a' : '#1e293b';
+  const inputBg = isDark ? '#334155' : 'white'; // Input background
+  const inputText = isDark ? 'white' : '#333'; // Input text color
 
   const sendEmail = (e) => {
     e.preventDefault();
     setIsSending(true);
+    
+    // Note: We removed the email field, so the template will only receive 'user_name' and 'message'
     emailjs.sendForm('service_y65owe5', 'template_kygrxid', form.current, '1HTfvq6f969VEiM88')
-      .then(() => { alert("Message Sent! 🚀"); e.target.reset(); setIsSending(false); }, 
-            () => { alert("Failed. Try again."); setIsSending(false); });
+      .then(() => { 
+        alert("Message Sent! 🚀"); 
+        e.target.reset(); 
+        setIsSending(false); 
+      }, 
+      () => { 
+        alert("Failed. Try again."); 
+        setIsSending(false); 
+      });
   };
 
   return (
@@ -68,7 +80,7 @@ function Home() {
         </div>
       </header>
 
-      {/* 2. ADD TECH STACK HERE */}
+      {/* 2. TECH STACK */}
       <TechStack />
 
       <section id="contact" style={{ padding: '80px 20px', background: contactBg, color: 'white', marginTop: '60px', width: '100%', boxSizing: 'border-box' }}>
@@ -80,14 +92,31 @@ function Home() {
             <ContactIcon href="https://www.linkedin.com/in/furkanshakib/" color="#0077b5" label="LinkedIn" iconPath={<path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68zm1.39 9.94v-8.37H5.5v8.37h2.77z"/>} />
             <ContactIcon href="https://www.facebook.com/furkan.shakib/" color="#1877f2" label="Facebook" iconPath={<path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H7v-3h3v-2.29c0-2.88 1.71-4.51 4.38-4.51 1.28 0 2.64.23 2.64.23v2.88h-1.49c-1.43 0-1.88.89-1.88 1.79V12h3.2l-.51 3H13.5v6.8c4.56-.93 8-4.96 8-9.8z"/>} />
           </div>
+
           <p style={{ color: '#94a3b8', marginBottom: '20px' }}>Or send me a direct message:</p>
+          
+          {/* UPDATED FORM: No Email Input */}
           <form ref={form} onSubmit={sendEmail} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <input type="text" name="user_name" required placeholder="Your Name" style={{ padding: '12px', borderRadius: '5px', border: 'none', background: '#334155', color: 'white' }} />
-            <input type="email" name="user_email" required placeholder="your@email.com" style={{ padding: '12px', borderRadius: '5px', border: 'none', background: '#334155', color: 'white' }} />
-            <textarea name="message" required placeholder="How can I help you?" style={{ padding: '12px', borderRadius: '5px', border: 'none', background: '#334155', color: 'white', height: '120px' }} />
+            
+            <input 
+              type="text" 
+              name="user_name" 
+              required 
+              placeholder="Your Name (Anonymous if left blank)" 
+              style={{ padding: '12px', borderRadius: '5px', border: 'none', background: inputBg, color: inputText }} 
+            />
+            
+            <textarea 
+              name="message" 
+              required 
+              placeholder="Write your message here..." 
+              style={{ padding: '12px', borderRadius: '5px', border: 'none', background: inputBg, color: inputText, height: '120px' }} 
+            />
+            
             <button type="submit" disabled={isSending} style={{ padding: '15px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px', fontSize: '1rem' }}>
               {isSending ? "Sending..." : "Send Message 🚀"}
             </button>
+            
           </form>
         </div>
       </section>
