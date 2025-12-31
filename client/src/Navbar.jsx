@@ -80,7 +80,7 @@ function Navbar() {
             color: brandColor, 
             fontFamily: "'MyCustomFont', sans-serif" // Uses your custom font
           }}>
-            Furkan Shakib
+            FURKAN SHAKIB.
           </h2>
         </Link>
 
