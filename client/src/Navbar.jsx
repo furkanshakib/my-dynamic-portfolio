@@ -14,7 +14,7 @@ function Navbar() {
   const navBorder = isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)';
   const textColor = isDark ? '#f1f5f9' : '#334155';
   
-  // 👇 BRAND TEXT COLOR: Black in Light Mode, White in Dark Mode
+  // BRAND TEXT COLOR
   const brandColor = isDark ? '#ffffff' : '#000000'; 
   const highlightColor = '#2563eb';
 
@@ -33,10 +33,10 @@ function Navbar() {
   return (
     <>
       <style>{`
-        /* 👇 LOAD YOUR CUSTOM FONT HERE */
+        /* LOAD YOUR CUSTOM FONT HERE */
         @font-face {
           font-family: 'MyCustomFont';
-          src: url('/custom.ttf') format('truetype'); /* Change .ttf to .otf if needed */
+          src: url('/custom.ttf') format('truetype');
           font-weight: normal;
           font-style: normal;
         }
@@ -73,14 +73,13 @@ function Navbar() {
             }} 
           />
           
-          {/* 👇 UPDATED FONT AND COLOR */}
           <h2 style={{ 
             margin: 0, 
-            fontSize: '1.8rem', // Made it slightly bigger 
+            fontSize: '1.8rem', 
             color: brandColor, 
-            fontFamily: "'MyCustomFont', sans-serif" // Uses your custom font
+            fontFamily: "'MyCustomFont', sans-serif" 
           }}>
-            FURKAN SHAKIB
+            Furkan Shakib
           </h2>
         </Link>
 
@@ -98,7 +97,7 @@ function Navbar() {
             {isDark ? '☀️' : '🌙'}
           </button>
 
-          <Link to="/admin" className="desktop-links" style={{ textDecoration: 'none', fontSize: '1.2rem' }} title="Admin Login">🔐</Link>
+          {/* 🔐 Lock Icon REMOVED from here */}
 
           <button className="mobile-btn" onClick={toggleMenu} style={{ background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: '5px' }}>
             <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
@@ -131,8 +130,8 @@ function Navbar() {
         <Link to="/experience" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🎓 Experience</Link>
         <Link to="/projects" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🚀 Projects</Link>
         <a href="/#contact" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>📞 Contact</a>
-        <div style={{ borderTop: '1px solid #ddd', margin: '10px 0' }}></div>
-        <Link to="/admin" onClick={toggleMenu} style={{ fontSize: '1rem', textDecoration: 'none', color: '#64748b' }}>🔐 Admin Login</Link>
+        
+        {/* Admin Link REMOVED from here too */}
       </div>
     </>
   );
