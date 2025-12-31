@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
-import 'react-quill-new/dist/quill.snow.css'; // 👈 UPDATED CSS IMPORT
+import 'react-quill-new/dist/quill.snow.css';
 
 function BlogPost() {
   const { id } = useParams();
@@ -25,6 +25,21 @@ function BlogPost() {
   return (
     <div style={{ minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Segoe UI', sans-serif" }}>
       <Navbar />
+      
+      {/* 👇 THIS STYLE BLOCK FIXES THE MASSIVE IMAGES */}
+      <style>{`
+        .blog-content img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 8px;
+          margin: 20px 0;
+          display: block;
+        }
+        /* Center images that were aligned center in the editor */
+        .ql-align-center { text-align: center; }
+        .ql-align-right { text-align: right; }
+      `}</style>
+
       <article style={{ maxWidth: '700px', margin: '0 auto', padding: '60px 20px' }}>
         {blog.image && <img src={blog.image} alt={blog.title} style={{ width: '100%', borderRadius: '10px', marginBottom: '30px' }} />}
         <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>{blog.title}</h1>
@@ -32,8 +47,8 @@ function BlogPost() {
             <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
         
-        {/* Render HTML Content */}
-        <div className="ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={{ __html: blog.content }}></div>
+        {/* Render HTML Content with a new class for styling */}
+        <div className="ql-editor blog-content" style={{ padding: 0 }} dangerouslySetInnerHTML={{ __html: blog.content }}></div>
       </article>
     </div>
   );

@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill-new'; 
+// 👇 IMPORTS FOR IMAGE RESIZING
+import ReactQuill, { Quill } from 'react-quill-new';
+import ImageResize from 'quill-image-resize-module-react';
+
 import 'react-quill-new/dist/quill.snow.css'; 
 import { useTheme } from './ThemeContext';
 
+// 👇 REGISTER THE MODULE
+Quill.register('modules/imageResize', ImageResize);
+
 function PortfolioManager() {
   const [activeTab, setActiveTab] = useState('projects');
-  const [loading, setLoading] = useState(false); // 👈 NEW: Loading state
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -51,15 +57,12 @@ function PortfolioManager() {
   };
   const handleDeleteExp = (id) => { if(window.confirm("Delete?")) axios.delete(`${API_BASE}/experience/${id}`).then(fetchData); };
 
-  // 👇 UPDATED BLOG HANDLER WITH DEBUGGING
   const handleAddBlog = () => {
-    console.log("Attempting to publish:", newBlog); // Debug log
-
+    console.log("Attempting to publish:", newBlog);
     if(!newBlog.title) return alert("❌ Title is required!");
     if(!newBlog.content) return alert("❌ Content is required!");
 
-    setLoading(true); // Start loading
-    
+    setLoading(true);
     axios.post(`${API_BASE}/blogs`, newBlog)
       .then(() => {
         alert("✅ Article Published Successfully!");
@@ -71,7 +74,7 @@ function PortfolioManager() {
         alert("❌ Failed to publish. Check console for details. Server might be sleeping.");
       })
       .finally(() => {
-        setLoading(false); // Stop loading
+        setLoading(false);
       });
   };
   
@@ -89,14 +92,20 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
   const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' };
 
+  // 👇 UPDATED MODULES TO INCLUDE IMAGE RESIZE
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
       ['bold', 'italic', 'underline', 'strike'],
       [{'list': 'ordered'}, {'list': 'bullet'}],
+      [{ 'align': [] }], // Adds alignment options (left, center, right)
       ['link', 'image', 'video'], 
       ['clean']
     ],
+    imageResize: {
+      parchment: Quill.import('parchment'),
+      modules: ['Resize', 'DisplaySize']
+    }
   };
 
   return (
@@ -177,6 +186,7 @@ function PortfolioManager() {
             </div>
             
             <div style={{ background: 'white', color: 'black', marginBottom: '20px', borderRadius: '5px', overflow: 'hidden' }}>
+              {/* 👇 UPDATED EDITOR COMPONENT */}
               <ReactQuill 
                 theme="snow" 
                 value={newBlog.content} 
@@ -185,7 +195,6 @@ function PortfolioManager() {
               />
             </div>
 
-            {/* 👇 UPDATED BUTTON SHOWS LOADING STATE */}
             <button onClick={handleAddBlog} style={{...btnStyle, opacity: loading ? 0.7 : 1}} disabled={loading}>
               {loading ? "Publishing... ⏳" : "Publish Article 🚀"}
             </button>
