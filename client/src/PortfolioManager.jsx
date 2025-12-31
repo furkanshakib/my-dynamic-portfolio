@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill'; // 👈 The Editor
-import 'react-quill/dist/quill.snow.css'; // 👈 Editor Styles
+import ReactQuill from 'react-quill'; 
+import 'react-quill/dist/quill.snow.css'; 
 import { useTheme } from './ThemeContext';
 
 function PortfolioManager() {
@@ -64,7 +64,7 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
   const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' };
 
-  // QUILL MODULES (Toolbar options)
+  // QUILL MODULES
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
@@ -142,7 +142,7 @@ function PortfolioManager() {
         </div>
       )}
 
-      {/* --- BLOGS TAB (NEW) --- */}
+      {/* --- BLOGS TAB --- */}
       {activeTab === 'blogs' && (
         <div>
           <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
@@ -155,9 +155,14 @@ function PortfolioManager() {
               <input placeholder="Cover Image URL (Optional)" value={newBlog.image} onChange={e => setNewBlog({...newBlog, image: e.target.value})} style={inputStyle} />
             </div>
             
-            {/* RICH TEXT EDITOR */}
+            {/* RICH TEXT EDITOR (Fixed for crash) */}
             <div style={{ background: 'white', color: 'black', marginBottom: '20px', borderRadius: '5px', overflow: 'hidden' }}>
-              <ReactQuill theme="snow" value={newBlog.content} onChange={val => setNewBlog({...newBlog, content: val})} modules={modules} />
+              <ReactQuill 
+                theme="snow" 
+                value={newBlog.content} 
+                onChange={val => setNewBlog({...newBlog, content: val})} 
+                modules={modules} 
+              />
             </div>
 
             <button onClick={handleAddBlog} style={btnStyle}>Publish Article</button>
