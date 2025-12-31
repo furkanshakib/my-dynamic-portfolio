@@ -53,14 +53,14 @@ function Navbar() {
         {/* LEFT: LOGO + NAME */}
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
           
-          {/* 👇 THIS IS THE NEW LOGO PART */}
+          {/* 👇 LOGO SHOWING ORIGINAL SHAPE */}
           <img 
             src="/logo.png" 
             alt="Logo" 
             style={{ 
-              width: '40px', height: '40px', 
-              borderRadius: '50%', // Makes it circular
-              objectFit: 'cover' 
+              height: '45px', // Fixed height to fit nicely
+              width: 'auto',  // Width adjusts to maintain aspect ratio
+              // borderRadius and objectFit removed here
             }} 
           />
           
