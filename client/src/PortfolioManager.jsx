@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill-new'; 
+// 👇 IMPORTS FOR EDITOR & RESIZING
+import ReactQuill, { Quill } from 'react-quill-new';
+import BlotFormatter from 'quill-blot-formatter';
 import 'react-quill-new/dist/quill.snow.css'; 
 import { useTheme } from './ThemeContext';
+
+// 👇 REGISTER THE NEW RESIZE MODULE
+Quill.register('modules/blotFormatter', BlotFormatter);
 
 function PortfolioManager() {
   const [activeTab, setActiveTab] = useState('projects');
@@ -85,16 +90,19 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
   const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' };
 
-  // Standard Modules (No Resize to prevent crash)
-  const modules = {
+  // 👇 MEMOIZE MODULES TO PREVENT RE-RENDERS
+  const modules = useMemo(() => ({
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
       ['bold', 'italic', 'underline', 'strike'],
       [{'list': 'ordered'}, {'list': 'bullet'}],
+      [{ 'align': [] }],
       ['link', 'image', 'video'], 
       ['clean']
     ],
-  };
+    // 👇 ACTIVATE THE RESIZE MODULE
+    blotFormatter: {}
+  }), []);
 
   return (
     <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', minHeight: '100vh', background: pageBg, color: text, fontFamily: 'sans-serif' }}>
@@ -174,7 +182,7 @@ function PortfolioManager() {
             </div>
             
             <div style={{ background: 'white', color: 'black', marginBottom: '20px', borderRadius: '5px', overflow: 'hidden' }}>
-              {/* STABLE EDITOR */}
+              {/* STABLE EDITOR WITH RESIZING */}
               <ReactQuill 
                 theme="snow" 
                 value={newBlog.content} 
