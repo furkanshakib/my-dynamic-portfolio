@@ -13,6 +13,9 @@ function Navbar() {
   const navBg = isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.85)';
   const navBorder = isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)';
   const textColor = isDark ? '#f1f5f9' : '#334155';
+  
+  // 👇 BRAND TEXT COLOR: Black in Light Mode, White in Dark Mode
+  const brandColor = isDark ? '#ffffff' : '#000000'; 
   const highlightColor = '#2563eb';
 
   const linkStyle = (route) => ({
@@ -30,6 +33,14 @@ function Navbar() {
   return (
     <>
       <style>{`
+        /* 👇 LOAD YOUR CUSTOM FONT HERE */
+        @font-face {
+          font-family: 'MyCustomFont';
+          src: url('/custom.ttf') format('truetype'); /* Change .ttf to .otf if needed */
+          font-weight: normal;
+          font-style: normal;
+        }
+
         .desktop-links { display: flex; gap: 30px; align-items: center; }
         .mobile-btn { display: none; }
         
@@ -53,18 +64,22 @@ function Navbar() {
         {/* LEFT: LOGO + NAME */}
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
           
-          {/* 👇 LOGO SHOWING ORIGINAL SHAPE */}
           <img 
             src="/logo.png" 
             alt="Logo" 
             style={{ 
-              height: '45px', // Fixed height to fit nicely
-              width: 'auto',  // Width adjusts to maintain aspect ratio
-              // borderRadius and objectFit removed here
+              height: '45px', 
+              width: 'auto'
             }} 
           />
           
-          <h2 style={{ margin: 0, fontSize: '1.5rem', color: highlightColor, fontFamily: "'Segoe UI', sans-serif" }}>
+          {/* 👇 UPDATED FONT AND COLOR */}
+          <h2 style={{ 
+            margin: 0, 
+            fontSize: '1.8rem', // Made it slightly bigger 
+            color: brandColor, 
+            fontFamily: "'MyCustomFont', sans-serif" // Uses your custom font
+          }}>
             Furkan Shakib
           </h2>
         </Link>
