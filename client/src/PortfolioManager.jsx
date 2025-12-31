@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill'; 
-import 'react-quill/dist/quill.snow.css'; 
+import ReactQuill from 'react-quill-new'; // 👈 UPDATED IMPORT
+import 'react-quill-new/dist/quill.snow.css'; // 👈 UPDATED CSS
 import { useTheme } from './ThemeContext';
 
 function PortfolioManager() {
@@ -64,7 +64,7 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
   const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' };
 
-  // QUILL MODULES
+  // QUILL MODULES (Defined outside to prevent re-render crashes)
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
@@ -91,7 +91,6 @@ function PortfolioManager() {
         <button onClick={() => setActiveTab('blogs')} style={{ ...btnStyle, background: activeTab === 'blogs' ? '#2563eb' : '#94a3b8' }}>📝 Blogs</button>
       </div>
 
-      {/* --- PROJECTS TAB --- */}
       {activeTab === 'projects' && (
         <div>
           <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
@@ -117,7 +116,6 @@ function PortfolioManager() {
         </div>
       )}
 
-      {/* --- EXPERIENCE TAB --- */}
       {activeTab === 'experience' && (
         <div>
           <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
@@ -142,7 +140,6 @@ function PortfolioManager() {
         </div>
       )}
 
-      {/* --- BLOGS TAB --- */}
       {activeTab === 'blogs' && (
         <div>
           <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
@@ -155,7 +152,7 @@ function PortfolioManager() {
               <input placeholder="Cover Image URL (Optional)" value={newBlog.image} onChange={e => setNewBlog({...newBlog, image: e.target.value})} style={inputStyle} />
             </div>
             
-            {/* RICH TEXT EDITOR (Fixed for crash) */}
+            {/* RICH TEXT EDITOR (Now using ReactQuillNew) */}
             <div style={{ background: 'white', color: 'black', marginBottom: '20px', borderRadius: '5px', overflow: 'hidden' }}>
               <ReactQuill 
                 theme="snow" 

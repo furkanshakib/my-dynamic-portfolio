@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
-import 'react-quill/dist/quill.snow.css';
+import 'react-quill-new/dist/quill.snow.css'; // 👈 UPDATED CSS IMPORT
 
 function BlogPost() {
   const { id } = useParams();
