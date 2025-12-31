@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill-new'; // 👈 UPDATED IMPORT
-import 'react-quill-new/dist/quill.snow.css'; // 👈 UPDATED CSS
+import ReactQuill from 'react-quill-new'; 
+import 'react-quill-new/dist/quill.snow.css'; 
 import { useTheme } from './ThemeContext';
 
 function PortfolioManager() {
   const [activeTab, setActiveTab] = useState('projects');
+  const [loading, setLoading] = useState(false); // 👈 NEW: Loading state
   const navigate = useNavigate();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -36,20 +37,44 @@ function PortfolioManager() {
   };
 
   // --- HANDLERS ---
-  const handleAddProject = () => axios.post(`${API_BASE}/projects`, newProject).then(() => { alert("✅ Project Added!"); setNewProject({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' }); fetchData(); });
+  const handleAddProject = () => {
+    axios.post(`${API_BASE}/projects`, newProject)
+      .then(() => { alert("✅ Project Added!"); setNewProject({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' }); fetchData(); })
+      .catch(err => alert("❌ Error adding project: " + err.message));
+  };
   const handleDeleteProject = (id) => { if(window.confirm("Delete?")) axios.delete(`${API_BASE}/projects/${id}`).then(fetchData); };
 
-  const handleAddExp = () => axios.post(`${API_BASE}/experience`, newExp).then(() => { alert("✅ Experience Added!"); setNewExp({ title: '', company: '', year: '', description: '', type: 'job' }); fetchData(); });
+  const handleAddExp = () => {
+    axios.post(`${API_BASE}/experience`, newExp)
+      .then(() => { alert("✅ Experience Added!"); setNewExp({ title: '', company: '', year: '', description: '', type: 'job' }); fetchData(); })
+      .catch(err => alert("❌ Error adding experience: " + err.message));
+  };
   const handleDeleteExp = (id) => { if(window.confirm("Delete?")) axios.delete(`${API_BASE}/experience/${id}`).then(fetchData); };
 
+  // 👇 UPDATED BLOG HANDLER WITH DEBUGGING
   const handleAddBlog = () => {
-    if(!newBlog.title || !newBlog.content) return alert("Title and Content required!");
-    axios.post(`${API_BASE}/blogs`, newBlog).then(() => {
-      alert("✅ Article Published!");
-      setNewBlog({ title: '', category: 'Article', image: '', content: '' });
-      fetchData();
-    });
+    console.log("Attempting to publish:", newBlog); // Debug log
+
+    if(!newBlog.title) return alert("❌ Title is required!");
+    if(!newBlog.content) return alert("❌ Content is required!");
+
+    setLoading(true); // Start loading
+    
+    axios.post(`${API_BASE}/blogs`, newBlog)
+      .then(() => {
+        alert("✅ Article Published Successfully!");
+        setNewBlog({ title: '', category: 'Article', image: '', content: '' });
+        fetchData();
+      })
+      .catch(err => {
+        console.error("Publish Error:", err);
+        alert("❌ Failed to publish. Check console for details. Server might be sleeping.");
+      })
+      .finally(() => {
+        setLoading(false); // Stop loading
+      });
   };
+  
   const handleDeleteBlog = (id) => { if(window.confirm("Delete this article?")) axios.delete(`${API_BASE}/blogs/${id}`).then(fetchData); };
 
   // --- STYLES ---
@@ -64,7 +89,6 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
   const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' };
 
-  // QUILL MODULES (Defined outside to prevent re-render crashes)
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
@@ -152,7 +176,6 @@ function PortfolioManager() {
               <input placeholder="Cover Image URL (Optional)" value={newBlog.image} onChange={e => setNewBlog({...newBlog, image: e.target.value})} style={inputStyle} />
             </div>
             
-            {/* RICH TEXT EDITOR (Now using ReactQuillNew) */}
             <div style={{ background: 'white', color: 'black', marginBottom: '20px', borderRadius: '5px', overflow: 'hidden' }}>
               <ReactQuill 
                 theme="snow" 
@@ -162,7 +185,10 @@ function PortfolioManager() {
               />
             </div>
 
-            <button onClick={handleAddBlog} style={btnStyle}>Publish Article</button>
+            {/* 👇 UPDATED BUTTON SHOWS LOADING STATE */}
+            <button onClick={handleAddBlog} style={{...btnStyle, opacity: loading ? 0.7 : 1}} disabled={loading}>
+              {loading ? "Publishing... ⏳" : "Publish Article 🚀"}
+            </button>
           </div>
 
           <div style={{ display: 'grid', gap: '20px' }}>
