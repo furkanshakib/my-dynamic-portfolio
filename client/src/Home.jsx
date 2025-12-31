@@ -82,9 +82,7 @@ function Home() {
         </div>
       </header>
 
-      {/* 2. TECH STACK */}
-      <TechStack />
-
+      {/* 2. CONTACT SECTION */}
       <section id="contact" style={{ padding: '80px 20px', background: contactBg, color: 'white', marginTop: '60px', width: '100%', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
           <h2 style={{ fontSize: '2rem', marginBottom: '40px' }}>Let's Connect</h2>
@@ -119,6 +117,9 @@ function Home() {
           </form>
         </div>
       </section>
+
+      {/* 3. TECH STACK (Moved to Bottom) */}
+      <TechStack />
     </div>
   );
 }
