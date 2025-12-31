@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios'; // 👈 Needed to fetch projects
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import Navbar from './Navbar';
@@ -29,37 +30,49 @@ function Home() {
   const myPhoto = "/profile.png"; 
   const form = useRef();
   const [isSending, setIsSending] = useState(false);
+  
+  // --- NEW: State for Featured Projects ---
+  const [featuredProjects, setFeaturedProjects] = useState([]);
+
+  useEffect(() => {
+    // Fetch projects and grab the first 3
+    axios.get("https://furkanshakib.onrender.com/api/projects")
+      .then(res => {
+        // Reverse to get newest first, then take top 3
+        const top3 = res.data.reverse().slice(0, 3);
+        setFeaturedProjects(top3);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   // --- DYNAMIC COLORS ---
   const textColor = isDark ? '#e2e8f0' : '#333';
   const subTextColor = isDark ? '#94a3b8' : '#555';
-  const contactBg = isDark ? '#0f172a' : '#1e293b'; // Always dark for style
+  const sectionBg = isDark ? '#0f172a' : '#ffffff';
+  const contactBg = isDark ? '#1e293b' : '#f1f5f9'; // Alternating background
   
-  // FIX: Force inputs to be dark so they don't hurt eyes
   const inputBg = '#334155'; 
   const inputText = 'white'; 
   const inputBorder = '1px solid #475569';
+  
+  // Card Colors
+  const cardBg = isDark ? '#1e293b' : 'white';
+  const cardTitle = isDark ? '#f1f5f9' : '#333';
+  const cardDesc = isDark ? '#cbd5e1' : '#666';
 
   const sendEmail = (e) => {
     e.preventDefault();
     setIsSending(true);
-    
     emailjs.sendForm('service_y65owe5', 'template_kygrxid', form.current, '1HTfvq6f969VEiM88')
-      .then(() => { 
-        alert("Message Sent! 🚀"); 
-        e.target.reset(); 
-        setIsSending(false); 
-      }, 
-      () => { 
-        alert("Failed. Try again."); 
-        setIsSending(false); 
-      });
+      .then(() => { alert("Message Sent! 🚀"); e.target.reset(); setIsSending(false); }, 
+            () => { alert("Failed. Try again."); setIsSending(false); });
   };
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: textColor, minHeight: '100vh', width: '100%' }}>
+    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: textColor, minHeight: '100vh', width: '100%', background: sectionBg }}>
       <Navbar />
 
+      {/* 1. HERO SECTION */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: '1280px', width: '90%', margin: '60px auto', flexWrap: 'wrap-reverse' }}>
         <div style={{ flex: '1', minWidth: '300px', paddingRight: '20px' }}>
           <h1 style={{ fontSize: '3rem', margin: '0 0 10px 0', color: isDark ? 'white' : '#111' }}>Furkan Azad Shakib</h1>
@@ -82,8 +95,38 @@ function Home() {
         </div>
       </header>
 
-      {/* 2. CONTACT SECTION */}
-      <section id="contact" style={{ padding: '80px 20px', background: contactBg, color: 'white', marginTop: '60px', width: '100%', boxSizing: 'border-box' }}>
+      {/* 2. NEW: FEATURED PROJECTS */}
+      {featuredProjects.length > 0 && (
+        <section style={{ maxWidth: '1280px', width: '90%', margin: '80px auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+            <h2 style={{ fontSize: '2rem', margin: 0 }}>Latest Work</h2>
+            <Link to="/projects" style={{ color: '#2563eb', fontWeight: 'bold', textDecoration: 'none' }}>View All →</Link>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '25px' }}>
+            {featuredProjects.map(p => (
+              <div key={p._id} style={{ background: cardBg, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', border: isDark ? '1px solid #334155' : 'none' }}>
+                {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />}
+                <div style={{ padding: '20px' }}>
+                  <span style={{ fontSize: '0.75rem', background: isDark ? '#334155' : '#eff6ff', color: isDark ? '#60a5fa' : '#2563eb', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
+                    {p.category}
+                  </span>
+                  <h3 style={{ margin: '10px 0', fontSize: '1.2rem', color: cardTitle }}>{p.title}</h3>
+                  <p style={{ color: cardDesc, fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '15px' }}>
+                    {p.description.substring(0, 100)}...
+                  </p>
+                  <a href={p.link} target="_blank" rel="noreferrer" style={{ color: '#2563eb', fontWeight: 'bold', textDecoration: 'none' }}>
+                    Read More →
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 3. CONTACT SECTION */}
+      <section id="contact" style={{ padding: '80px 20px', background: contactBg, marginTop: '60px', width: '100%', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
           <h2 style={{ fontSize: '2rem', marginBottom: '40px' }}>Let's Connect</h2>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', marginBottom: '50px', flexWrap: 'wrap' }}>
@@ -92,25 +135,11 @@ function Home() {
             <ContactIcon href="https://www.linkedin.com/in/furkanshakib/" color="#0077b5" label="LinkedIn" iconPath={<path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68zm1.39 9.94v-8.37H5.5v8.37h2.77z"/>} />
             <ContactIcon href="https://www.facebook.com/furkan.shakib/" color="#1877f2" label="Facebook" iconPath={<path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H7v-3h3v-2.29c0-2.88 1.71-4.51 4.38-4.51 1.28 0 2.64.23 2.64.23v2.88h-1.49c-1.43 0-1.88.89-1.88 1.79V12h3.2l-.51 3H13.5v6.8c4.56-.93 8-4.96 8-9.8z"/>} />
           </div>
-
-          <p style={{ color: '#94a3b8', marginBottom: '20px' }}>Or send me a direct message:</p>
           
+          <p style={{ color: subTextColor, marginBottom: '20px' }}>Or send me a direct message:</p>
           <form ref={form} onSubmit={sendEmail} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <input 
-              type="text" 
-              name="user_name" 
-              required 
-              placeholder="Your Name (Anonymous if left blank)" 
-              style={{ padding: '12px', borderRadius: '5px', border: inputBorder, background: inputBg, color: inputText }} 
-            />
-            
-            <textarea 
-              name="message" 
-              required 
-              placeholder="Write your message here..." 
-              style={{ padding: '12px', borderRadius: '5px', border: inputBorder, background: inputBg, color: inputText, height: '120px' }} 
-            />
-            
+            <input type="text" name="user_name" required placeholder="Your Name (Anonymous if left blank)" style={{ padding: '12px', borderRadius: '5px', border: inputBorder, background: inputBg, color: inputText }} />
+            <textarea name="message" required placeholder="Write your message here..." style={{ padding: '12px', borderRadius: '5px', border: inputBorder, background: inputBg, color: inputText, height: '120px' }} />
             <button type="submit" disabled={isSending} style={{ padding: '15px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px', fontSize: '1rem' }}>
               {isSending ? "Sending..." : "Send Message 🚀"}
             </button>
@@ -118,7 +147,7 @@ function Home() {
         </div>
       </section>
 
-      {/* 3. TECH STACK (Moved to Bottom) */}
+      {/* 4. TECH STACK (Bottom) */}
       <TechStack />
     </div>
   );
