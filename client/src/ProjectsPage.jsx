@@ -15,7 +15,10 @@ function ProjectsPage() {
 
   useEffect(() => {
     axios.get(API_URL)
-      .then(res => setProjects(res.data))
+      .then(res => {
+        // 🔄 REVERSE THE DATA so newest shows first
+        setProjects(res.data.reverse());
+      })
       .catch(err => console.error(err));
   }, []);
 

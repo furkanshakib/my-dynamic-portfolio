@@ -12,7 +12,10 @@ function Experience() {
 
   useEffect(() => {
     axios.get(API_URL)
-      .then(res => setExperiences(res.data))
+      .then(res => {
+        // 🔄 REVERSE THE DATA so newest (last added) shows first
+        setExperiences(res.data.reverse()); 
+      })
       .catch(err => console.error(err));
   }, []);
 
@@ -77,13 +80,13 @@ function Experience() {
       <h2 style={{ textAlign: 'center', borderBottom: `2px solid ${isDark ? '#334155' : '#ddd'}`, paddingBottom: '10px', marginBottom: '40px', color: titleColor }}>
         Professional Experience
       </h2>
-      {jobs.length > 0 ? renderTimeline(jobs) : <p style={{textAlign:'center', color: descColor}}>Loading...</p>}
+      {jobs.length > 0 ? renderTimeline(jobs) : <p style={{textAlign:'center', color: descColor}}>No experience added yet.</p>}
 
       {/* 2. EDUCATION */}
       <h2 style={{ textAlign: 'center', borderBottom: `2px solid ${isDark ? '#334155' : '#ddd'}`, paddingBottom: '10px', marginBottom: '40px', color: titleColor }}>
         Education
       </h2>
-      {education.length > 0 ? renderTimeline(education, true) : <p style={{textAlign:'center', color: descColor}}>Loading...</p>}
+      {education.length > 0 ? renderTimeline(education, true) : <p style={{textAlign:'center', color: descColor}}>No education added yet.</p>}
 
     </section>
   );
