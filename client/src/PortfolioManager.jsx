@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-// 👇 IMPORTS FOR IMAGE RESIZING
-import ReactQuill, { Quill } from 'react-quill-new';
-import ImageResize from 'quill-image-resize-module-react';
-
+import ReactQuill from 'react-quill-new'; 
 import 'react-quill-new/dist/quill.snow.css'; 
 import { useTheme } from './ThemeContext';
-
-// 👇 REGISTER THE MODULE
-Quill.register('modules/imageResize', ImageResize);
 
 function PortfolioManager() {
   const [activeTab, setActiveTab] = useState('projects');
@@ -58,7 +52,6 @@ function PortfolioManager() {
   const handleDeleteExp = (id) => { if(window.confirm("Delete?")) axios.delete(`${API_BASE}/experience/${id}`).then(fetchData); };
 
   const handleAddBlog = () => {
-    console.log("Attempting to publish:", newBlog);
     if(!newBlog.title) return alert("❌ Title is required!");
     if(!newBlog.content) return alert("❌ Content is required!");
 
@@ -71,7 +64,7 @@ function PortfolioManager() {
       })
       .catch(err => {
         console.error("Publish Error:", err);
-        alert("❌ Failed to publish. Check console for details. Server might be sleeping.");
+        alert("❌ Failed to publish. Server might be sleeping.");
       })
       .finally(() => {
         setLoading(false);
@@ -92,20 +85,15 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
   const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' };
 
-  // 👇 UPDATED MODULES TO INCLUDE IMAGE RESIZE
+  // Standard Modules (No Resize to prevent crash)
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
       ['bold', 'italic', 'underline', 'strike'],
       [{'list': 'ordered'}, {'list': 'bullet'}],
-      [{ 'align': [] }], // Adds alignment options (left, center, right)
       ['link', 'image', 'video'], 
       ['clean']
     ],
-    imageResize: {
-      parchment: Quill.import('parchment'),
-      modules: ['Resize', 'DisplaySize']
-    }
   };
 
   return (
@@ -186,7 +174,7 @@ function PortfolioManager() {
             </div>
             
             <div style={{ background: 'white', color: 'black', marginBottom: '20px', borderRadius: '5px', overflow: 'hidden' }}>
-              {/* 👇 UPDATED EDITOR COMPONENT */}
+              {/* STABLE EDITOR */}
               <ReactQuill 
                 theme="snow" 
                 value={newBlog.content} 
