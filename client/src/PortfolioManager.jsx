@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from './ThemeContext'; // 👈 Import the Brain
+import ReactQuill from 'react-quill'; // 👈 The Editor
+import 'react-quill/dist/quill.snow.css'; // 👈 Editor Styles
+import { useTheme } from './ThemeContext';
 
 function PortfolioManager() {
   const [activeTab, setActiveTab] = useState('projects');
   const navigate = useNavigate();
-  
-  // Theme Logic
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  // --- STATES ---
+  // --- DATA STATES ---
   const [projects, setProjects] = useState([]);
-  const [newProject, setNewProject] = useState({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
-  
   const [experiences, setExperiences] = useState([]);
-  const [newExp, setNewExp] = useState({ title: '', company: '', year: '', description: '', type: 'job' });
+  const [blogs, setBlogs] = useState([]);
 
-  // API URLs
-  const API_PROJECTS = "https://furkanshakib.onrender.com/api/projects";
-  const API_EXP = "https://furkanshakib.onrender.com/api/experience";
+  // --- INPUT STATES ---
+  const [newProject, setNewProject] = useState({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
+  const [newExp, setNewExp] = useState({ title: '', company: '', year: '', description: '', type: 'job' });
+  const [newBlog, setNewBlog] = useState({ title: '', category: 'Article', image: '', content: '' });
+
+  const API_BASE = "https://furkanshakib.onrender.com/api";
 
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin");
@@ -29,110 +30,87 @@ function PortfolioManager() {
   }, [navigate]);
 
   const fetchData = () => {
-    // Adding timestamp to force fresh data
-    axios.get(`${API_PROJECTS}?t=${Date.now()}`).then(res => setProjects(res.data)).catch(console.error);
-    axios.get(`${API_EXP}?t=${Date.now()}`).then(res => setExperiences(res.data)).catch(console.error);
+    axios.get(`${API_BASE}/projects`).then(res => setProjects(res.data.reverse())).catch(console.error);
+    axios.get(`${API_BASE}/experience`).then(res => setExperiences(res.data.reverse())).catch(console.error);
+    axios.get(`${API_BASE}/blogs`).then(res => setBlogs(res.data.reverse())).catch(console.error);
   };
 
   // --- HANDLERS ---
-  const handleAddProject = () => {
-    if(!newProject.title) return alert("Title required!");
-    axios.post(API_PROJECTS, newProject).then(() => {
-      alert("✅ Project Added!");
-      setNewProject({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
+  const handleAddProject = () => axios.post(`${API_BASE}/projects`, newProject).then(() => { alert("✅ Project Added!"); setNewProject({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' }); fetchData(); });
+  const handleDeleteProject = (id) => { if(window.confirm("Delete?")) axios.delete(`${API_BASE}/projects/${id}`).then(fetchData); };
+
+  const handleAddExp = () => axios.post(`${API_BASE}/experience`, newExp).then(() => { alert("✅ Experience Added!"); setNewExp({ title: '', company: '', year: '', description: '', type: 'job' }); fetchData(); });
+  const handleDeleteExp = (id) => { if(window.confirm("Delete?")) axios.delete(`${API_BASE}/experience/${id}`).then(fetchData); };
+
+  const handleAddBlog = () => {
+    if(!newBlog.title || !newBlog.content) return alert("Title and Content required!");
+    axios.post(`${API_BASE}/blogs`, newBlog).then(() => {
+      alert("✅ Article Published!");
+      setNewBlog({ title: '', category: 'Article', image: '', content: '' });
       fetchData();
     });
   };
+  const handleDeleteBlog = (id) => { if(window.confirm("Delete this article?")) axios.delete(`${API_BASE}/blogs/${id}`).then(fetchData); };
 
-  const handleDeleteProject = (id) => {
-    if(window.confirm("Delete this project?")) {
-      axios.delete(`${API_PROJECTS}/${id}`).then(() => fetchData());
-    }
-  };
-
-  const handleAddExp = () => {
-    if(!newExp.title) return alert("Title required!");
-    axios.post(API_EXP, newExp).then(() => {
-      alert("✅ Experience Added!");
-      setNewExp({ title: '', company: '', year: '', description: '', type: 'job' });
-      fetchData();
-    });
-  };
-
-  const handleDeleteExp = (id) => {
-    if(window.confirm("Delete this item?")) {
-      axios.delete(`${API_EXP}/${id}`).then(() => fetchData());
-    }
-  };
-
-  // --- DYNAMIC STYLES ---
+  // --- STYLES ---
   const pageBg = isDark ? '#0f172a' : '#fff';
-  const headingColor = isDark ? '#f1f5f9' : '#1e293b';
-  
-  // Card Styles
+  const text = isDark ? '#f1f5f9' : '#333';
   const cardBg = isDark ? '#1e293b' : 'white';
-  const cardText = isDark ? '#e2e8f0' : '#333';
-  const cardBorder = isDark ? '#334155' : '#e2e8f0';
-
-  // Input Styles
   const inputBg = isDark ? '#334155' : 'white';
-  const inputText = isDark ? 'white' : 'black';
-  const inputBorder = isDark ? '#475569' : '#ccc';
+  const inputColor = isDark ? 'white' : 'black';
+  const border = isDark ? '#475569' : '#ccc';
 
-  const inputStyle = { 
-    padding: '10px', borderRadius: '5px', 
-    border: `1px solid ${inputBorder}`, 
-    background: inputBg, color: inputText,
-    width: '100%', marginBottom: '10px', boxSizing: 'border-box' 
+  const inputStyle = { padding: '10px', borderRadius: '5px', border: `1px solid ${border}`, background: inputBg, color: inputColor, width: '100%', marginBottom: '10px' };
+  const btnStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
+  const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' };
+
+  // QUILL MODULES (Toolbar options)
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{'list': 'ordered'}, {'list': 'bullet'}],
+      ['link', 'image', 'video'], 
+      ['clean']
+    ],
   };
-
-  const buttonStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' };
-  const deleteBtnStyle = { background: '#ef4444', color: 'white', border: 'none', padding: '8px 12px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem' };
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif', minHeight: '100vh' }}>
+    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', minHeight: '100vh', background: pageBg, color: text, fontFamily: 'sans-serif' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: headingColor }}>👑 Admin Dashboard</h1>
-        <div style={{ display: 'flex', gap: '10px' }}>
-             <button onClick={fetchData} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer' }}>🔄 Refresh</button>
-             <button onClick={() => { localStorage.removeItem("isAdmin"); navigate("/"); }} style={{ background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer' }}>Logout</button>
+        <h1>👑 Admin Dashboard</h1>
+        <div style={{display:'flex', gap:'10px'}}>
+             <button onClick={fetchData} style={{...btnStyle, background:'#3b82f6'}}>🔄 Refresh</button>
+             <button onClick={() => { localStorage.removeItem("isAdmin"); navigate("/"); }} style={{...btnStyle, background:'#64748b'}}>Logout</button>
         </div>
       </div>
 
-      {/* TABS */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
-        <button onClick={() => setActiveTab('projects')} style={{ padding: '10px 20px', background: activeTab === 'projects' ? '#2563eb' : '#94a3b8', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Projects</button>
-        <button onClick={() => setActiveTab('experience')} style={{ padding: '10px 20px', background: activeTab === 'experience' ? '#2563eb' : '#94a3b8', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Experience & Education</button>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
+        <button onClick={() => setActiveTab('projects')} style={{ ...btnStyle, background: activeTab === 'projects' ? '#2563eb' : '#94a3b8' }}>Projects</button>
+        <button onClick={() => setActiveTab('experience')} style={{ ...btnStyle, background: activeTab === 'experience' ? '#2563eb' : '#94a3b8' }}>Experience</button>
+        <button onClick={() => setActiveTab('blogs')} style={{ ...btnStyle, background: activeTab === 'blogs' ? '#2563eb' : '#94a3b8' }}>📝 Blogs</button>
       </div>
 
       {/* --- PROJECTS TAB --- */}
       {activeTab === 'projects' && (
         <div>
-          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', border: `1px solid ${cardBorder}` }}>
-            <h3 style={{ marginTop: 0, color: cardText }}>➕ Add New Project</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-              <input placeholder="Title" value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} style={inputStyle} />
-              <select value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})} style={inputStyle}>
+          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
+            <h3>➕ Add Project</h3>
+            <input placeholder="Title" value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} style={inputStyle} />
+            <select value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})} style={inputStyle}>
                 <option>Research</option><option>Web Dev</option><option>Video</option><option>Articles</option>
-              </select>
-              <input placeholder="Image URL" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} style={inputStyle} />
-              <input placeholder="Link URL" value={newProject.link} onChange={e => setNewProject({...newProject, link: e.target.value})} style={inputStyle} />
-              <input placeholder="Tags" value={newProject.tags} onChange={e => setNewProject({...newProject, tags: e.target.value})} style={inputStyle} />
-            </div>
-            <textarea placeholder="Description" value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} style={{ ...inputStyle, height: '80px', marginTop: '10px' }} />
-            <button onClick={handleAddProject} style={buttonStyle}>Add Project</button>
+            </select>
+            <input placeholder="Image URL" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} style={inputStyle} />
+            <input placeholder="Link URL" value={newProject.link} onChange={e => setNewProject({...newProject, link: e.target.value})} style={inputStyle} />
+            <input placeholder="Tags" value={newProject.tags} onChange={e => setNewProject({...newProject, tags: e.target.value})} style={inputStyle} />
+            <textarea placeholder="Description" value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} style={{ ...inputStyle, height: '80px' }} />
+            <button onClick={handleAddProject} style={btnStyle}>Add Project</button>
           </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
             {projects.map(p => (
-              <div key={p._id} style={{ border: `1px solid ${cardBorder}`, padding: '15px', borderRadius: '8px', background: cardBg, color: cardText, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                    <h4 style={{ margin: '0 0 5px 0', fontSize: '1.1rem' }}>{p.title}</h4>
-                    <span style={{ fontSize: '0.8rem', background: isDark ? '#334155' : '#eff6ff', color: isDark ? '#60a5fa' : '#2563eb', padding: '2px 8px', borderRadius: '4px' }}>{p.category}</span>
-                </div>
-                <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
-                    <button onClick={() => handleDeleteProject(p._id)} style={deleteBtnStyle}>🗑️ Delete</button>
-                </div>
+              <div key={p._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg }}>
+                <h4>{p.title}</h4>
+                <button onClick={() => handleDeleteProject(p._id)} style={deleteBtn}>Delete</button>
               </div>
             ))}
           </div>
@@ -142,34 +120,57 @@ function PortfolioManager() {
       {/* --- EXPERIENCE TAB --- */}
       {activeTab === 'experience' && (
         <div>
-          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', border: `1px solid ${cardBorder}` }}>
-            <h3 style={{ marginTop: 0, color: cardText }}>➕ Add Experience</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-              <input placeholder="Title" value={newExp.title} onChange={e => setNewExp({...newExp, title: e.target.value})} style={inputStyle} />
-              <input placeholder="Company" value={newExp.company} onChange={e => setNewExp({...newExp, company: e.target.value})} style={inputStyle} />
-              <input placeholder="Year" value={newExp.year} onChange={e => setNewExp({...newExp, year: e.target.value})} style={inputStyle} />
-              <select value={newExp.type} onChange={e => setNewExp({...newExp, type: e.target.value})} style={inputStyle}>
-                <option value="job">Job Experience</option>
-                <option value="education">Education</option>
+          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
+            <h3>➕ Add Experience</h3>
+            <input placeholder="Title" value={newExp.title} onChange={e => setNewExp({...newExp, title: e.target.value})} style={inputStyle} />
+            <input placeholder="Company" value={newExp.company} onChange={e => setNewExp({...newExp, company: e.target.value})} style={inputStyle} />
+            <input placeholder="Year" value={newExp.year} onChange={e => setNewExp({...newExp, year: e.target.value})} style={inputStyle} />
+            <select value={newExp.type} onChange={e => setNewExp({...newExp, type: e.target.value})} style={inputStyle}>
+                <option value="job">Job Experience</option><option value="education">Education</option>
+            </select>
+            <textarea placeholder="Description" value={newExp.description} onChange={e => setNewExp({...newExp, description: e.target.value})} style={{ ...inputStyle, height: '80px' }} />
+            <button onClick={handleAddExp} style={btnStyle}>Add Item</button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+            {experiences.map(e => (
+              <div key={e._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg }}>
+                <h4>{e.title}</h4>
+                <button onClick={() => handleDeleteExp(e._id)} style={deleteBtn}>Delete</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* --- BLOGS TAB (NEW) --- */}
+      {activeTab === 'blogs' && (
+        <div>
+          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
+            <h3>✍️ Write New Article</h3>
+            <input placeholder="Article Title" value={newBlog.title} onChange={e => setNewBlog({...newBlog, title: e.target.value})} style={inputStyle} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <select value={newBlog.category} onChange={e => setNewBlog({...newBlog, category: e.target.value})} style={inputStyle}>
+                <option>Article</option><option>Opinion</option><option>Research Note</option>
               </select>
+              <input placeholder="Cover Image URL (Optional)" value={newBlog.image} onChange={e => setNewBlog({...newBlog, image: e.target.value})} style={inputStyle} />
             </div>
-            <textarea placeholder="Description" value={newExp.description} onChange={e => setNewExp({...newExp, description: e.target.value})} style={{ ...inputStyle, height: '80px', marginTop: '10px' }} />
-            <button onClick={handleAddExp} style={buttonStyle}>Add Item</button>
+            
+            {/* RICH TEXT EDITOR */}
+            <div style={{ background: 'white', color: 'black', marginBottom: '20px', borderRadius: '5px', overflow: 'hidden' }}>
+              <ReactQuill theme="snow" value={newBlog.content} onChange={val => setNewBlog({...newBlog, content: val})} modules={modules} />
+            </div>
+
+            <button onClick={handleAddBlog} style={btnStyle}>Publish Article</button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-            {experiences.map(e => (
-              <div key={e._id} style={{ border: `1px solid ${cardBorder}`, padding: '15px', borderRadius: '8px', background: cardBg, color: cardText, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ display: 'grid', gap: '20px' }}>
+            {blogs.map(b => (
+              <div key={b._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 'bold', background: isDark ? '#334155' : '#eff6ff', color: isDark ? '#60a5fa' : '#2563eb', padding: '3px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
-                        {e.type}
-                    </span>
-                    <h4 style={{ margin: '10px 0 5px 0', fontSize: '1.1rem' }}>{e.title}</h4>
-                    <p style={{ margin: '0 0 10px 0', color: isDark ? '#94a3b8' : '#666', fontSize: '0.9rem' }}>{e.company}</p>
+                   <h4 style={{ margin: 0 }}>{b.title}</h4>
+                   <small style={{ opacity: 0.7 }}>{new Date(b.date).toLocaleDateString()}</small>
                 </div>
-                <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-end' }}>
-                    <button onClick={() => handleDeleteExp(e._id)} style={deleteBtnStyle}>🗑️ Delete</button>
-                </div>
+                <button onClick={() => handleDeleteBlog(b._id)} style={deleteBtn}>Delete</button>
               </div>
             ))}
           </div>

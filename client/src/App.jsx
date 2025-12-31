@@ -7,6 +7,8 @@ import Login from './Login';
 import PortfolioManager from './PortfolioManager';
 import ExperiencePage from './ExperiencePage';
 import ProjectsPage from './ProjectsPage';
+import BlogPage from './BlogPage';  // 👈 Add this
+import BlogPost from './BlogPost';  // 👈 Add this
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
           <Route path="/dashboard" element={<PortfolioManager />} />
           <Route path="/experience" element={<ExperiencePage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/blogs" element={<BlogPage />} />
+          <Route path="/blogs/:id" element={<BlogPost />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

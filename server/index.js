@@ -83,4 +83,41 @@ app.delete('/api/experience/:id', async (req, res) => {
 
 // Start Server (FIXED: Uses dynamic port for Render)
 const PORT = process.env.PORT || 5000;
+// ... existing imports ...
+const Blog = require('./models/Blog'); // 👈 Import the new model
+
+// --- BLOG ROUTES ---
+
+// 1. Get All Blogs
+app.get('/api/blogs', async (req, res) => {
+  try {
+    const blogs = await Blog.find();
+    res.json(blogs);
+  } catch (err) { res.status(500).json(err); }
+});
+
+// 2. Get Single Blog (by ID)
+app.get('/api/blogs/:id', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    res.json(blog);
+  } catch (err) { res.status(500).json(err); }
+});
+
+// 3. Create New Blog
+app.post('/api/blogs', async (req, res) => {
+  try {
+    const newBlog = new Blog(req.body);
+    await newBlog.save();
+    res.json(newBlog);
+  } catch (err) { res.status(500).json(err); }
+});
+
+// 4. Delete Blog
+app.delete('/api/blogs/:id', async (req, res) => {
+  try {
+    await Blog.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted" });
+  } catch (err) { res.status(500).json(err); }
+});
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

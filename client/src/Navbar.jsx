@@ -88,6 +88,7 @@ function Navbar() {
           <Link to="/" style={linkStyle('/')}>Home</Link>
           <Link to="/experience" style={linkStyle('/experience')}>Experience</Link>
           <Link to="/projects" style={linkStyle('/projects')}>Projects</Link>
+          <Link to="/blogs" style={linkStyle('/blogs')}>Blogs</Link>
           <a href="/#contact" style={{ ...linkStyle('contact'), cursor: 'pointer' }}>Contact</a>
         </div>
 
@@ -100,6 +101,7 @@ function Navbar() {
           {/* 🔐 Lock Icon REMOVED from here */}
 
           <button className="mobile-btn" onClick={toggleMenu} style={{ background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: '5px' }}>
+            <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
             <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
             <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
             <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
@@ -129,6 +131,7 @@ function Navbar() {
         <Link to="/" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🏠 Home</Link>
         <Link to="/experience" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🎓 Experience</Link>
         <Link to="/projects" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🚀 Projects</Link>
+        <Link to="/blogs" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>📝 Blogs</Link>
         <a href="/#contact" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>📞 Contact</a>
         
         {/* Admin Link REMOVED from here too */}
