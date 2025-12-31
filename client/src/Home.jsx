@@ -30,18 +30,20 @@ function Home() {
   const form = useRef();
   const [isSending, setIsSending] = useState(false);
 
-  // Dynamic Styles
+  // --- DYNAMIC COLORS ---
   const textColor = isDark ? '#e2e8f0' : '#333';
   const subTextColor = isDark ? '#94a3b8' : '#555';
-  const contactBg = isDark ? '#0f172a' : '#1e293b';
-  const inputBg = isDark ? '#334155' : 'white'; // Input background
-  const inputText = isDark ? 'white' : '#333'; // Input text color
+  const contactBg = isDark ? '#0f172a' : '#1e293b'; // Always dark for style
+  
+  // FIX: Force inputs to be dark so they don't hurt eyes
+  const inputBg = '#334155'; 
+  const inputText = 'white'; 
+  const inputBorder = '1px solid #475569';
 
   const sendEmail = (e) => {
     e.preventDefault();
     setIsSending(true);
     
-    // Note: We removed the email field, so the template will only receive 'user_name' and 'message'
     emailjs.sendForm('service_y65owe5', 'template_kygrxid', form.current, '1HTfvq6f969VEiM88')
       .then(() => { 
         alert("Message Sent! 🚀"); 
@@ -95,28 +97,25 @@ function Home() {
 
           <p style={{ color: '#94a3b8', marginBottom: '20px' }}>Or send me a direct message:</p>
           
-          {/* UPDATED FORM: No Email Input */}
           <form ref={form} onSubmit={sendEmail} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            
             <input 
               type="text" 
               name="user_name" 
               required 
               placeholder="Your Name (Anonymous if left blank)" 
-              style={{ padding: '12px', borderRadius: '5px', border: 'none', background: inputBg, color: inputText }} 
+              style={{ padding: '12px', borderRadius: '5px', border: inputBorder, background: inputBg, color: inputText }} 
             />
             
             <textarea 
               name="message" 
               required 
               placeholder="Write your message here..." 
-              style={{ padding: '12px', borderRadius: '5px', border: 'none', background: inputBg, color: inputText, height: '120px' }} 
+              style={{ padding: '12px', borderRadius: '5px', border: inputBorder, background: inputBg, color: inputText, height: '120px' }} 
             />
             
             <button type="submit" disabled={isSending} style={{ padding: '15px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px', fontSize: '1rem' }}>
               {isSending ? "Sending..." : "Send Message 🚀"}
             </button>
-            
           </form>
         </div>
       </section>
