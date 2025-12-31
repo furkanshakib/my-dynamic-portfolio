@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Navbar from './Navbar'; // 👈 Added Navbar so this page feels complete
 import { useTheme } from './ThemeContext';
 
 function Experience() {
@@ -100,7 +99,7 @@ function Experience() {
 
   return (
     <div style={{ minHeight: '100vh', background: pageBg, fontFamily: "'Segoe UI', sans-serif" }}>
-      <Navbar />
+
 
       {/* Animation Styles */}
       <style>{`
