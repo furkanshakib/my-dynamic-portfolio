@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios'; // 👈 Needed to fetch projects
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import Navbar from './Navbar';
 import TechStack from './TechStack';
 import { useTheme } from './ThemeContext';
 
+// --- ICONS ---
 function ContactIcon({ href, color, iconPath, label }) {
   const [isHovered, setIsHovered] = useState(false);
   const iconStyle = {
@@ -31,34 +32,53 @@ function Home() {
   const form = useRef();
   const [isSending, setIsSending] = useState(false);
   
-  // --- NEW: State for Featured Projects ---
+  // Projects State
   const [featuredProjects, setFeaturedProjects] = useState([]);
 
   useEffect(() => {
-    // Fetch projects and grab the first 3
     axios.get("https://furkanshakib.onrender.com/api/projects")
       .then(res => {
-        // Reverse to get newest first, then take top 3
         const top3 = res.data.reverse().slice(0, 3);
         setFeaturedProjects(top3);
       })
       .catch(err => console.error(err));
   }, []);
 
-  // --- DYNAMIC COLORS ---
+  // --- STYLES & THEME ---
   const textColor = isDark ? '#e2e8f0' : '#333';
   const subTextColor = isDark ? '#94a3b8' : '#555';
   const sectionBg = isDark ? '#0f172a' : '#ffffff';
-  const contactBg = isDark ? '#1e293b' : '#f1f5f9'; // Alternating background
+  const secondaryBg = isDark ? '#1e293b' : '#f8f9fa'; 
   
-  const inputBg = '#334155'; 
-  const inputText = 'white'; 
-  const inputBorder = '1px solid #475569';
-  
-  // Card Colors
+  // Card Styles
   const cardBg = isDark ? '#1e293b' : 'white';
   const cardTitle = isDark ? '#f1f5f9' : '#333';
   const cardDesc = isDark ? '#cbd5e1' : '#666';
+  const cardBorder = isDark ? '1px solid #334155' : '1px solid #e2e8f0';
+
+  // Input Styles
+  const inputBg = '#334155'; 
+  const inputText = 'white'; 
+  const inputBorder = '1px solid #475569';
+
+  // --- SERVICES DATA ---
+  const services = [
+    {
+      emoji: "🔎",
+      title: "Academic Research",
+      desc: "Specialized in Peace & Conflict Studies. Experienced in qualitative data analysis, SPSS, and conducting field surveys."
+    },
+    {
+      emoji: "💻",
+      title: "Web Development",
+      desc: "Building dynamic MERN Stack applications (MongoDB, Express, React, Node) with secure admin panels and responsive design."
+    },
+    {
+      emoji: "🎬",
+      title: "Multimedia & Content",
+      desc: "Professional video editing using Premiere Pro. Creating engaging educational content and digital storytelling assets."
+    }
+  ];
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -73,7 +93,11 @@ function Home() {
       <Navbar />
 
       {/* 1. HERO SECTION */}
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: '1280px', width: '90%', margin: '60px auto', flexWrap: 'wrap-reverse' }}>
+      <header style={{ 
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
+        maxWidth: '1280px', width: '90%', margin: '60px auto', flexWrap: 'wrap-reverse',
+        padding: '20px 0'
+      }}>
         <div style={{ flex: '1', minWidth: '300px', paddingRight: '20px' }}>
           <h1 style={{ fontSize: '3rem', margin: '0 0 10px 0', color: isDark ? 'white' : '#111' }}>Furkan Azad Shakib</h1>
           <h2 style={{ fontSize: '1.5rem', color: subTextColor, fontWeight: 'normal', margin: '0 0 20px 0' }}>
@@ -81,7 +105,7 @@ function Home() {
           </h2>
           <p style={{ lineHeight: '1.6', color: subTextColor, fontSize: '1.1rem', maxWidth: '600px' }}>
             Detail-oriented professional pursuing a Master's in Peace and Conflict Studies at the University of Dhaka. 
-            Experienced in administration, documentation, and data management with a passion for digital solutions.
+            Merging academic rigor with modern digital solutions.
           </p>
           <div style={{ marginTop: '30px', display: 'flex', gap: '15px' }}>
             <Link to="/projects" style={{ padding: '12px 24px', background: '#2563eb', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>View My Work</Link>
@@ -90,22 +114,55 @@ function Home() {
             </a>
           </div>
         </div>
-        <div style={{ flex: '1', display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-          <img src={myPhoto} alt="Furkan Shakib" style={{ width: '280px', height: '280px', borderRadius: '50%', objectFit: 'cover', border: '5px solid white', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
+        
+        {/* Photo with Glow Effect */}
+        <div style={{ flex: '1', display: 'flex', justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
+           {/* The Glow */}
+           <div style={{ 
+             position: 'absolute', width: '280px', height: '280px', borderRadius: '50%', 
+             background: 'rgba(37, 99, 235, 0.4)', filter: 'blur(50px)', zIndex: 0 
+           }}></div>
+           {/* The Image */}
+           <img src={myPhoto} alt="Furkan Shakib" style={{ width: '280px', height: '280px', borderRadius: '50%', objectFit: 'cover', border: '5px solid white', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', position: 'relative', zIndex: 1 }} />
         </div>
       </header>
 
-      {/* 2. NEW: FEATURED PROJECTS */}
+
+      {/* 2. NEW: "WHAT I DO" SERVICES SECTION */}
+      <section style={{ background: secondaryBg, padding: '80px 0' }}>
+        <div style={{ maxWidth: '1280px', width: '90%', margin: '0 auto' }}>
+          <h2 style={{ textAlign: 'center', fontSize: '2rem', marginBottom: '50px', color: cardTitle }}>What I Do</h2>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+            {services.map((s, index) => (
+              <div key={index} style={{ 
+                background: cardBg, padding: '30px', borderRadius: '12px', border: cardBorder,
+                boxShadow: '0 4px 10px rgba(0,0,0,0.05)', textAlign: 'center', transition: 'transform 0.3s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>{s.emoji}</div>
+                <h3 style={{ marginBottom: '15px', color: cardTitle }}>{s.title}</h3>
+                <p style={{ color: cardDesc, lineHeight: '1.6' }}>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* 3. FEATURED PROJECTS */}
       {featuredProjects.length > 0 && (
         <section style={{ maxWidth: '1280px', width: '90%', margin: '80px auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '2rem', margin: 0 }}>Latest Work</h2>
+            <h2 style={{ fontSize: '2rem', margin: 0, color: cardTitle }}>Latest Work</h2>
             <Link to="/projects" style={{ color: '#2563eb', fontWeight: 'bold', textDecoration: 'none' }}>View All →</Link>
           </div>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '25px' }}>
             {featuredProjects.map(p => (
-              <div key={p._id} style={{ background: cardBg, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', border: isDark ? '1px solid #334155' : 'none' }}>
+              <div key={p._id} style={{ background: cardBg, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', border: cardBorder }}>
                 {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />}
                 <div style={{ padding: '20px' }}>
                   <span style={{ fontSize: '0.75rem', background: isDark ? '#334155' : '#eff6ff', color: isDark ? '#60a5fa' : '#2563eb', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
@@ -125,10 +182,10 @@ function Home() {
         </section>
       )}
 
-      {/* 3. CONTACT SECTION */}
-      <section id="contact" style={{ padding: '80px 20px', background: contactBg, marginTop: '60px', width: '100%', boxSizing: 'border-box' }}>
+      {/* 4. CONTACT SECTION */}
+      <section id="contact" style={{ padding: '80px 20px', background: secondaryBg, width: '100%', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '2rem', marginBottom: '40px' }}>Let's Connect</h2>
+          <h2 style={{ fontSize: '2rem', marginBottom: '40px', color: cardTitle }}>Let's Connect</h2>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', marginBottom: '50px', flexWrap: 'wrap' }}>
             <ContactIcon href="mailto:furkanshakib@gmail.com" color="#ef4444" label="Email" iconPath={<path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>} />
             <ContactIcon href="https://wa.me/8801624767370" color="#22c55e" label="WhatsApp" iconPath={<path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2zM12.05 20.21c-1.5 0-2.97-.39-4.29-1.14l-.31-.18-3.19.84.85-3.1-.2-.32c-.86-1.38-1.32-2.96-1.32-4.58 0-4.63 3.77-8.4 8.4-8.4 2.24 0 4.35.87 5.94 2.46 1.59 1.59 2.46 3.7 2.46 5.94 0 4.63-3.77 8.4-8.39 8.4z"/>} />
@@ -147,7 +204,7 @@ function Home() {
         </div>
       </section>
 
-      {/* 4. TECH STACK (Bottom) */}
+      {/* 5. TECH STACK (Bottom) */}
       <TechStack />
     </div>
   );
