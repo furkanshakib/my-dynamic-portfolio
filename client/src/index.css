@@ -9,11 +9,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 👇 GLOBAL RESET: This stops the text breaking issue everywhere */
-* {
+/* 🔴 NUCLEAR FIX: This forces EVERY element to keep words together */
+*, *::before, *::after {
   box-sizing: border-box;
-  word-break: normal !important;       /* Never split words (e.g., "reg-arding") */
-  overflow-wrap: break-word !important; /* Break long words only if necessary */
+  word-break: keep-all !important;      /* CJK text breaks, English stays together */
+  overflow-wrap: break-word !important; /* Break only if the word is huge (like a URL) */
+  white-space: normal !important;       /* Ignore editor line breaks */
+  hyphens: none !important;             /* Disable auto-hyphenation */
+}
+
+/* Allow breaks only for specific long text like URLs */
+a {
+  word-break: break-all !important; 
 }
 
 body {
@@ -21,15 +28,35 @@ body {
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
 }
 
-/* Quill Editor Fixes */
+/* ReactQuill Editor Specific Fixes */
 .ql-editor {
-  white-space: normal !important; /* Ignore editor's rigid line breaks */
+  padding: 0 !important;
   height: auto !important;
+}
+
+.ql-editor p {
+  margin-bottom: 10px;
 }
 
 .ql-editor ul, .ql-editor ol {
   padding-left: 20px !important;
+  margin: 10px 0;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
