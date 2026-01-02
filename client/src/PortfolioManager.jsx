@@ -31,9 +31,17 @@ function PortfolioManager() {
 
   const API_BASE = "https://furkanshakib.onrender.com/api";
 
+  // 👇 PASTE THIS NEW CODE INSTEAD
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin");
-    if (!isAdmin) navigate("/admin");
+    const token = localStorage.getItem("token"); // 1. Grab the token from storage
+
+    // 2. If no admin flag OR no token, kick them out
+    if (!isAdmin || !token) navigate("/admin");
+    
+    // 3. IMPORTANT: Attach the token to the header of every Axios request
+    if(token) axios.defaults.headers.common['x-auth-token'] = token; 
+
     fetchData();
   }, [navigate]);
 
