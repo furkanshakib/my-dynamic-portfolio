@@ -51,21 +51,16 @@ function Home() {
   const borderColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
   const highlight = '#2563eb';
 
-  // --- STATIC DATA ---
+ // --- STATIC DATA ---
   const skills = [
-    { name: "React.js", icon: "⚛️" },
-    { name: "Node.js", icon: "🟢" },
-    { name: "SPSS", icon: "📊" },
-    { name: "Research", icon: "🔎" },
-    { name: "Premiere Pro", icon: "🎬" },
-    { name: "Data Analysis", icon: "📈" }
+    { name: "Academic Research", icon: "🔎" },
+    { name: "Academic Writing", icon: "✍️" },
+    { name: "Vibe Coding", icon: "💻" },
+    { name: "Video Editing", icon: "🎬" },
+    { name: "MS Office", icon: "📊" },
+    { name: "Mobile Photography", icon: "📸" }
   ];
 
-  const services = [
-    { title: "Academic Research", icon: "🎓" },
-    { title: "Web Development", icon: "💻" },
-    { title: "Video Editing", icon: "🎥" },
-  ];
 
   return (
     <div style={{ background: pageBg, minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
