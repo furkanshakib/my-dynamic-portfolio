@@ -9,18 +9,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 🔴 NUCLEAR FIX: This forces EVERY element to keep words together */
+/* 🟢 GLOBAL RESET: This forces standard English word breaking */
 *, *::before, *::after {
   box-sizing: border-box;
-  word-break: keep-all !important;      /* CJK text breaks, English stays together */
-  overflow-wrap: break-word !important; /* Break only if the word is huge (like a URL) */
-  white-space: normal !important;       /* Ignore editor line breaks */
+  word-break: normal !important;      /* Break words only at spaces */
+  overflow-wrap: break-word !important; /* Prevent horizontal scroll for long words */
+  white-space: normal !important;       /* Ignore rigid line breaks from editors */
   hyphens: none !important;             /* Disable auto-hyphenation */
-}
-
-/* Allow breaks only for specific long text like URLs */
-a {
-  word-break: break-all !important; 
 }
 
 body {
@@ -35,6 +30,7 @@ body {
 .ql-editor {
   padding: 0 !important;
   height: auto !important;
+  white-space: normal !important; /* Double-check for the editor */
 }
 
 .ql-editor p {
