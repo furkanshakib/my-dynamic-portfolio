@@ -21,13 +21,13 @@ function PortfolioManager() {
   const [projects, setProjects] = useState([]);
   const [experiences, setExperiences] = useState([]);
   const [blogs, setBlogs] = useState([]);
-  const [skills, setSkills] = useState([]); // 👈 NEW STATE
+  const [skills, setSkills] = useState([]); 
 
   // --- INPUT STATES ---
   const [newProject, setNewProject] = useState({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
   const [newExp, setNewExp] = useState({ title: '', company: '', year: '', description: '', type: 'job' });
   const [newBlog, setNewBlog] = useState({ title: '', category: 'Article', image: '', content: '' });
-  const [newSkill, setNewSkill] = useState({ name: '', icon: '' }); // 👈 NEW STATE
+  const [newSkill, setNewSkill] = useState({ name: '', icon: '' }); 
 
   const API_BASE = "https://furkanshakib.onrender.com/api";
 
@@ -41,7 +41,7 @@ function PortfolioManager() {
     axios.get(`${API_BASE}/projects`).then(res => setProjects(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/experience`).then(res => setExperiences(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/blogs`).then(res => setBlogs(res.data.reverse())).catch(console.error);
-    axios.get(`${API_BASE}/skills`).then(res => setSkills(res.data.reverse())).catch(console.error); // 👈 NEW FETCH
+    axios.get(`${API_BASE}/skills`).then(res => setSkills(res.data.reverse())).catch(console.error);
   };
 
   const resetForms = () => {
@@ -49,7 +49,7 @@ function PortfolioManager() {
     setNewProject({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
     setNewExp({ title: '', company: '', year: '', description: '', type: 'job' });
     setNewBlog({ title: '', category: 'Article', image: '', content: '' });
-    setNewSkill({ name: '', icon: '' }); // 👈 RESET SKILL
+    setNewSkill({ name: '', icon: '' });
   };
 
   // --- SUBMIT HANDLERS ---
@@ -58,7 +58,8 @@ function PortfolioManager() {
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
 
-  constXV = () => {
+  // 👇 THIS WAS THE FIXED FUNCTION NAME
+  const handleSaveExp = () => {
     const apiCall = editingId ? axios.put(`${API_BASE}/experience/${editingId}`, newExp) : axios.post(`${API_BASE}/experience`, newExp);
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
@@ -70,7 +71,7 @@ function PortfolioManager() {
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Published!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message)).finally(() => setLoading(false));
   };
 
-  const handleSaveSkill = () => { // 👈 NEW HANDLER
+  const handleSaveSkill = () => {
     if(!newSkill.name || !newSkill.icon) return alert("Name and Icon required!");
     axios.post(`${API_BASE}/skills`, newSkill)
       .then(() => { alert("✅ Skill Added!"); resetForms(); fetchData(); })
@@ -224,7 +225,7 @@ function PortfolioManager() {
         </div>
       )}
 
-      {/* --- SKILLS TAB (👇 NEW) --- */}
+      {/* --- SKILLS TAB --- */}
       {activeTab === 'skills' && (
         <div>
           <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
