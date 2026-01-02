@@ -1,19 +1,23 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './Home';
-import Projects from './ProjectsPage';
 import Contact from './Contact';
 import Login from './Login';
 import AdminDashboard from './AdminDashboard';
-import ExperiencePage from './ExperiencePage'; // 👈 IMPORT THE PAGE, NOT THE COMPONENT
+
+// 👇 IMPORT THE PAGES (Not just the components)
+import ExperiencePage from './ExperiencePage'; 
+import ProjectsPage from './ProjectsPage';     
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      {/* 👇 Point this route to ExperiencePage */}
-      <Route path="/experience" element={<ExperiencePage />} /> 
+      
+      {/* 👇 USE THE PAGE WRAPPERS */}
+      <Route path="/experience" element={<ExperiencePage />} />
       <Route path="/projects" element={<ProjectsPage />} />
+      
       <Route path="/contact" element={<Contact />} />
       <Route path="/admin" element={<Login />} />
       <Route path="/dashboard" element={<AdminDashboard />} />
