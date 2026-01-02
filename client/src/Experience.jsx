@@ -12,7 +12,6 @@ function Experience() {
   useEffect(() => {
     axios.get(API_URL)
       .then(res => {
-        // Reverse so newest is first
         setExperiences(res.data.reverse()); 
       })
       .catch(err => console.error(err));
@@ -27,7 +26,6 @@ function Experience() {
   const headingColor = isDark ? '#f1f5f9' : '#1e293b';
   const timelineLine = isDark ? '#334155' : '#e2e8f0';
 
-  // Card Styles
   const cardBg = isDark ? '#1e293b' : 'white';
   const cardTitle = isDark ? '#f1f5f9' : '#333';
   const cardSubtitle = isDark ? '#94a3b8' : '#555';
@@ -35,7 +33,6 @@ function Experience() {
   const cardBorder = isDark ? '1px solid #334155' : '1px solid white';
   const shadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
 
-  // Badges
   const jobBadge = { bg: isDark ? '#1e3a8a' : '#eff6ff', text: isDark ? '#60a5fa' : '#2563eb' };
   const eduBadge = { bg: isDark ? '#064e3b' : '#ecfdf5', text: isDark ? '#34d399' : '#059669' };
 
@@ -51,13 +48,13 @@ function Experience() {
 
       {items.map((item, index) => {
         
-        // 👇 LOGO LOGIC ADDED HERE
+        // 👇 UPDATED: Pointing to the ORIGINAL file names now
         let logoUrl = null;
         const txt = item.company.toLowerCase();
         
-        if (txt.includes('dhaka')) logoUrl = '/du2.png';
-        else if (txt.includes('10 minute')) logoUrl = '/10ms2.png';
-        else if (txt.includes('integrity') || txt.includes('jica')) logoUrl = '/jica2.png';
+        if (txt.includes('dhaka')) logoUrl = '/du.png';
+        else if (txt.includes('10 minute')) logoUrl = '/10ms.png';
+        else if (txt.includes('integrity') || txt.includes('jica')) logoUrl = '/jica.png';
 
         return (
           <div key={item._id} className="timeline-item" style={{ 
@@ -75,10 +72,10 @@ function Experience() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '1.5rem', border: `4px solid ${pageBg}`, zIndex: 2,
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              overflow: 'hidden' // Keeps image inside circle
+              overflow: 'hidden', background: 'white' // Force white background for cleaner logos
             }}>
               {logoUrl ? (
-                <img src={logoUrl} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '0' }} />
+                <img src={logoUrl} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '5px' }} />
               ) : (
                 isEdu ? '🎓' : '💼'
               )}
@@ -115,8 +112,6 @@ function Experience() {
 
   return (
     <div style={{ minHeight: '100vh', background: pageBg, fontFamily: "'Segoe UI', sans-serif" }}>
-
-      {/* Animation Styles */}
       <style>{`
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(30px); }
@@ -129,19 +124,16 @@ function Experience() {
       `}</style>
 
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 20px' }}>
-        
         <h1 style={{ textAlign: 'center', fontSize: '2.5rem', marginBottom: '10px', color: headingColor }}>My Journey</h1>
         <p style={{ textAlign: 'center', color: cardSubtitle, marginBottom: '60px' }}>
           A timeline of my professional career and academic achievements.
         </p>
 
-        {/* 1. PROFESSIONAL EXPERIENCE */}
         <h2 style={{ fontSize: '1.8rem', color: headingColor, borderBottom: `2px solid ${timelineLine}`, paddingBottom: '10px', marginBottom: '20px' }}>
           Professional Experience
         </h2>
         {jobs.length > 0 ? renderTimeline(jobs, false) : <p style={{ color: cardSubtitle }}>No experience added yet.</p>}
 
-        {/* 2. EDUCATION */}
         <h2 style={{ fontSize: '1.8rem', color: headingColor, borderBottom: `2px solid ${timelineLine}`, paddingBottom: '10px', marginBottom: '20px', marginTop: '60px' }}>
           Education
         </h2>
