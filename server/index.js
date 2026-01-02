@@ -7,7 +7,7 @@ require('dotenv').config();
 const Project = require('./models/Project');
 const Experience = require('./models/Experience');
 const Blog = require('./models/Blog');
-const Skill = require('./models/Skill'); // 👈 NEW IMPORT
+const Skill = require('./models/SkillItem'); // 👈 NEW IMPORT
 
 const app = express();
 
