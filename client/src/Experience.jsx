@@ -56,8 +56,18 @@ function Experience() {
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
               
-              {/* 👇 UPDATED: Use dangerouslySetInnerHTML to render bullets/bold/etc */}
-              <div className="ql-editor" style={{ padding: 0, color: cardDesc, fontSize: '1rem' }} dangerouslySetInnerHTML={{ __html: item.description }}></div>
+              {/* 👇 FIXED: Added 'wordBreak: normal' and 'overflowWrap: anywhere' */}
+              <div 
+                className="ql-editor" 
+                style={{ 
+                  padding: 0, 
+                  color: cardDesc, 
+                  fontSize: '1rem',
+                  wordBreak: 'normal',    // Don't break words mid-character
+                  overflowWrap: 'anywhere' // Break only if word is actually too long for line
+                }} 
+                dangerouslySetInnerHTML={{ __html: item.description }}
+              ></div>
             
             </div>
           </div>
