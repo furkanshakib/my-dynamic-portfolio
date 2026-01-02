@@ -2,39 +2,40 @@
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 🟢 GLOBAL RESET */
 * {
   box-sizing: border-box;
 }
 
-/* 🟢 TEXT FIX: This stops "reg-arding" splits */
-p, span, div, li, h1, h2, h3, h4, h5, h6, a {
-  word-break: normal !important;        /* Only break at spaces */
-  overflow-wrap: break-word !important; /* Wrap long words only if necessary */
-  white-space: normal !important;       /* Ignore editor line breaks */
-  hyphens: none !important;             /* Disable auto-hyphenation */
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Fix ReactQuill specific containers */
+/* 🟢 THE MAGIC CLASS: Apply this to any text container */
+.fix-text-layout, 
+.fix-text-layout * {
+  word-break: normal !important;        /* Never break words in the middle */
+  overflow-wrap: break-word !important; /* Wrap long words only if needed */
+  white-space: pre-wrap !important;     /* Preserve paragraph spacing but wrap lines */
+  hyphens: none !important;             /* Disable auto-hyphenation */
+  text-align: left !important;          /* Force left align to prevent weird gaps */
+  max-width: 100% !important;
+}
+
+/* Quill Editor Fixes */
 .ql-editor {
   height: auto !important;
   padding: 0 !important;
-  white-space: normal !important;
 }
-
 .ql-editor ul, .ql-editor ol {
   padding-left: 20px !important;
-  margin: 10px 0;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }

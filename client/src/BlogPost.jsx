@@ -22,10 +22,12 @@ function BlogPost() {
   const pageBg = isDark ? '#0f172a' : '#fff';
   const text = isDark ? '#f1f5f9' : '#333';
 
-  // 🧼 HELPER: Removes dirty inline styles that cause breaking
+  // 🧼 HELPER: Strip styles and classes
   const cleanHTML = (html) => {
     if (!html) return "";
-    return html.replace(/style="[^"]*"/g, "").replace(/style='[^']*'/g, ""); 
+    return html
+      .replace(/style="[^"]*"/g, "")
+      .replace(/class="[^"]*"/g, ""); 
   };
 
   return (
@@ -33,23 +35,12 @@ function BlogPost() {
       <Navbar />
       
       <style>{`
-        /* Images Responsive */
         .blog-content img {
           max-width: 100%;
           height: auto;
           border-radius: 8px;
           margin: 20px 0;
           display: block;
-        }
-        /* Alignment Fixes */
-        .ql-align-center { text-align: center; }
-        .ql-align-right { text-align: right; }
-        
-        /* 🟢 TEXT FIX: Match the Experience page logic */
-        .blog-content p, .blog-content span, .blog-content li, .blog-content div {
-           word-break: normal !important;
-           overflow-wrap: break-word !important;
-           white-space: normal !important;
         }
       `}</style>
 
@@ -60,8 +51,12 @@ function BlogPost() {
             <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
         
-        {/* Render Cleaned HTML */}
-        <div className="ql-editor blog-content" style={{ padding: 0 }} dangerouslySetInnerHTML={{ __html: cleanHTML(blog.content) }}></div>
+        {/* 👇 APPLIED THE FIX CLASS HERE */}
+        <div 
+          className="fix-text-layout blog-content" 
+          style={{ padding: 0 }} 
+          dangerouslySetInnerHTML={{ __html: cleanHTML(blog.content) }}
+        ></div>
       </article>
     </div>
   );
