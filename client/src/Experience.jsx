@@ -55,8 +55,9 @@ function Experience() {
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
               
-              {/* Content rendering */}
+              {/* 👇 ADDED className="content-body" to target this specifically */}
               <div 
+                className="content-body"
                 style={{ color: cardDesc, fontSize: '1rem', lineHeight: '1.6' }} 
                 dangerouslySetInnerHTML={{ __html: item.description }}
               ></div>

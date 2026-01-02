@@ -9,13 +9,22 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 🟢 GLOBAL RESET: This forces standard English word breaking */
-*, *::before, *::after {
+/* 🟢 GLOBAL RESET: This fixes the "reg-arding" issue */
+* {
   box-sizing: border-box;
-  word-break: normal !important;      /* Break words only at spaces */
-  overflow-wrap: break-word !important; /* Prevent horizontal scroll for long words */
-  white-space: normal !important;       /* Ignore rigid line breaks from editors */
-  hyphens: none !important;             /* Disable auto-hyphenation */
+}
+
+/* Apply strict rules to all text elements to stop splitting words */
+p, span, li, h1, h2, h3, h4, h5, h6, div {
+  word-break: normal !important;      /* Never break a word in the middle */
+  overflow-wrap: break-word !important; /* Only wrap if the word is too long for the screen */
+  white-space: normal !important;       /* Ignore editor formatting that forces breaks */
+  hyphens: none !important;             /* Stop auto-hyphens */
+}
+
+/* Exception: Links can break so they don't overflow */
+a {
+  word-break: break-all !important;
 }
 
 body {
@@ -23,36 +32,4 @@ body {
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* ReactQuill Editor Specific Fixes */
-.ql-editor {
-  padding: 0 !important;
-  height: auto !important;
-  white-space: normal !important; /* Double-check for the editor */
-}
-
-.ql-editor p {
-  margin-bottom: 10px;
-}
-
-.ql-editor ul, .ql-editor ol {
-  padding-left: 20px !important;
-  margin: 10px 0;
-}
-
-/* Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }
