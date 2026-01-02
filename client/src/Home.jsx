@@ -171,21 +171,46 @@ function Home() {
         {/* 2. MIDDLE COLUMN (Experience & Skills) */}
         <div className="middle-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          {/* Work Experience */}
+         {/* Work Experience */}
           <div className="bento-card" style={{ flex: 1 }}>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '20px' }}>Work Experience</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {experience.length > 0 ? experience.map(exp => (
-                <div key={exp._id} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                   <div style={{ background: 'rgba(37, 99, 235, 0.1)', color: highlight, padding: '10px', borderRadius: '10px', fontSize: '1.2rem', fontWeight: 'bold' }}>
-                     {exp.company.charAt(0)}
-                   </div>
-                   <div>
-                     <h4 style={{ margin: 0, fontSize: '1rem' }}>{exp.title}</h4>
-                     <span style={{ fontSize: '0.8rem', color: subText }}>{exp.company} • {exp.year}</span>
-                   </div>
-                </div>
-              )) : <p style={{color: subText}}>Loading experience...</p>}
+              {experience.length > 0 ? experience.map(exp => {
+                
+                // 👇 HELPER: Check company name and pick logo
+                let logoUrl = null;
+                const txt = exp.company.toLowerCase();
+                
+                if (txt.includes('dhaka')) logoUrl = '/du.png';
+                else if (txt.includes('10 minute')) logoUrl = '/10ms.png';
+                else if (txt.includes('integrity') || txt.includes('jica')) logoUrl = '/jica.png';
+
+                return (
+                  <div key={exp._id} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                     
+                     {/* LOGO OR LETTER FALLBACK */}
+                     <div style={{ 
+                       width: '50px', height: '50px', 
+                       background: 'rgba(37, 99, 235, 0.1)', 
+                       borderRadius: '10px', 
+                       display: 'flex', alignItems: 'center', justifyContent: 'center',
+                       fontSize: '1.2rem', fontWeight: 'bold', color: highlight,
+                       overflow: 'hidden' // Keeps image inside rounded corners
+                     }}>
+                        {logoUrl ? (
+                          <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        ) : (
+                          exp.company.charAt(0)
+                        )}
+                     </div>
+
+                     <div>
+                       <h4 style={{ margin: 0, fontSize: '1rem' }}>{exp.title}</h4>
+                       <span style={{ fontSize: '0.8rem', color: subText }}>{exp.company} • {exp.year}</span>
+                     </div>
+                  </div>
+                );
+              }) : <p style={{color: subText}}>Loading experience...</p>}
             </div>
           </div>
 
