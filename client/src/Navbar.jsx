@@ -21,7 +21,7 @@ function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'Projects', path: '/projects' },
     { name: 'Contact', path: '/contact' },
-    { name: 'Admin', path: '/admin' } // Kept Admin for your easy access
+    { name: 'Admin', path: '/admin' }
   ];
 
   return (
@@ -33,9 +33,13 @@ function Navbar() {
     }}>
       <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         
-        {/* LOGO */}
-        <Link to="/" style={{ fontSize: '1.2rem', fontWeight: 'bold', color: textColor, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '1.5rem' }}>⚡</span> Portfolio
+        {/* 👇 LOGO & NAME RESTORED */}
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Change '/logo.png' to your actual file name if different! */}
+          <img src="/logo.png" alt="Logo" style={{ height: '40px', width: 'auto', borderRadius: '8px' }} /> 
+          <span style={{ fontSize: '1.3rem', fontWeight: 'bold', color: textColor, fontFamily: "'Inter', sans-serif" }}>
+            Furkan Shakib
+          </span>
         </Link>
 
         {/* DESKTOP LINKS (Hidden on Mobile) */}
@@ -45,12 +49,13 @@ function Navbar() {
               textDecoration: 'none', 
               color: location.pathname === link.path ? accent : textColor, 
               fontWeight: location.pathname === link.path ? 'bold' : 'normal',
-              fontSize: '0.95rem'
+              fontSize: '0.95rem',
+              transition: 'color 0.2s'
             }}>
               {link.name}
             </Link>
           ))}
-          <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>
+          <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', padding: '5px' }}>
             {isDark ? '☀️' : '🌙'}
           </button>
         </div>
@@ -81,7 +86,7 @@ function Navbar() {
           ))}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px' }}>
              <span style={{ color: textColor }}>Theme</span>
-             <button onClick={toggleTheme} style={{ background: 'none', border: `1px solid ${border}`, padding:'5px 10px', borderRadius:'6px', cursor: 'pointer', fontSize: '1.2rem', color: textColor }}>
+             <button onClick={toggleTheme} style={{ background: 'none', border: `1px solid ${border}`, padding:'8px 15px', borderRadius:'6px', cursor: 'pointer', fontSize: '0.9rem', color: textColor }}>
                 {isDark ? 'Switch to Light ☀️' : 'Switch to Dark 🌙'}
              </button>
           </div>
