@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-"dependencies": {
+  "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
@@ -19,4 +19,5 @@
     "nodemon": "^3.1.11",
     "bcryptjs": "^2.4.3",     
     "jsonwebtoken": "^9.0.2"   
+  }
 }
