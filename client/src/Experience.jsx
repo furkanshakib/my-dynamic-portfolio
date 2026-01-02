@@ -56,19 +56,9 @@ function Experience() {
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
               
-              {/* 👇 FIXED: Switched to 'break-word' and 'pre-wrap' */}
               <div 
-                className="ql-editor" 
-                style={{ 
-                  padding: 0, 
-                  color: cardDesc, 
-                  fontSize: '1rem',
-                  lineHeight: '1.6',
-                  wordBreak: 'normal',       // Prevents splitting words like "m-ultiple"
-                  overflowWrap: 'break-word', // Wraps whole words
-                  whiteSpace: 'pre-wrap',    // Respects your formatting/spacing
-                  hyphens: 'none'            // Disables auto-hyphenation
-                }} 
+                className="ql-editor description-box" 
+                style={{ padding: 0, color: cardDesc, fontSize: '1rem' }} 
                 dangerouslySetInnerHTML={{ __html: item.description }}
               ></div>
             
@@ -84,8 +74,19 @@ function Experience() {
       <style>{`
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .timeline-item { opacity: 0; animation: slideUp 0.6s ease forwards; }
+        
         .ql-editor ul { padding-left: 20px; margin: 10px 0; }
         .ql-editor li { margin-bottom: 5px; }
+
+        /* 👇 FINAL FIX: NUCLEAR OPTION */
+        .description-box, .description-box * {
+          word-break: normal !important;      /* No breaking mid-word */
+          overflow-wrap: break-word !important; /* Only break if word is HUGE */
+          word-wrap: break-word !important;   /* Legacy support */
+          white-space: normal !important;     /* Let browser decide lines, not the editor */
+          hyphens: none !important;           /* No auto-hyphens */
+          max-width: 100%;                    /* Ensure container doesn't overflow */
+        }
       `}</style>
 
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 20px' }}>
