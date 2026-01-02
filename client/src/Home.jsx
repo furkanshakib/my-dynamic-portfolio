@@ -110,7 +110,18 @@ function Home() {
         
         {/* 1. PROFILE BOX (Top Left) */}
         <div className="bento-card profile-box" style={{ gridRow: 'span 2' }}>
-          <img src="/profile.png" alt="Profile" style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '16px', marginBottom: '20px' }} />
+         <img 
+  src="/profile.png" 
+  alt="Profile" 
+  style={{ 
+    width: '100%', 
+    maxHeight: '350px', 
+    objectFit: 'contain', 
+    borderRadius: '16px', 
+    marginBottom: '20px',
+    background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' 
+  }} 
+/>
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>Furkan Shakib 👋</h1>
           <p style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px' }}>
             A passionate <b>Peace & Conflict Researcher</b> and <b>Full Stack Developer</b>. I bridge the gap between social science and modern technology.
