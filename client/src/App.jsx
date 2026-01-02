@@ -1,4 +1,5 @@
 import React from 'react';
+import Contact from './Contact';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './ThemeContext'; // 👈 Import this
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/blogs" element={<BlogPage />} />
           <Route path="/blogs/:id" element={<BlogPost />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

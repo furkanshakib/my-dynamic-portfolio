@@ -89,7 +89,8 @@ function Navbar() {
           <Link to="/experience" style={linkStyle('/experience')}>Experience</Link>
           <Link to="/projects" style={linkStyle('/projects')}>Projects</Link>
           <Link to="/blogs" style={linkStyle('/blogs')}>Blogs</Link>
-          <a href="/#contact" style={{ ...linkStyle('contact'), cursor: 'pointer' }}>Contact</a>
+          {/* 👇 UPDATED: Points to /contact page now */}
+          <Link to="/contact" style={linkStyle('/contact')}>Contact</Link>
         </div>
 
         {/* RIGHT: ACTIONS */}
@@ -97,8 +98,6 @@ function Navbar() {
           <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', padding: '5px' }} title="Toggle Theme">
             {isDark ? '☀️' : '🌙'}
           </button>
-
-          {/* 🔐 Lock Icon REMOVED from here */}
 
           <button className="mobile-btn" onClick={toggleMenu} style={{ background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: '5px' }}>
             <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
@@ -132,9 +131,8 @@ function Navbar() {
         <Link to="/experience" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🎓 Experience</Link>
         <Link to="/projects" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🚀 Projects</Link>
         <Link to="/blogs" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>📝 Blogs</Link>
-        <a href="/#contact" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>📞 Contact</a>
-        
-        {/* Admin Link REMOVED from here too */}
+        {/* 👇 UPDATED: Mobile link updated as well */}
+        <Link to="/contact" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>📞 Contact</Link>
       </div>
     </>
   );
