@@ -43,7 +43,7 @@ function Navbar() {
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 10 }}>
           <img src="/logo.png" alt="Logo" style={{ height: '35px', width: 'auto', borderRadius: '8px' }} /> 
           <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: textColor, fontFamily: "'Inter', sans-serif" }}>
-            Furkan Shakib
+            FURKAN SHAKIB
           </span>
         </Link>
 
