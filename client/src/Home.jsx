@@ -155,7 +155,7 @@ function Home() {
         </div>
 
         {/* 2. MIDDLE COLUMN (Experience & Skills) */}
-        <div className="middle-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div className="middle-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px', gridRow: 'span 2' }}>
           
          {/* Work Experience */}
           <div className="bento-card" style={{ flex: 1 }}>
