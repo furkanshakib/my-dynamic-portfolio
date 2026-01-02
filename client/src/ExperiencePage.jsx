@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import Experience from './Experience';
-import { useTheme } from './ThemeContext'; // 👈 Import the Brain
+import { useTheme } from './ThemeContext';
 
 function ExperiencePage() {
-  const { theme } = useTheme(); // 👈 Ask the Brain for the theme
+  const { theme } = useTheme();
   const isDark = theme === 'dark';
 
   // Dynamic Styles
@@ -25,7 +25,8 @@ function ExperiencePage() {
 
       {/* 3. FOOTER BUTTON */}
       <div style={{ textAlign: 'center', padding: '40px' }}>
-        <Link to="/#contact" style={{ padding: '12px 24px', background: buttonBg, color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold', transition: '0.3s' }}>
+        {/* 👇 FIXED: Points to /contact now */}
+        <Link to="/contact" style={{ padding: '12px 24px', background: buttonBg, color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold', transition: '0.3s' }}>
             Get in Touch →
         </Link>
       </div>

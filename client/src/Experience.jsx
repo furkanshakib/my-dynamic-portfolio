@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTheme } from './ThemeContext';
-import 'react-quill-new/dist/quill.snow.css'; 
 
 function Experience() {
   const { theme } = useTheme();
@@ -56,9 +55,10 @@ function Experience() {
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
               
+              {/* 👇 FIXED: Using a custom class 'text-content' and removed 'ql-editor' */}
               <div 
-                className="ql-editor description-box" 
-                style={{ padding: 0, color: cardDesc, fontSize: '1rem' }} 
+                className="text-content"
+                style={{ color: cardDesc, fontSize: '1rem', lineHeight: '1.6' }} 
                 dangerouslySetInnerHTML={{ __html: item.description }}
               ></div>
             
@@ -74,18 +74,22 @@ function Experience() {
       <style>{`
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .timeline-item { opacity: 0; animation: slideUp 0.6s ease forwards; }
-        
-        .ql-editor ul { padding-left: 20px; margin: 10px 0; }
-        .ql-editor li { margin-bottom: 5px; }
 
-        /* 👇 FINAL FIX: NUCLEAR OPTION */
-        .description-box, .description-box * {
-          word-break: normal !important;      /* No breaking mid-word */
-          overflow-wrap: break-word !important; /* Only break if word is HUGE */
-          word-wrap: break-word !important;   /* Legacy support */
-          white-space: normal !important;     /* Let browser decide lines, not the editor */
-          hyphens: none !important;           /* No auto-hyphens */
-          max-width: 100%;                    /* Ensure container doesn't overflow */
+        /* 👇 TEXT FIXES */
+        .text-content {
+          overflow-wrap: break-word !important; /* Only break if word is too long for the container */
+          word-wrap: break-word !important;     /* Fallback */
+          word-break: normal !important;        /* Strict rule: Never break words in the middle */
+          hyphens: none !important;             /* Disable hyphenation */
+        }
+
+        /* Ensure bullets still show up since we removed ql-editor */
+        .text-content ul, .text-content ol { padding-left: 20px; margin: 10px 0; }
+        .text-content li { margin-bottom: 5px; }
+        
+        /* Protection against global resets */
+        .text-content * {
+           word-break: normal !important;
         }
       `}</style>
 
