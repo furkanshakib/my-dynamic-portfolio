@@ -2,37 +2,39 @@
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 🟢 UNIVERSAL RESET */
+/* 🟢 GLOBAL RESET */
 * {
   box-sizing: border-box;
 }
 
-/* Force standard text behavior on everything */
-p, h1, h2, h3, h4, h5, h6, span, div, li, a {
-  word-break: normal !important;       /* Never split a word in half */
-  overflow-wrap: break-word !important; /* Only split if word is longer than screen */
-  white-space: normal !important;       /* Ignore rigid editor formatting */
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
+/* 🟢 TEXT FIX: This stops "reg-arding" splits */
+p, span, div, li, h1, h2, h3, h4, h5, h6, a {
+  word-break: normal !important;        /* Only break at spaces */
+  overflow-wrap: break-word !important; /* Wrap long words only if necessary */
+  white-space: normal !important;       /* Ignore editor line breaks */
+  hyphens: none !important;             /* Disable auto-hyphenation */
 }
 
 /* Fix ReactQuill specific containers */
 .ql-editor {
   height: auto !important;
   padding: 0 !important;
+  white-space: normal !important;
 }
 
 .ql-editor ul, .ql-editor ol {
   padding-left: 20px !important;
+  margin: 10px 0;
 }
 
+/* Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }

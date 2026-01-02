@@ -15,6 +15,14 @@ function BlogPage() {
       .catch(console.error);
   }, []);
 
+  // 🧼 HELPER: Truly strips HTML and decodes entities like &nbsp;
+  const stripHtml = (html) => {
+    if (!html) return "";
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
+
   const pageBg = isDark ? '#0f172a' : '#f8f9fa';
   const cardBg = isDark ? '#1e293b' : 'white';
   const text = isDark ? '#f1f5f9' : '#333';
@@ -33,8 +41,8 @@ function BlogPage() {
                 <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 'bold' }}>{blog.category}</span>
                 <h2 style={{ fontSize: '1.4rem', margin: '10px 0' }}>{blog.title}</h2>
                 <div style={{ fontSize: '0.9rem', opacity: 0.8, marginBottom: '20px' }}>
-                  {/* Show snippet */}
-                  {blog.content.replace(/<[^>]+>/g, '').substring(0, 100)}...
+                  {/* 👇 FIXED: Using stripHtml to fix &nbsp; issues */}
+                  {stripHtml(blog.content).substring(0, 100)}...
                 </div>
                 <Link to={`/blogs/${blog._id}`} style={{ color: '#2563eb', fontWeight: 'bold', textDecoration: 'none' }}>Read Article →</Link>
               </div>

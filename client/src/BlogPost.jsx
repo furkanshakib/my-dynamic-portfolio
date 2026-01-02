@@ -22,12 +22,18 @@ function BlogPost() {
   const pageBg = isDark ? '#0f172a' : '#fff';
   const text = isDark ? '#f1f5f9' : '#333';
 
+  // 🧼 HELPER: Removes dirty inline styles that cause breaking
+  const cleanHTML = (html) => {
+    if (!html) return "";
+    return html.replace(/style="[^"]*"/g, "").replace(/style='[^']*'/g, ""); 
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Segoe UI', sans-serif" }}>
       <Navbar />
       
-      {/* 👇 THIS STYLE BLOCK FIXES THE MASSIVE IMAGES */}
       <style>{`
+        /* Images Responsive */
         .blog-content img {
           max-width: 100%;
           height: auto;
@@ -35,9 +41,16 @@ function BlogPost() {
           margin: 20px 0;
           display: block;
         }
-        /* Center images that were aligned center in the editor */
+        /* Alignment Fixes */
         .ql-align-center { text-align: center; }
         .ql-align-right { text-align: right; }
+        
+        /* 🟢 TEXT FIX: Match the Experience page logic */
+        .blog-content p, .blog-content span, .blog-content li, .blog-content div {
+           word-break: normal !important;
+           overflow-wrap: break-word !important;
+           white-space: normal !important;
+        }
       `}</style>
 
       <article style={{ maxWidth: '700px', margin: '0 auto', padding: '60px 20px' }}>
@@ -47,8 +60,8 @@ function BlogPost() {
             <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
         
-        {/* Render HTML Content with a new class for styling */}
-        <div className="ql-editor blog-content" style={{ padding: 0 }} dangerouslySetInnerHTML={{ __html: blog.content }}></div>
+        {/* Render Cleaned HTML */}
+        <div className="ql-editor blog-content" style={{ padding: 0 }} dangerouslySetInnerHTML={{ __html: cleanHTML(blog.content) }}></div>
       </article>
     </div>
   );
