@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion'; // 👈 NEW IMPORT
 import Navbar from './Navbar';
+import Skeleton from './Skeleton'; // 👈 NEW IMPORT
 import { useTheme } from './ThemeContext';
 
 function SocialIcon({ href, iconPath, color }) {
@@ -22,14 +24,30 @@ function Home() {
   
   const [projects, setProjects] = useState([]);
   const [experience, setExperience] = useState([]);
-  const [skills, setSkills] = useState([]); // 👈 NEW STATE
+  const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(true); // 👈 NEW LOADING STATE
 
   useEffect(() => {
-    // 👇 UPDATED FETCH CALLS
-    const API = "https://furkanshakib.onrender.com/api";
-    axios.get(`${API}/projects`).then(res => setProjects(res.data.reverse().slice(0, 4))).catch(console.error);
-    axios.get(`${API}/experience`).then(res => setExperience(res.data.reverse().slice(0, 3))).catch(console.error);
-    axios.get(`${API}/skills`).then(res => setSkills(res.data)).catch(console.error); // 👈 FETCH SKILLS
+    const fetchData = async () => {
+      try {
+        const API = "https://furkanshakib.onrender.com/api";
+        // Run all fetches at once
+        const [projRes, expRes, skillRes] = await Promise.all([
+          axios.get(`${API}/projects`),
+          axios.get(`${API}/experience`),
+          axios.get(`${API}/skills`)
+        ]);
+        
+        setProjects(projRes.data.reverse().slice(0, 4));
+        setExperience(expRes.data.reverse().slice(0, 3));
+        setSkills(skillRes.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false); // Stop loading when done
+      }
+    };
+    fetchData();
   }, []);
 
   const pageBg = isDark ? '#0f172a' : '#f8f9fa';
@@ -39,15 +57,19 @@ function Home() {
   const borderColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
   const highlight = '#2563eb';
 
-  // 👇 REMOVED HARDCODED SKILLS LIST
+  // Animation Variants
+  const fadeUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
 
   return (
-    <div style={{ background: pageBg, minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
+    <div style={{ background: pageBg, minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px', transition: 'background 0.3s' }}>
       <Navbar />
 
       <style>{`
         .bento-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
-        .bento-card { background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; transition: transform 0.2s; }
+        .bento-card { background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; transition: transform 0.2s, background 0.3s; }
         .bento-card:hover { transform: translateY(-3px); }
 
         @media (max-width: 1100px) {
@@ -64,10 +86,18 @@ function Home() {
         }
       `}</style>
 
-      <div className="bento-grid">
+      {/* WRAP GRID IN MOTION */}
+      <motion.div 
+        className="bento-grid"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: { transition: { staggerChildren: 0.1 } } // Stagger effect
+        }}
+      >
         
         {/* 1. PROFILE BOX */}
-        <div className="bento-card profile-box" style={{ gridRow: 'span 2' }}>
+        <motion.div className="bento-card profile-box" style={{ gridRow: 'span 2' }} variants={fadeUp}>
          <img src="/profile.png" alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'contain', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>Furkan Shakib 👋</h1>
           <p style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px' }}>
@@ -82,73 +112,105 @@ function Home() {
               <SocialIcon href="mailto:furkanshakib@gmail.com" color="#ef4444" iconPath={<path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>} />
               <SocialIcon href="https://wa.me/8801624767370" color="#22c55e" iconPath={<path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2z"/>} />
           </div>
-        </div>
+        </motion.div>
 
         {/* 2. MIDDLE COLUMN */}
         <div className="middle-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px', gridRow: 'span 2' }}>
+          
           {/* Work Experience */}
-          <div className="bento-card" style={{ flex: 1 }}>
+          <motion.div className="bento-card" style={{ flex: 1 }} variants={fadeUp}>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '20px' }}>Work Experience</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {experience.length > 0 ? experience.map(exp => {
-                let logoUrl = null;
-                const txt = exp.company.toLowerCase();
-                if (txt.includes('dhaka')) logoUrl = '/du.png';
-                else if (txt.includes('10 minute')) logoUrl = '/10ms.png';
-                else if (txt.includes('integrity') || txt.includes('jica')) logoUrl = '/jica.png';
+              
+              {/* 👇 LOADING SKELETON CHECK */}
+              {loading ? (
+                <>
+                  <Skeleton height="50px" />
+                  <Skeleton height="50px" />
+                  <Skeleton height="50px" />
+                </>
+              ) : (
+                experience.length > 0 ? experience.map(exp => {
+                  let logoUrl = null;
+                  const txt = exp.company.toLowerCase();
+                  if (txt.includes('dhaka')) logoUrl = '/du.png';
+                  else if (txt.includes('10 minute')) logoUrl = '/10ms.png';
+                  else if (txt.includes('integrity') || txt.includes('jica')) logoUrl = '/jica.png';
 
-                return (
-                  <div key={exp._id} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                      <div style={{ width: '50px', height: '50px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: highlight, overflow: 'hidden' }}>
-                         {logoUrl ? <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : exp.company.charAt(0)}
-                      </div>
-                      <div>
-                        <h4 style={{ margin: 0, fontSize: '1rem' }}>{exp.title}</h4>
-                        <span style={{ fontSize: '0.8rem', color: subText }}>{exp.company} • {exp.year}</span>
-                      </div>
-                  </div>
-                );
-              }) : <p style={{color: subText}}>Loading experience...</p>}
+                  return (
+                    <div key={exp._id} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                        <div style={{ width: '50px', height: '50px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: highlight, overflow: 'hidden' }}>
+                           {logoUrl ? <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : exp.company.charAt(0)}
+                        </div>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: '1rem' }}>{exp.title}</h4>
+                          <span style={{ fontSize: '0.8rem', color: subText }}>{exp.company} • {exp.year}</span>
+                        </div>
+                    </div>
+                  );
+                }) : <p style={{color: subText}}>No experience added.</p>
+              )}
+
             </div>
-          </div>
+          </motion.div>
 
-          {/* Expert Area (👇 UPDATED SECTION) */}
-          <div className="bento-card" style={{ flex: 1 }}>
+          {/* Expert Area */}
+          <motion.div className="bento-card" style={{ flex: 1 }} variants={fadeUp}>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '20px' }}>My Expert Area</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-              {skills.length > 0 ? skills.map((skill) => (
-                <div key={skill._id} style={{ background: isDark ? '#0f172a' : '#f1f5f9', padding: '15px 5px', borderRadius: '12px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.5rem', marginBottom: '5px' }}>{skill.icon}</div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{skill.name}</div>
-                </div>
-              )) : <p style={{gridColumn:'span 3', textAlign:'center', color:subText, fontSize:'0.9rem'}}>Add skills in Dashboard!</p>}
+              
+              {/* 👇 LOADING SKELETON CHECK */}
+              {loading ? (
+                <>
+                  <Skeleton height="80px" />
+                  <Skeleton height="80px" />
+                  <Skeleton height="80px" />
+                </>
+              ) : (
+                skills.length > 0 ? skills.map((skill) => (
+                  <div key={skill._id} style={{ background: isDark ? '#0f172a' : '#f1f5f9', padding: '15px 5px', borderRadius: '12px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '5px' }}>{skill.icon}</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{skill.name}</div>
+                  </div>
+                )) : <p style={{gridColumn:'span 3', textAlign:'center', color:subText, fontSize:'0.9rem'}}>No skills added.</p>
+              )}
+
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* 3. RECENT PROJECTS */}
-        <div className="bento-card projects-box" style={{ gridRow: 'span 2', overflow: 'hidden' }}>
+        <motion.div className="bento-card projects-box" style={{ gridRow: 'span 2', overflow: 'hidden' }} variants={fadeUp}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
              <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Recent Projects</h3>
              <Link to="/projects" style={{ fontSize: '0.9rem', color: highlight, textDecoration: 'none' }}>All Projects →</Link>
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto', paddingRight: '5px' }}>
-             {projects.map(p => (
-               <a href={p.link} target="_blank" rel="noreferrer" key={p._id} style={{ textDecoration: 'none', color: 'inherit' }}>
-                 <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', border: `1px solid ${borderColor}` }}>
-                    {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} />}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)', padding: '15px', boxSizing: 'border-box' }}>
-                      <span style={{ fontSize: '0.7rem', background: highlight, color: 'white', padding: '2px 6px', borderRadius: '4px' }}>{p.category}</span>
-                      <h4 style={{ color: 'white', margin: '5px 0 0 0', fontSize: '1rem' }}>{p.title}</h4>
+             
+             {/* 👇 LOADING SKELETON CHECK */}
+             {loading ? (
+                <>
+                   <Skeleton height="160px" />
+                   <Skeleton height="160px" />
+                </>
+             ) : (
+                projects.map(p => (
+                  <a href={p.link} target="_blank" rel="noreferrer" key={p._id} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', border: `1px solid ${borderColor}` }}>
+                       {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} />}
+                       <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)', padding: '15px', boxSizing: 'border-box' }}>
+                         <span style={{ fontSize: '0.7rem', background: highlight, color: 'white', padding: '2px 6px', borderRadius: '4px' }}>{p.category}</span>
+                         <h4 style={{ color: 'white', margin: '5px 0 0 0', fontSize: '1rem' }}>{p.title}</h4>
+                       </div>
                     </div>
-                 </div>
-               </a>
-             ))}
+                  </a>
+                ))
+             )}
           </div>
-        </div>
+        </motion.div>
         
-      </div>
+      </motion.div>
     </div>
   );
 }
