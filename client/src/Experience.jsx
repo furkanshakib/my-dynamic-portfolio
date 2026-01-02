@@ -55,9 +55,9 @@ function Experience() {
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
               
-              {/* 👇 FIXED: Using a custom class 'text-content' and removed 'ql-editor' */}
+              {/* 👇 THE CONTENT BOX */}
               <div 
-                className="text-content"
+                className="experience-content"
                 style={{ color: cardDesc, fontSize: '1rem', lineHeight: '1.6' }} 
                 dangerouslySetInnerHTML={{ __html: item.description }}
               ></div>
@@ -75,21 +75,25 @@ function Experience() {
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .timeline-item { opacity: 0; animation: slideUp 0.6s ease forwards; }
 
-        /* 👇 TEXT FIXES */
-        .text-content {
-          overflow-wrap: break-word !important; /* Only break if word is too long for the container */
-          word-wrap: break-word !important;     /* Fallback */
-          word-break: normal !important;        /* Strict rule: Never break words in the middle */
-          hyphens: none !important;             /* Disable hyphenation */
+        /* 👇 THIS IS THE CRITICAL FIX */
+        .experience-content {
+           width: 100%;
+        }
+        
+        /* Force every single text element (p, span, li, etc) to behave normally */
+        .experience-content * {
+           white-space: normal !important;  /* Ignore editor line breaks */
+           word-break: normal !important;   /* Do NOT break words in the middle */
+           overflow-wrap: break-word !important; /* Only break if word is too long */
+           hyphens: none !important;        /* No auto-hyphens */
+           max-width: 100% !important;      /* Prevent overflow */
         }
 
-        /* Ensure bullets still show up since we removed ql-editor */
-        .text-content ul, .text-content ol { padding-left: 20px; margin: 10px 0; }
-        .text-content li { margin-bottom: 5px; }
-        
-        /* Protection against global resets */
-        .text-content * {
-           word-break: normal !important;
+        .experience-content ul, .experience-content ol { 
+           padding-left: 20px; margin: 10px 0; 
+        }
+        .experience-content li { 
+           margin-bottom: 5px; 
         }
       `}</style>
 
