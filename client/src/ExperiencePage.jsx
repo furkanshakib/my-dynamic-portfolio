@@ -25,7 +25,7 @@ function ExperiencePage() {
 
       {/* 3. FOOTER BUTTON */}
       <div style={{ textAlign: 'center', padding: '40px' }}>
-        {/* 👇 FIXED: Points to /contact now */}
+        {/* 👇 FIXED: Pointing to the new separate Contact page */}
         <Link to="/contact" style={{ padding: '12px 24px', background: buttonBg, color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold', transition: '0.3s' }}>
             Get in Touch →
         </Link>

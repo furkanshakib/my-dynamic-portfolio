@@ -1,22 +1,55 @@
 :root {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: light dark;
-  color: #333;
-  background-color: #f8f9fa;
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 👇 THIS IS THE MAGIC FIX */
+* {
+  word-break: normal;       /* Standard breaking */
+  overflow-wrap: break-word; /* Wrap long words only if needed */
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   padding: 0;
-  min-width: 100vw; /* Forces full width */
+  min-width: 320px;
   min-height: 100vh;
 }
 
-#root {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
+/* ReactQuill Editor Overrides (Mobile Fixes) */
+.ql-editor {
+  white-space: normal !important; /* Force text to wrap naturally */
+  padding: 0 !important;
+  height: auto !important;
+}
+
+.ql-editor p {
+  margin-bottom: 10px;
+}
+
+.ql-editor ul, .ql-editor ol {
+  padding-left: 20px !important;
+  margin: 10px 0;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
