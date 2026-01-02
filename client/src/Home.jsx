@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
 
-// --- ICONS (Reused from your old code) ---
+// --- ICONS ---
 function SocialIcon({ href, iconPath, color }) {
   return (
     <a href={href} target="_blank" rel="noreferrer" 
@@ -32,14 +32,12 @@ function Home() {
 
   // Fetch Data
   useEffect(() => {
-    // Fetch Projects
     axios.get("https://furkanshakib.onrender.com/api/projects")
-      .then(res => setProjects(res.data.reverse().slice(0, 4))) // Get top 4
+      .then(res => setProjects(res.data.reverse().slice(0, 4))) 
       .catch(console.error);
 
-    // Fetch Experience
     axios.get("https://furkanshakib.onrender.com/api/experience")
-      .then(res => setExperience(res.data.reverse().slice(0, 3))) // Get top 3
+      .then(res => setExperience(res.data.reverse().slice(0, 3)))
       .catch(console.error);
   }, []);
 
@@ -51,7 +49,7 @@ function Home() {
   const borderColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
   const highlight = '#2563eb';
 
- // --- STATIC DATA ---
+  // --- STATIC DATA ---
   const skills = [
     { name: "Academic Research", icon: "🔎" },
     { name: "Academic Writing", icon: "✍️" },
@@ -61,18 +59,11 @@ function Home() {
     { name: "Mobile Photography", icon: "📸" }
   ];
 
-  // 👇 THIS WAS MISSING
-  const services = [
-    { title: "Academic Research", icon: "🎓" },
-    { title: "Web Development", icon: "💻" },
-    { title: "Video Editing", icon: "🎥" },
-  ];
-
   return (
     <div style={{ background: pageBg, minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
       <Navbar />
 
-     {/* CSS GRID STYLES */}
+      {/* CSS GRID STYLES */}
       <style>{`
         .bento-grid {
           display: grid;
@@ -84,7 +75,6 @@ function Home() {
           padding: 0 20px;
         }
 
-        /* CARD STYLE */
         .bento-card {
           background: ${cardBg};
           border: 1px solid ${borderColor};
@@ -96,41 +86,36 @@ function Home() {
         }
         .bento-card:hover { transform: translateY(-3px); }
 
-        /* 👇 FIXED RESPONSIVE RULES */
-        
-        /* Tablets (Medium Screens) */
+        /* RESPONSIVE RULES */
         @media (max-width: 1100px) {
           .bento-grid { 
-            grid-template-columns: 1fr 1fr; /* Switch to 2 columns */
+            grid-template-columns: 1fr 1fr; 
           }
           .profile-box { 
-            grid-column: span 2; /* Profile takes full width on top */
-            flex-direction: row; /* Layout profile side-by-side if you want, or keep column */
+            grid-column: span 2; 
+            flex-direction: row; 
             align-items: center;
             gap: 30px;
           }
           .profile-box img {
-            width: 200px !important; /* Smaller image on tablet */
+            width: 200px !important; 
             height: 200px !important;
             margin-bottom: 0 !important;
           }
         }
 
-        /* Mobile (Phones) - FORCE STACK */
         @media (max-width: 768px) {
           .bento-grid {
-            display: flex; /* Override Grid */
-            flex-direction: column; /* Stack everything vertically */
+            display: flex; 
+            flex-direction: column; 
             gap: 20px;
           }
-          
           .profile-box {
-            flex-direction: column; /* Stack profile image and text */
+            flex-direction: column; 
             text-align: center;
           }
-          
           .profile-box img {
-            width: 100% !important; /* Full width image again */
+            width: 100% !important; 
             height: auto !important;
             max-height: 350px;
             margin-bottom: 20px !important;
@@ -178,7 +163,6 @@ function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               {experience.length > 0 ? experience.map(exp => {
                 
-                // 👇 HELPER: Check company name and pick logo
                 let logoUrl = null;
                 const txt = exp.company.toLowerCase();
                 
@@ -196,7 +180,7 @@ function Home() {
                        borderRadius: '10px', 
                        display: 'flex', alignItems: 'center', justifyContent: 'center',
                        fontSize: '1.2rem', fontWeight: 'bold', color: highlight,
-                       overflow: 'hidden' // Keeps image inside rounded corners
+                       overflow: 'hidden' 
                      }}>
                         {logoUrl ? (
                           <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -257,19 +241,6 @@ function Home() {
              ))}
           </div>
         </div>
-
-        {/* 4. SERVICES ROW (Bottom Left) */}
-        <div className="bento-card services-box" style={{ gridColumn: 'span 2', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
-           {services.map((s, i) => (
-             <div key={i} style={{ textAlign: 'center', minWidth: '120px' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '10px', color: highlight }}>{s.icon}</div>
-                <h4 style={{ margin: 0, fontSize: '1rem' }}>{s.title}</h4>
-             </div>
-           ))}
-        </div>
-
-        {/* 5. CTA (Bottom Right - tucked into grid naturally) */}
-        {/* Note: In this layout, if rows align, we can just leave it or add a small CTA */}
         
       </div>
     </div>
