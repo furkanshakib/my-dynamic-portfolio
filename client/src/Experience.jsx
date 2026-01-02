@@ -55,9 +55,8 @@ function Experience() {
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
               
-              {/* 👇 THE CONTENT BOX */}
+              {/* Content rendering */}
               <div 
-                className="experience-content"
                 style={{ color: cardDesc, fontSize: '1rem', lineHeight: '1.6' }} 
                 dangerouslySetInnerHTML={{ __html: item.description }}
               ></div>
@@ -74,27 +73,8 @@ function Experience() {
       <style>{`
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .timeline-item { opacity: 0; animation: slideUp 0.6s ease forwards; }
-
-        /* 👇 THIS IS THE CRITICAL FIX */
-        .experience-content {
-           width: 100%;
-        }
-        
-        /* Force every single text element (p, span, li, etc) to behave normally */
-        .experience-content * {
-           white-space: normal !important;  /* Ignore editor line breaks */
-           word-break: normal !important;   /* Do NOT break words in the middle */
-           overflow-wrap: break-word !important; /* Only break if word is too long */
-           hyphens: none !important;        /* No auto-hyphens */
-           max-width: 100% !important;      /* Prevent overflow */
-        }
-
-        .experience-content ul, .experience-content ol { 
-           padding-left: 20px; margin: 10px 0; 
-        }
-        .experience-content li { 
-           margin-bottom: 5px; 
-        }
+        ul, ol { padding-left: 20px; margin: 10px 0; }
+        li { margin-bottom: 5px; }
       `}</style>
 
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 20px' }}>

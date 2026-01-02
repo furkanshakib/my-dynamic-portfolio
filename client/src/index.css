@@ -9,11 +9,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 👇 THIS IS THE MAGIC FIX */
+/* 👇 GLOBAL RESET: This stops the text breaking issue everywhere */
 * {
-  word-break: normal;       /* Standard breaking */
-  overflow-wrap: break-word; /* Wrap long words only if needed */
   box-sizing: border-box;
+  word-break: normal !important;       /* Never split words (e.g., "reg-arding") */
+  overflow-wrap: break-word !important; /* Break long words only if necessary */
 }
 
 body {
@@ -21,35 +21,15 @@ body {
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* ReactQuill Editor Overrides (Mobile Fixes) */
+/* Quill Editor Fixes */
 .ql-editor {
-  white-space: normal !important; /* Force text to wrap naturally */
-  padding: 0 !important;
+  white-space: normal !important; /* Ignore editor's rigid line breaks */
   height: auto !important;
-}
-
-.ql-editor p {
-  margin-bottom: 10px;
 }
 
 .ql-editor ul, .ql-editor ol {
   padding-left: 20px !important;
-  margin: 10px 0;
-}
-
-/* Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }
