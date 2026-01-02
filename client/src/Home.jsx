@@ -71,11 +71,11 @@ function Home() {
     <div style={{ background: pageBg, minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
       <Navbar />
 
-      {/* CSS GRID STYLES */}
+     {/* CSS GRID STYLES */}
       <style>{`
         .bento-grid {
           display: grid;
-          grid-template-columns: 1.2fr 1fr 1fr; /* 3 Columns */
+          grid-template-columns: 1.2fr 1fr 1fr; /* 3 Columns on Desktop */
           grid-template-rows: auto auto;
           gap: 20px;
           max-width: 1400px;
@@ -95,14 +95,45 @@ function Home() {
         }
         .bento-card:hover { transform: translateY(-3px); }
 
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-          .bento-grid { grid-template-columns: 1fr 1fr; }
-          .profile-box { grid-column: span 2; }
+        /* 👇 FIXED RESPONSIVE RULES */
+        
+        /* Tablets (Medium Screens) */
+        @media (max-width: 1100px) {
+          .bento-grid { 
+            grid-template-columns: 1fr 1fr; /* Switch to 2 columns */
+          }
+          .profile-box { 
+            grid-column: span 2; /* Profile takes full width on top */
+            flex-direction: row; /* Layout profile side-by-side if you want, or keep column */
+            align-items: center;
+            gap: 30px;
+          }
+          .profile-box img {
+            width: 200px !important; /* Smaller image on tablet */
+            height: 200px !important;
+            margin-bottom: 0 !important;
+          }
         }
+
+        /* Mobile (Phones) - FORCE STACK */
         @media (max-width: 768px) {
-          .bento-grid { grid-template-columns: 1fr; }
-          .profile-box, .middle-col, .projects-box, .services-box, .contact-box { grid-column: span 1; }
+          .bento-grid {
+            display: flex; /* Override Grid */
+            flex-direction: column; /* Stack everything vertically */
+            gap: 20px;
+          }
+          
+          .profile-box {
+            flex-direction: column; /* Stack profile image and text */
+            text-align: center;
+          }
+          
+          .profile-box img {
+            width: 100% !important; /* Full width image again */
+            height: auto !important;
+            max-height: 350px;
+            margin-bottom: 20px !important;
+          }
         }
       `}</style>
 
