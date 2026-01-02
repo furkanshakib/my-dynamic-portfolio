@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
@@ -7,7 +7,9 @@ function Contact() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const form = useRef();
-  const [isSending, setIsSending] = useState(false);
+  
+  // Status: 'idle' | 'sending' | 'success' | 'error'
+  const [status, setStatus] = useState('idle');
 
   // --- STYLES ---
   const pageBg = isDark ? '#0f172a' : '#f8f9fa';
@@ -15,22 +17,22 @@ function Contact() {
   const textMain = isDark ? '#f1f5f9' : '#1e293b';
   const textSub = isDark ? '#94a3b8' : '#64748b';
   const border = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-  const inputBg = isDark ? '#0f172a' : '#f1f5f9';
+  const inputBg = isDark ? '#0f172a' : '#f8f9fa';
 
   const sendEmail = (e) => {
     e.preventDefault();
-    setIsSending(true);
+    setStatus('sending');
     
-    // 👇 REPLACE THESE WITH YOUR ACTUAL EMAILJS KEYS LATER IF NEEDED
+    // 👇 YOUR EMAILJS KEYS
     emailjs.sendForm('service_y65owe5', 'template_kygrxid', form.current, '1HTfvq6f969VEiM88')
       .then(() => { 
-          alert("Message Sent Successfully! 🚀"); 
-          e.target.reset(); 
-          setIsSending(false); 
+          setStatus('success');
+          e.target.reset(); // Clear the form
+          // Hide success message after 5 seconds
+          setTimeout(() => setStatus('idle'), 5000);
       }, (error) => { 
-          alert("Failed to send message. Please try again."); 
           console.error(error);
-          setIsSending(false); 
+          setStatus('error');
       });
   };
 
@@ -55,8 +57,23 @@ function Contact() {
         </div>
 
         {/* 2. RIGHT SIDE: FORM */}
-        <div style={{ flex: '1', minWidth: '300px', background: cardBg, padding: '40px', borderRadius: '24px', border: `1px solid ${border}`, boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+        <div style={{ flex: '1', minWidth: '300px', background: cardBg, padding: '40px', borderRadius: '24px', border: `1px solid ${border}`, boxShadow: '0 10px 30px rgba(0,0,0,0.05)', position: 'relative' }}>
+          
           <h3 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Send me a message 🚀</h3>
+
+          {/* SUCCESS MESSAGE BANNER */}
+          {status === 'success' && (
+            <div style={{ background: '#dcfce7', color: '#166534', padding: '15px', borderRadius: '10px', marginBottom: '20px', border: '1px solid #bbf7d0', animation: 'fadeIn 0.5s' }}>
+              ✅ <b>Message Sent!</b> I'll get back to you soon.
+            </div>
+          )}
+
+          {/* ERROR MESSAGE BANNER */}
+          {status === 'error' && (
+            <div style={{ background: '#fee2e2', color: '#991b1b', padding: '15px', borderRadius: '10px', marginBottom: '20px', border: '1px solid #fecaca', animation: 'fadeIn 0.5s' }}>
+              ❌ <b>Failed to send.</b> Please try again later.
+            </div>
+          )}
           
           <form ref={form} onSubmit={sendEmail} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             <input type="text" name="user_name" placeholder="Your Name" required 
@@ -69,13 +86,21 @@ function Contact() {
               style={{ width: '100%', padding: '15px', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textMain, outline: 'none', resize: 'none' }} 
             ></textarea>
             
-            <button type="submit" disabled={isSending} style={{ padding: '15px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem', transition: 'opacity 0.2s' }}>
-              {isSending ? "Sending..." : "Send Message"}
+            <button type="submit" disabled={status === 'sending' || status === 'success'} style={{ 
+                padding: '15px', 
+                background: status === 'success' ? '#16a34a' : '#2563eb', 
+                color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem', transition: 'all 0.3s',
+                opacity: status === 'sending' ? 0.7 : 1
+            }}>
+              {status === 'sending' ? "Sending... ⏳" : (status === 'success' ? "Sent! 🚀" : "Send Message")}
             </button>
           </form>
         </div>
 
       </div>
+      
+      {/* Simple animation style */}
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 }
@@ -83,7 +108,10 @@ function Contact() {
 // Helper Component for List Items
 function ContactItem({ icon, label, value, link, sub }) {
   return (
-    <a href={link} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '15px', textDecoration: 'none', color: 'inherit' }}>
+    <a href={link} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '15px', textDecoration: 'none', color: 'inherit', transition: 'transform 0.2s' }}
+       onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(5px)'}
+       onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}
+    >
       <div style={{ width: '50px', height: '50px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>
         {icon}
       </div>
