@@ -13,7 +13,7 @@ function App() {
       <Route path="/" element={<Home />} />
       {/* 👇 Point this route to ExperiencePage */}
       <Route path="/experience" element={<ExperiencePage />} /> 
-      <Route path="/projects" element={<Projects />} />
+      <Route path="/projects" element={<ProjectsPage />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/admin" element={<Login />} />
       <Route path="/dashboard" element={<AdminDashboard />} />
