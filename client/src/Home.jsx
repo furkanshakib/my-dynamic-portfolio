@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import Navbar from './Navbar';
-import TechStack from './TechStack';
 import { useTheme } from './ThemeContext';
 
 // --- ICONS ---
@@ -204,8 +203,6 @@ function Home() {
         </div>
       </section>
 
-      {/* 5. TECH STACK (Bottom) */}
-      <TechStack />
     </div>
   );
 }
