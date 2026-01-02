@@ -4,16 +4,10 @@ import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
 
-// --- ICONS ---
 function SocialIcon({ href, iconPath, color }) {
   return (
     <a href={href} target="_blank" rel="noreferrer" 
-       style={{ 
-         display: 'flex', alignItems: 'center', justifyContent: 'center',
-         width: '40px', height: '40px', borderRadius: '10px',
-         background: 'rgba(255,255,255,0.05)', color: color,
-         border: '1px solid rgba(255,255,255,0.1)', transition: 'all 0.2s'
-       }}
+       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', color: color, border: '1px solid rgba(255,255,255,0.1)', transition: 'all 0.2s' }}
        onMouseEnter={(e) => { e.currentTarget.style.background = color; e.currentTarget.style.color = 'white'; }}
        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = color; }}
     >
@@ -26,22 +20,14 @@ function Home() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   
-  // Data States
   const [projects, setProjects] = useState([]);
   const [experience, setExperience] = useState([]);
 
-  // Fetch Data
   useEffect(() => {
-    axios.get("https://furkanshakib.onrender.com/api/projects")
-      .then(res => setProjects(res.data.reverse().slice(0, 4))) 
-      .catch(console.error);
-
-    axios.get("https://furkanshakib.onrender.com/api/experience")
-      .then(res => setExperience(res.data.reverse().slice(0, 3)))
-      .catch(console.error);
+    axios.get("https://furkanshakib.onrender.com/api/projects").then(res => setProjects(res.data.reverse().slice(0, 4))).catch(console.error);
+    axios.get("https://furkanshakib.onrender.com/api/experience").then(res => setExperience(res.data.reverse().slice(0, 3))).catch(console.error);
   }, []);
 
-  // --- STYLES ---
   const pageBg = isDark ? '#0f172a' : '#f8f9fa';
   const cardBg = isDark ? '#1e293b' : '#ffffff';
   const textColor = isDark ? '#f1f5f9' : '#1e293b';
@@ -49,7 +35,6 @@ function Home() {
   const borderColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
   const highlight = '#2563eb';
 
-  // --- STATIC DATA ---
   const skills = [
     { name: "Academic Research", icon: "🔎" },
     { name: "Academic Writing", icon: "✍️" },
@@ -59,86 +44,41 @@ function Home() {
     { name: "Mobile Photography", icon: "📸" }
   ];
 
+  // Helper to remove HTML tags for preview text
+  const stripHtml = (html) => {
+     let tmp = document.createElement("DIV");
+     tmp.innerHTML = html;
+     return tmp.textContent || tmp.innerText || "";
+  };
+
   return (
     <div style={{ background: pageBg, minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
       <Navbar />
 
-      {/* CSS GRID STYLES */}
       <style>{`
-        .bento-grid {
-          display: grid;
-          grid-template-columns: 1.2fr 1fr 1fr; /* 3 Columns on Desktop */
-          grid-template-rows: auto auto;
-          gap: 20px;
-          max-width: 1400px;
-          margin: 40px auto;
-          padding: 0 20px;
-        }
-
-        .bento-card {
-          background: ${cardBg};
-          border: 1px solid ${borderColor};
-          border-radius: 24px;
-          padding: 30px;
-          display: flex;
-          flex-direction: column;
-          transition: transform 0.2s;
-        }
+        .bento-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+        .bento-card { background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; transition: transform 0.2s; }
         .bento-card:hover { transform: translateY(-3px); }
 
-        /* RESPONSIVE RULES */
         @media (max-width: 1100px) {
-          .bento-grid { 
-            grid-template-columns: 1fr 1fr; 
-          }
-          .profile-box { 
-            grid-column: span 2; 
-            flex-direction: row; 
-            align-items: center;
-            gap: 30px;
-          }
-          .profile-box img {
-            width: 200px !important; 
-            height: 200px !important;
-            margin-bottom: 0 !important;
-          }
+          .bento-grid { grid-template-columns: 1fr 1fr; }
+          .profile-box { grid-column: span 2; flex-direction: row; align-items: center; gap: 30px; }
+          .profile-box img { width: 200px !important; height: 200px !important; margin-bottom: 0 !important; }
+          .middle-col { grid-row: auto !important; } 
         }
 
         @media (max-width: 768px) {
-          .bento-grid {
-            display: flex; 
-            flex-direction: column; 
-            gap: 20px;
-          }
-          .profile-box {
-            flex-direction: column; 
-            text-align: center;
-          }
-          .profile-box img {
-            width: 100% !important; 
-            height: auto !important;
-            max-height: 350px;
-            margin-bottom: 20px !important;
-          }
+          .bento-grid { display: flex; flex-direction: column; gap: 20px; }
+          .profile-box { flex-direction: column; text-align: center; }
+          .profile-box img { width: 100% !important; height: auto !important; max-height: 350px; margin-bottom: 20px !important; }
         }
       `}</style>
 
       <div className="bento-grid">
         
-        {/* 1. PROFILE BOX (Top Left) */}
+        {/* 1. PROFILE BOX */}
         <div className="bento-card profile-box" style={{ gridRow: 'span 2' }}>
-         <img 
-            src="/profile.png" 
-            alt="Profile" 
-            style={{ 
-              width: '100%', 
-              maxHeight: '350px', 
-              objectFit: 'contain', 
-              borderRadius: '16px', 
-              marginBottom: '20px',
-              background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' 
-            }} 
-          />
+         <img src="/profile.png" alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'contain', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>Furkan Shakib 👋</h1>
           <p style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px' }}>
             A passionate <b>Peace & Conflict Researcher</b> and <b>Full Stack Developer</b>. I bridge the gap between social science and modern technology.
@@ -154,41 +94,24 @@ function Home() {
           </div>
         </div>
 
-        {/* 2. MIDDLE COLUMN (Experience & Skills) */}
+        {/* 2. MIDDLE COLUMN */}
         <div className="middle-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px', gridRow: 'span 2' }}>
-          
-         {/* Work Experience */}
+          {/* Work Experience */}
           <div className="bento-card" style={{ flex: 1 }}>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '20px' }}>Work Experience</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               {experience.length > 0 ? experience.map(exp => {
-                
                 let logoUrl = null;
                 const txt = exp.company.toLowerCase();
-                
                 if (txt.includes('dhaka')) logoUrl = '/du.png';
                 else if (txt.includes('10 minute')) logoUrl = '/10ms.png';
                 else if (txt.includes('integrity') || txt.includes('jica')) logoUrl = '/jica.png';
 
                 return (
                   <div key={exp._id} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                     
-                     {/* LOGO OR LETTER FALLBACK */}
-                     <div style={{ 
-                       width: '50px', height: '50px', 
-                       background: 'rgba(37, 99, 235, 0.1)', 
-                       borderRadius: '10px', 
-                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                       fontSize: '1.2rem', fontWeight: 'bold', color: highlight,
-                       overflow: 'hidden' 
-                     }}>
-                        {logoUrl ? (
-                          <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                        ) : (
-                          exp.company.charAt(0)
-                        )}
+                     <div style={{ width: '50px', height: '50px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: highlight, overflow: 'hidden' }}>
+                        {logoUrl ? <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : exp.company.charAt(0)}
                      </div>
-
                      <div>
                        <h4 style={{ margin: 0, fontSize: '1rem' }}>{exp.title}</h4>
                        <span style={{ fontSize: '0.8rem', color: subText }}>{exp.company} • {exp.year}</span>
@@ -199,15 +122,12 @@ function Home() {
             </div>
           </div>
 
-          {/* Expert Area (Static Skills) */}
+          {/* Expert Area */}
           <div className="bento-card" style={{ flex: 1 }}>
             <h3 style={{ fontSize: '1.2rem', marginBottom: '20px' }}>My Expert Area</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
               {skills.map((skill, i) => (
-                <div key={i} style={{ 
-                  background: isDark ? '#0f172a' : '#f1f5f9', 
-                  padding: '15px 5px', borderRadius: '12px', textAlign: 'center' 
-                }}>
+                <div key={i} style={{ background: isDark ? '#0f172a' : '#f1f5f9', padding: '15px 5px', borderRadius: '12px', textAlign: 'center' }}>
                   <div style={{ fontSize: '1.5rem', marginBottom: '5px' }}>{skill.icon}</div>
                   <div style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{skill.name}</div>
                 </div>
@@ -216,7 +136,7 @@ function Home() {
           </div>
         </div>
 
-        {/* 3. RECENT PROJECTS (Right Column) */}
+        {/* 3. RECENT PROJECTS */}
         <div className="bento-card projects-box" style={{ gridRow: 'span 2', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
              <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Recent Projects</h3>
@@ -228,13 +148,11 @@ function Home() {
                <a href={p.link} target="_blank" rel="noreferrer" key={p._id} style={{ textDecoration: 'none', color: 'inherit' }}>
                  <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', border: `1px solid ${borderColor}` }}>
                     {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} />}
-                    <div style={{ 
-                      position: 'absolute', bottom: 0, left: 0, width: '100%', 
-                      background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)', 
-                      padding: '15px', boxSizing: 'border-box' 
-                    }}>
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)', padding: '15px', boxSizing: 'border-box' }}>
                       <span style={{ fontSize: '0.7rem', background: highlight, color: 'white', padding: '2px 6px', borderRadius: '4px' }}>{p.category}</span>
                       <h4 style={{ color: 'white', margin: '5px 0 0 0', fontSize: '1rem' }}>{p.title}</h4>
+                      {/* 👇 STRIP HTML TAGS FOR PREVIEW */}
+                      {/* <p style={{ color: '#ccc', fontSize: '0.8rem', margin: '5px 0 0 0' }}>{stripHtml(p.description).substring(0, 60)}...</p> */}
                     </div>
                  </div>
                </a>

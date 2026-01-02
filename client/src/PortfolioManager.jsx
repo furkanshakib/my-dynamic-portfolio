@@ -11,7 +11,7 @@ Quill.register('modules/blotFormatter', BlotFormatter);
 function PortfolioManager() {
   const [activeTab, setActiveTab] = useState('projects');
   const [loading, setLoading] = useState(false);
-  const [editingId, setEditingId] = useState(null); // 👈 Tracks which item we are editing
+  const [editingId, setEditingId] = useState(null);
   
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -41,7 +41,6 @@ function PortfolioManager() {
     axios.get(`${API_BASE}/blogs`).then(res => setBlogs(res.data.reverse())).catch(console.error);
   };
 
-  // --- RESET FORMS ---
   const resetForms = () => {
     setEditingId(null);
     setNewProject({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
@@ -49,69 +48,31 @@ function PortfolioManager() {
     setNewBlog({ title: '', category: 'Article', image: '', content: '' });
   };
 
-  // --- EDIT HANDLERS (Populate Form) ---
-  const startEditProject = (item) => {
-    setEditingId(item._id);
-    setNewProject(item);
-    window.scrollTo(0,0); // Scroll to top to see form
-  };
-  const startEditExp = (item) => {
-    setEditingId(item._id);
-    setNewExp(item);
-    window.scrollTo(0,0);
-  };
-  const startEditBlog = (item) => {
-    setEditingId(item._id);
-    setNewBlog(item);
-    window.scrollTo(0,0);
-  };
+  // --- EDIT HANDLERS ---
+  const startEditProject = (item) => { setEditingId(item._id); setNewProject(item); window.scrollTo(0,0); };
+  const startEditExp = (item) => { setEditingId(item._id); setNewExp(item); window.scrollTo(0,0); };
+  const startEditBlog = (item) => { setEditingId(item._id); setNewBlog(item); window.scrollTo(0,0); };
 
-  // --- SUBMIT HANDLERS (Create OR Update) ---
+  // --- SUBMIT HANDLERS ---
   const handleSaveProject = () => {
-    if (editingId) {
-      // UPDATE Logic
-      axios.put(`${API_BASE}/projects/${editingId}`, newProject)
-        .then(() => { alert("✅ Project Updated!"); resetForms(); fetchData(); });
-    } else {
-      // CREATE Logic
-      axios.post(`${API_BASE}/projects`, newProject)
-        .then(() => { alert("✅ Project Added!"); resetForms(); fetchData(); });
-    }
+    const apiCall = editingId ? axios.put(`${API_BASE}/projects/${editingId}`, newProject) : axios.post(`${API_BASE}/projects`, newProject);
+    apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
 
   const handleSaveExp = () => {
-    if (editingId) {
-      axios.put(`${API_BASE}/experience/${editingId}`, newExp)
-        .then(() => { alert("✅ Experience Updated!"); resetForms(); fetchData(); });
-    } else {
-      axios.post(`${API_BASE}/experience`, newExp)
-        .then(() => { alert("✅ Experience Added!"); resetForms(); fetchData(); });
-    }
+    const apiCall = editingId ? axios.put(`${API_BASE}/experience/${editingId}`, newExp) : axios.post(`${API_BASE}/experience`, newExp);
+    apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
 
   const handleSaveBlog = () => {
     if(!newBlog.title || !newBlog.content) return alert("Title and Content required!");
     setLoading(true);
-
-    const apiCall = editingId 
-      ? axios.put(`${API_BASE}/blogs/${editingId}`, newBlog) 
-      : axios.post(`${API_BASE}/blogs`, newBlog);
-
-    apiCall
-      .then(() => {
-        alert(editingId ? "✅ Article Updated!" : "✅ Article Published!");
-        resetForms();
-        fetchData();
-      })
-      .catch(err => alert("❌ Error: " + err.message))
-      .finally(() => setLoading(false));
+    const apiCall = editingId ? axios.put(`${API_BASE}/blogs/${editingId}`, newBlog) : axios.post(`${API_BASE}/blogs`, newBlog);
+    apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Published!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message)).finally(() => setLoading(false));
   };
 
-  // --- DELETE HANDLERS ---
   const handleDelete = (type, id) => {
-    if(window.confirm("Are you sure you want to delete this?")) {
-      axios.delete(`${API_BASE}/${type}/${id}`).then(fetchData);
-    }
+    if(window.confirm("Delete this?")) axios.delete(`${API_BASE}/${type}/${id}`).then(fetchData);
   };
 
   // --- STYLES ---
@@ -127,6 +88,7 @@ function PortfolioManager() {
   const cancelBtn = { ...btnStyle, background: '#64748b' };
   const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' };
   const editBtn = { background: '#f59e0b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' };
+  const editorContainer = { background: 'white', color: 'black', marginBottom: '10px', borderRadius: '5px', overflow: 'hidden' };
 
   const modules = useMemo(() => ({
     toolbar: [
@@ -143,7 +105,6 @@ function PortfolioManager() {
   return (
     <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', minHeight: '100vh', background: pageBg, color: text, fontFamily: 'sans-serif' }}>
       
-      {/* HEADER */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h1>👑 Admin Dashboard</h1>
         <div style={{display:'flex', gap:'10px'}}>
@@ -152,7 +113,6 @@ function PortfolioManager() {
         </div>
       </div>
 
-      {/* TABS */}
       <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
         <button onClick={() => { setActiveTab('projects'); resetForms(); }} style={{ ...btnStyle, background: activeTab === 'projects' ? '#2563eb' : '#94a3b8' }}>Projects</button>
         <button onClick={() => { setActiveTab('experience'); resetForms(); }} style={{ ...btnStyle, background: activeTab === 'experience' ? '#2563eb' : '#94a3b8' }}>Experience</button>
@@ -171,12 +131,15 @@ function PortfolioManager() {
             <input placeholder="Image URL" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} style={inputStyle} />
             <input placeholder="Link URL" value={newProject.link} onChange={e => setNewProject({...newProject, link: e.target.value})} style={inputStyle} />
             <input placeholder="Tags" value={newProject.tags} onChange={e => setNewProject({...newProject, tags: e.target.value})} style={inputStyle} />
-            <textarea placeholder="Description" value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} style={{ ...inputStyle, height: '80px' }} />
             
+            {/* RICH TEXT EDITOR FOR PROJECT */}
+            <div style={editorContainer}>
+              <ReactQuill theme="snow" value={newProject.description} onChange={val => setNewProject({...newProject, description: val})} modules={modules} placeholder="Project Description..." />
+            </div>
+
             <button onClick={handleSaveProject} style={btnStyle}>{editingId ? "Update Project" : "Add Project"}</button>
             {editingId && <button onClick={resetForms} style={cancelBtn}>Cancel</button>}
           </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
             {projects.map(p => (
               <div key={p._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg }}>
@@ -202,12 +165,15 @@ function PortfolioManager() {
             <select value={newExp.type} onChange={e => setNewExp({...newExp, type: e.target.value})} style={inputStyle}>
                 <option value="job">Job Experience</option><option value="education">Education</option>
             </select>
-            <textarea placeholder="Description" value={newExp.description} onChange={e => setNewExp({...newExp, description: e.target.value})} style={{ ...inputStyle, height: '80px' }} />
             
+            {/* RICH TEXT EDITOR FOR EXPERIENCE */}
+            <div style={editorContainer}>
+              <ReactQuill theme="snow" value={newExp.description} onChange={val => setNewExp({...newExp, description: val})} modules={modules} placeholder="Job Description (use bullets!)..." />
+            </div>
+
             <button onClick={handleSaveExp} style={btnStyle}>{editingId ? "Update Item" : "Add Item"}</button>
             {editingId && <button onClick={resetForms} style={cancelBtn}>Cancel</button>}
           </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
             {experiences.map(e => (
               <div key={e._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg }}>
@@ -234,33 +200,19 @@ function PortfolioManager() {
               </select>
               <input placeholder="Cover Image URL (Optional)" value={newBlog.image} onChange={e => setNewBlog({...newBlog, image: e.target.value})} style={inputStyle} />
             </div>
-            
-            <div style={{ background: 'white', color: 'black', marginBottom: '20px', borderRadius: '5px', overflow: 'hidden' }}>
-              <ReactQuill 
-                theme="snow" 
-                value={newBlog.content} 
-                onChange={val => setNewBlog({...newBlog, content: val})} 
-                modules={modules} 
-              />
+            <div style={editorContainer}>
+              <ReactQuill theme="snow" value={newBlog.content} onChange={val => setNewBlog({...newBlog, content: val})} modules={modules} />
             </div>
-
             <button onClick={handleSaveBlog} style={{...btnStyle, opacity: loading ? 0.7 : 1}} disabled={loading}>
               {loading ? "Saving... ⏳" : (editingId ? "Update Article" : "Publish Article")}
             </button>
             {editingId && <button onClick={resetForms} style={cancelBtn}>Cancel</button>}
           </div>
-
           <div style={{ display: 'grid', gap: '20px' }}>
             {blogs.map(b => (
               <div key={b._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                   <h4 style={{ margin: 0 }}>{b.title}</h4>
-                   <small style={{ opacity: 0.7 }}>{new Date(b.date).toLocaleDateString()}</small>
-                </div>
-                <div>
-                  <button onClick={() => startEditBlog(b)} style={editBtn}>Edit</button>
-                  <button onClick={() => handleDelete('blogs', b._id)} style={deleteBtn}>Delete</button>
-                </div>
+                <div><h4 style={{ margin: 0 }}>{b.title}</h4><small style={{ opacity: 0.7 }}>{new Date(b.date).toLocaleDateString()}</small></div>
+                <div><button onClick={() => startEditBlog(b)} style={editBtn}>Edit</button><button onClick={() => handleDelete('blogs', b._id)} style={deleteBtn}>Delete</button></div>
               </div>
             ))}
           </div>
