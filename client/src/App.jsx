@@ -1,32 +1,23 @@
 import React from 'react';
-import Contact from './Contact';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from './ThemeContext'; // 👈 Import this
-
+import { Routes, Route } from 'react-router-dom';
 import Home from './Home';
+import Projects from './Projects';
+import Contact from './Contact';
 import Login from './Login';
-import PortfolioManager from './PortfolioManager';
-import ExperiencePage from './ExperiencePage';
-import ProjectsPage from './ProjectsPage';
-import BlogPage from './BlogPage';  // 👈 Add this
-import BlogPost from './BlogPost';  // 👈 Add this
+import AdminDashboard from './AdminDashboard';
+import ExperiencePage from './ExperiencePage'; // 👈 IMPORT THE PAGE, NOT THE COMPONENT
 
 function App() {
   return (
-    <ThemeProvider> {/* 👈 Wrap everything in this */}
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<Login />} />
-          <Route path="/dashboard" element={<PortfolioManager />} />
-          <Route path="/experience" element={<ExperiencePage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/blogs" element={<BlogPage />} />
-          <Route path="/blogs/:id" element={<BlogPost />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      {/* 👇 Point this route to ExperiencePage */}
+      <Route path="/experience" element={<ExperiencePage />} /> 
+      <Route path="/projects" element={<Projects />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/admin" element={<Login />} />
+      <Route path="/dashboard" element={<AdminDashboard />} />
+    </Routes>
   );
 }
 

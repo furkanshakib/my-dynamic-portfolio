@@ -7,21 +7,19 @@ function Navbar() {
   const location = useLocation();
   const isDark = theme === 'dark';
   
-  // State for Mobile Menu
   const [isOpen, setIsOpen] = useState(false);
 
-  // Styles
   const navBg = isDark ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.8)';
   const textColor = isDark ? '#f1f5f9' : '#1e293b';
   const accent = '#2563eb';
   const border = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
-  // Links Configuration
+  // 👇 CORRECT LINKS: No Admin, Added Experience
   const links = [
     { name: 'Home', path: '/' },
+    { name: 'Experience', path: '/experience' },
     { name: 'Projects', path: '/projects' },
-    { name: 'Contact', path: '/contact' },
-    { name: 'Admin', path: '/admin' }
+    { name: 'Contact', path: '/contact' }
   ];
 
   return (
@@ -33,16 +31,15 @@ function Navbar() {
     }}>
       <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         
-        {/* 👇 LOGO & NAME RESTORED */}
+        {/* LOGO */}
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {/* Change '/logo.png' to your actual file name if different! */}
           <img src="/logo.png" alt="Logo" style={{ height: '40px', width: 'auto', borderRadius: '8px' }} /> 
           <span style={{ fontSize: '1.3rem', fontWeight: 'bold', color: textColor, fontFamily: "'Inter', sans-serif" }}>
             Furkan Shakib
           </span>
         </Link>
 
-        {/* DESKTOP LINKS (Hidden on Mobile) */}
+        {/* DESKTOP MENU */}
         <div className="desktop-menu" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           {links.map(link => (
             <Link key={link.name} to={link.path} style={{ 
@@ -60,7 +57,7 @@ function Navbar() {
           </button>
         </div>
 
-        {/* MOBILE TOGGLE (Visible on Mobile) */}
+        {/* MOBILE TOGGLE */}
         <button className="mobile-toggle" onClick={() => setIsOpen(!isOpen)} style={{ background: 'none', border: 'none', color: textColor, fontSize: '1.5rem', cursor: 'pointer' }}>
           {isOpen ? '✕' : '☰'}
         </button>
@@ -92,8 +89,6 @@ function Navbar() {
           </div>
         </div>
       )}
-
-      {/* CSS FOR MEDIA QUERIES */}
       <style>{`
         .mobile-toggle { display: none; }
         @media (max-width: 768px) {
