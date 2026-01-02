@@ -49,57 +49,72 @@ function Experience() {
         width: '2px', background: timelineLine, borderRadius: '2px' 
       }}></div>
 
-      {items.map((item, index) => (
-        <div key={item._id} className="timeline-item" style={{ 
-          position: 'relative', marginBottom: '50px', paddingLeft: '45px',
-          animationDelay: `${index * 0.1}s` // Staggered animation
-        }}>
-          
-          {/* The Icon (Dot) */}
-          <div style={{ 
-            position: 'absolute', left: '0', top: '0', 
-            width: '60px', height: '60px', 
-            background: isEdu ? eduBadge.bg : jobBadge.bg,
-            color: isEdu ? eduBadge.text : jobBadge.text,
-            borderRadius: '50%', 
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.5rem', border: `4px solid ${pageBg}`, zIndex: 2,
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-          }}>
-            {isEdu ? '🎓' : '💼'}
-          </div>
+      {items.map((item, index) => {
+        
+        // 👇 LOGO LOGIC ADDED HERE
+        let logoUrl = null;
+        const txt = item.company.toLowerCase();
+        
+        if (txt.includes('dhaka')) logoUrl = '/du2.png';
+        else if (txt.includes('10 minute')) logoUrl = '/10ms2.png';
+        else if (txt.includes('integrity') || txt.includes('jica')) logoUrl = '/jica2.png';
 
-          {/* The Card */}
-          <div style={{ 
-            background: cardBg, padding: '25px', borderRadius: '12px', 
-            border: cardBorder, boxShadow: shadow,
-            transition: 'transform 0.3s ease'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
-              <span style={{ 
-                background: isEdu ? eduBadge.bg : jobBadge.bg, 
-                color: isEdu ? eduBadge.text : jobBadge.text, 
-                padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold' 
-              }}>
-                {item.year}
-              </span>
-            </div>
+        return (
+          <div key={item._id} className="timeline-item" style={{ 
+            position: 'relative', marginBottom: '50px', paddingLeft: '45px',
+            animationDelay: `${index * 0.1}s` 
+          }}>
             
-            <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
-            <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
-            <p style={{ margin: 0, color: cardDesc, lineHeight: '1.6', fontSize: '1rem' }}>{item.description}</p>
+            {/* The Icon (Logo or Emoji) */}
+            <div style={{ 
+              position: 'absolute', left: '0', top: '0', 
+              width: '60px', height: '60px', 
+              background: isEdu ? eduBadge.bg : jobBadge.bg,
+              color: isEdu ? eduBadge.text : jobBadge.text,
+              borderRadius: '50%', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.5rem', border: `4px solid ${pageBg}`, zIndex: 2,
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+              overflow: 'hidden' // Keeps image inside circle
+            }}>
+              {logoUrl ? (
+                <img src={logoUrl} alt="logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '0' }} />
+              ) : (
+                isEdu ? '🎓' : '💼'
+              )}
+            </div>
+
+            {/* The Card */}
+            <div style={{ 
+              background: cardBg, padding: '25px', borderRadius: '12px', 
+              border: cardBorder, boxShadow: shadow,
+              transition: 'transform 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
+                <span style={{ 
+                  background: isEdu ? eduBadge.bg : jobBadge.bg, 
+                  color: isEdu ? eduBadge.text : jobBadge.text, 
+                  padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold' 
+                }}>
+                  {item.year}
+                </span>
+              </div>
+              
+              <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
+              <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
+              <p style={{ margin: 0, color: cardDesc, lineHeight: '1.6', fontSize: '1rem' }}>{item.description}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 
   return (
     <div style={{ minHeight: '100vh', background: pageBg, fontFamily: "'Segoe UI', sans-serif" }}>
-
 
       {/* Animation Styles */}
       <style>{`
