@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './Home';
-import Projects from './Projects';
+import Projects from './ProjectsPage';
 import Contact from './Contact';
 import Login from './Login';
 import AdminDashboard from './AdminDashboard';
