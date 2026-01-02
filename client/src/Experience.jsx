@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTheme } from './ThemeContext';
-import 'react-quill-new/dist/quill.snow.css'; // Import styles for content
+import 'react-quill-new/dist/quill.snow.css'; 
 
 function Experience() {
   const { theme } = useTheme();
@@ -56,15 +56,18 @@ function Experience() {
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
               
-              {/* 👇 FIXED: Added 'wordBreak: normal' and 'overflowWrap: anywhere' */}
+              {/* 👇 FIXED: Switched to 'break-word' and 'pre-wrap' */}
               <div 
                 className="ql-editor" 
                 style={{ 
                   padding: 0, 
                   color: cardDesc, 
                   fontSize: '1rem',
-                  wordBreak: 'normal',    // Don't break words mid-character
-                  overflowWrap: 'anywhere' // Break only if word is actually too long for line
+                  lineHeight: '1.6',
+                  wordBreak: 'normal',       // Prevents splitting words like "m-ultiple"
+                  overflowWrap: 'break-word', // Wraps whole words
+                  whiteSpace: 'pre-wrap',    // Respects your formatting/spacing
+                  hyphens: 'none'            // Disables auto-hyphenation
                 }} 
                 dangerouslySetInnerHTML={{ __html: item.description }}
               ></div>
@@ -81,7 +84,6 @@ function Experience() {
       <style>{`
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .timeline-item { opacity: 0; animation: slideUp 0.6s ease forwards; }
-        /* Fix list styles inside the cards */
         .ql-editor ul { padding-left: 20px; margin: 10px 0; }
         .ql-editor li { margin-bottom: 5px; }
       `}</style>
