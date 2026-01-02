@@ -9,7 +9,7 @@ import { useTheme } from './ThemeContext';
 Quill.register('modules/blotFormatter', BlotFormatter);
 
 function PortfolioManager() {
-  const [activeTab, setActiveTab] = useState('projects');
+  const [activeTab, setActiveTab] = useState('overview'); // Default to Overview
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   
@@ -58,7 +58,6 @@ function PortfolioManager() {
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
 
-  // 👇 THIS WAS THE FIXED FUNCTION NAME
   const handleSaveExp = () => {
     const apiCall = editingId ? axios.put(`${API_BASE}/experience/${editingId}`, newExp) : axios.post(`${API_BASE}/experience`, newExp);
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
@@ -83,18 +82,30 @@ function PortfolioManager() {
   };
 
   // --- STYLES ---
-  const pageBg = isDark ? '#0f172a' : '#fff';
+  const pageBg = isDark ? '#0f172a' : '#f8f9fa';
+  const sidebarBg = isDark ? '#1e293b' : 'white';
   const text = isDark ? '#f1f5f9' : '#333';
   const cardBg = isDark ? '#1e293b' : 'white';
-  const inputBg = isDark ? '#334155' : 'white';
-  const inputColor = isDark ? 'white' : 'black';
-  const border = isDark ? '#475569' : '#ccc';
+  const border = isDark ? '#334155' : '#e2e8f0';
+  const inputBg = isDark ? '#0f172a' : '#f8f9fa';
+  const activeColor = '#2563eb';
 
-  const inputStyle = { padding: '10px', borderRadius: '5px', border: `1px solid ${border}`, background: inputBg, color: inputColor, width: '100%', marginBottom: '10px' };
-  const btnStyle = { padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', marginRight: '10px' };
-  const deleteBtn = { background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' };
-  const editorContainer = { background: 'white', color: 'black', marginBottom: '10px', borderRadius: '5px', overflow: 'hidden' };
+  const sidebarItemStyle = (tabName) => ({
+    padding: '12px 20px',
+    margin: '5px 0',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    color: activeTab === tabName ? 'white' : text,
+    background: activeTab === tabName ? activeColor : 'transparent',
+    fontWeight: activeTab === tabName ? 'bold' : 'normal',
+    display: 'flex', alignItems: 'center', gap: '10px',
+    transition: 'all 0.2s'
+  });
 
+  const btnStyle = { padding: '10px 20px', background: activeColor, color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' };
+  const inputStyle = { padding: '12px', borderRadius: '8px', border: `1px solid ${border}`, background: inputBg, color: text, width: '100%', marginBottom: '15px', outline: 'none' };
+
+  // --- EDITOR MODULES ---
   const modules = useMemo(() => ({
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
@@ -107,148 +118,198 @@ function PortfolioManager() {
   }), []);
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', minHeight: '100vh', background: pageBg, color: text, fontFamily: 'sans-serif' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Inter', sans-serif" }}>
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1>👑 Admin Dashboard</h1>
-        <div style={{display:'flex', gap:'10px'}}>
-             <button onClick={fetchData} style={{...btnStyle, background:'#3b82f6'}}>🔄 Refresh</button>
-             <button onClick={() => { localStorage.removeItem("isAdmin"); navigate("/"); }} style={{...btnStyle, background:'#64748b'}}>Logout</button>
+      {/* 1. SIDEBAR */}
+      <div style={{ width: '250px', background: sidebarBg, borderRight: `1px solid ${border}`, padding: '20px', display: 'flex', flexDirection: 'column' }}>
+        <h2 style={{ fontSize: '1.2rem', marginBottom: '40px', display:'flex', alignItems:'center', gap:'10px' }}>👑 Admin</h2>
+        
+        <div style={sidebarItemStyle('overview')} onClick={() => setActiveTab('overview')}>📊 Dashboard</div>
+        <div style={sidebarItemStyle('projects')} onClick={() => {setActiveTab('projects'); resetForms();}}>🚀 Projects</div>
+        <div style={sidebarItemStyle('experience')} onClick={() => {setActiveTab('experience'); resetForms();}}>🎓 Experience</div>
+        <div style={sidebarItemStyle('blogs')} onClick={() => {setActiveTab('blogs'); resetForms();}}>📝 Blogs</div>
+        <div style={sidebarItemStyle('skills')} onClick={() => {setActiveTab('skills'); resetForms();}}>⚡ Skills</div>
+
+        <div style={{ marginTop: 'auto', borderTop: `1px solid ${border}`, paddingTop: '20px' }}>
+          <button onClick={() => window.open('/', '_blank')} style={{ ...sidebarItemStyle(''), justifyContent: 'center', background: isDark?'#334155':'#e2e8f0' }}>👀 View Site</button>
+          <button onClick={() => { localStorage.removeItem("isAdmin"); navigate("/"); }} style={{ ...sidebarItemStyle(''), color: '#ef4444', marginTop: '10px' }}>🚪 Logout</button>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
-        <button onClick={() => { setActiveTab('projects'); resetForms(); }} style={{ ...btnStyle, background: activeTab === 'projects' ? '#2563eb' : '#94a3b8' }}>Projects</button>
-        <button onClick={() => { setActiveTab('experience'); resetForms(); }} style={{ ...btnStyle, background: activeTab === 'experience' ? '#2563eb' : '#94a3b8' }}>Experience</button>
-        <button onClick={() => { setActiveTab('blogs'); resetForms(); }} style={{ ...btnStyle, background: activeTab === 'blogs' ? '#2563eb' : '#94a3b8' }}>📝 Blogs</button>
-        <button onClick={() => { setActiveTab('skills'); resetForms(); }} style={{ ...btnStyle, background: activeTab === 'skills' ? '#2563eb' : '#94a3b8' }}>⚡ Skills</button>
-      </div>
-
-      {/* --- PROJECTS TAB --- */}
-      {activeTab === 'projects' && (
-        <div>
-          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
-            <h3>{editingId ? "✏️ Edit Project" : "➕ Add Project"}</h3>
-            <input placeholder="Title" value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} style={inputStyle} />
-            <select value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})} style={inputStyle}>
-                <option>Research</option><option>Web Dev</option><option>Video</option><option>Articles</option>
-            </select>
-            <input placeholder="Image URL" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} style={inputStyle} />
-            <input placeholder="Link URL" value={newProject.link} onChange={e => setNewProject({...newProject, link: e.target.value})} style={inputStyle} />
+      {/* 2. MAIN CONTENT AREA */}
+      <div style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
+        
+        {/* --- OVERVIEW TAB --- */}
+        {activeTab === 'overview' && (
+          <div>
+            <h1 style={{ marginBottom: '10px' }}>Welcome back, Furkan! 👋</h1>
+            <p style={{ opacity: 0.7, marginBottom: '40px' }}>Here is what's happening on your portfolio.</p>
             
-            <div style={editorContainer}>
-              <ReactQuill theme="snow" value={newProject.description} onChange={val => setNewProject({...newProject, description: val})} modules={modules} placeholder="Project Description..." />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+              <StatCard title="Projects" count={projects.length} icon="🚀" bg={cardBg} border={border} />
+              <StatCard title="Experience" count={experiences.length} icon="🎓" bg={cardBg} border={border} />
+              <StatCard title="Articles" count={blogs.length} icon="📝" bg={cardBg} border={border} />
+              <StatCard title="Skills" count={skills.length} icon="⚡" bg={cardBg} border={border} />
             </div>
-
-            <button onClick={handleSaveProject} style={btnStyle}>{editingId ? "Update" : "Add"}</button>
-            {editingId && <button onClick={resetForms} style={{...btnStyle, background:'#64748b'}}>Cancel</button>}
           </div>
-          {/* List Projects */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-            {projects.map(p => (
-              <div key={p._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg }}>
-                <h4>{p.title}</h4>
-                <div style={{ marginTop: '10px' }}>
-                  <button onClick={() => {setEditingId(p._id); setNewProject(p); window.scrollTo(0,0);}} style={{...btnStyle, background:'#f59e0b', fontSize:'0.8rem'}}>Edit</button>
-                  <button onClick={() => handleDelete('projects', p._id)} style={deleteBtn}>Delete</button>
+        )}
+
+        {/* --- PROJECTS TAB --- */}
+        {activeTab === 'projects' && (
+          <div style={{ maxWidth: '900px' }}>
+             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px' }}>
+                <h2>Projects ({projects.length})</h2>
+                {editingId && <button onClick={resetForms} style={{...btnStyle, background:'#64748b'}}>Cancel Edit</button>}
+             </div>
+             
+             {/* FORM */}
+             <div style={{ background: cardBg, padding: '30px', borderRadius: '16px', border: `1px solid ${border}`, marginBottom: '40px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+                <input placeholder="Project Title" value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} style={inputStyle} />
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
+                  <select value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})} style={inputStyle}>
+                      <option>Research</option><option>Web Dev</option><option>Video</option><option>Articles</option>
+                  </select>
+                  <input placeholder="Image URL" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} style={inputStyle} />
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* --- EXPERIENCE TAB --- */}
-      {activeTab === 'experience' && (
-        <div>
-          {/* Form Area */}
-          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
-            <h3>{editingId ? "✏️ Edit Experience" : "➕ Add Experience"}</h3>
-            <input placeholder="Title" value={newExp.title} onChange={e => setNewExp({...newExp, title: e.target.value})} style={inputStyle} />
-            <input placeholder="Company" value={newExp.company} onChange={e => setNewExp({...newExp, company: e.target.value})} style={inputStyle} />
-            <input placeholder="Year" value={newExp.year} onChange={e => setNewExp({...newExp, year: e.target.value})} style={inputStyle} />
-            <select value={newExp.type} onChange={e => setNewExp({...newExp, type: e.target.value})} style={inputStyle}>
-                <option value="job">Job Experience</option><option value="education">Education</option>
-            </select>
-            <div style={editorContainer}>
-              <ReactQuill theme="snow" value={newExp.description} onChange={val => setNewExp({...newExp, description: val})} modules={modules} />
-            </div>
-            <button onClick={handleSaveExp} style={btnStyle}>{editingId ? "Update" : "Add"}</button>
-            {editingId && <button onClick={resetForms} style={{...btnStyle, background:'#64748b'}}>Cancel</button>}
-          </div>
-           {/* List Experience */}
-          <div style={{ display: 'grid', gap: '20px' }}>
-            {experiences.map(e => (
-              <div key={e._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg }}>
-                <h4>{e.title} - {e.company}</h4>
-                <div style={{ marginTop: '10px' }}>
-                  <button onClick={() => {setEditingId(e._id); setNewExp(e); window.scrollTo(0,0);}} style={{...btnStyle, background:'#f59e0b', fontSize:'0.8rem'}}>Edit</button>
-                  <button onClick={() => handleDelete('experience', e._id)} style={deleteBtn}>Delete</button>
+                <input placeholder="Project Link" value={newProject.link} onChange={e => setNewProject({...newProject, link: e.target.value})} style={inputStyle} />
+                <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
+                  <ReactQuill theme="snow" value={newProject.description} onChange={val => setNewProject({...newProject, description: val})} modules={modules} placeholder="Describe your project..." />
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+                <button onClick={handleSaveProject} style={{...btnStyle, width:'100%'}}>{editingId ? "Update Project" : "Add Project"}</button>
+             </div>
 
-      {/* --- BLOGS TAB --- */}
-      {activeTab === 'blogs' && (
-        <div>
-           {/* Form Area */}
-          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
-            <h3>{editingId ? "✏️ Edit Article" : "✍️ Write Article"}</h3>
-            <input placeholder="Title" value={newBlog.title} onChange={e => setNewBlog({...newBlog, title: e.target.value})} style={inputStyle} />
-            <input placeholder="Image URL" value={newBlog.image} onChange={e => setNewBlog({...newBlog, image: e.target.value})} style={inputStyle} />
-            <select value={newBlog.category} onChange={e => setNewBlog({...newBlog, category: e.target.value})} style={inputStyle}>
-                <option>Article</option><option>Opinion</option><option>Research Note</option>
-            </select>
-            <div style={editorContainer}>
-              <ReactQuill theme="snow" value={newBlog.content} onChange={val => setNewBlog({...newBlog, content: val})} modules={modules} />
-            </div>
-            <button onClick={handleSaveBlog} style={{...btnStyle, opacity: loading ? 0.7 : 1}} disabled={loading}>
-              {loading ? "Saving..." : (editingId ? "Update" : "Publish")}
-            </button>
-            {editingId && <button onClick={resetForms} style={{...btnStyle, background:'#64748b'}}>Cancel</button>}
+             {/* LIST */}
+             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+                {projects.map(p => (
+                  <ItemCard key={p._id} title={p.title} subtitle={p.category} bg={cardBg} border={border} 
+                    onEdit={() => {setEditingId(p._id); setNewProject(p); window.scrollTo(0,0);}} 
+                    onDelete={() => handleDelete('projects', p._id)} />
+                ))}
+             </div>
           </div>
-           {/* List Blogs */}
-          <div style={{ display: 'grid', gap: '20px' }}>
-            {blogs.map(b => (
-              <div key={b._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                <div><h4>{b.title}</h4></div>
-                <div>
-                   <button onClick={() => {setEditingId(b._id); setNewBlog(b); window.scrollTo(0,0);}} style={{...btnStyle, background:'#f59e0b', fontSize:'0.8rem'}}>Edit</button>
-                   <button onClick={() => handleDelete('blogs', b._id)} style={deleteBtn}>Delete</button>
+        )}
+
+        {/* --- EXPERIENCE TAB --- */}
+        {activeTab === 'experience' && (
+          <div style={{ maxWidth: '900px' }}>
+             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px' }}>
+                <h2>Experience ({experiences.length})</h2>
+                {editingId && <button onClick={resetForms} style={{...btnStyle, background:'#64748b'}}>Cancel Edit</button>}
+             </div>
+             
+             <div style={{ background: cardBg, padding: '30px', borderRadius: '16px', border: `1px solid ${border}`, marginBottom: '40px' }}>
+                <input placeholder="Job Title" value={newExp.title} onChange={e => setNewExp({...newExp, title: e.target.value})} style={inputStyle} />
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
+                  <input placeholder="Company / Org" value={newExp.company} onChange={e => setNewExp({...newExp, company: e.target.value})} style={inputStyle} />
+                  <input placeholder="Year (e.g. 2023 - Present)" value={newExp.year} onChange={e => setNewExp({...newExp, year: e.target.value})} style={inputStyle} />
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+                <select value={newExp.type} onChange={e => setNewExp({...newExp, type: e.target.value})} style={inputStyle}>
+                    <option value="job">Job Experience</option><option value="education">Education</option>
+                </select>
+                <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
+                  <ReactQuill theme="snow" value={newExp.description} onChange={val => setNewExp({...newExp, description: val})} modules={modules} />
+                </div>
+                <button onClick={handleSaveExp} style={{...btnStyle, width:'100%'}}>{editingId ? "Update Item" : "Add Item"}</button>
+             </div>
 
-      {/* --- SKILLS TAB --- */}
-      {activeTab === 'skills' && (
-        <div>
-          <div style={{ background: cardBg, padding: '25px', borderRadius: '10px', marginBottom: '30px', border: `1px solid ${border}` }}>
-            <h3>⚡ Add New Skill</h3>
-            <div style={{display:'flex', gap:'10px'}}>
-              <input placeholder="Skill Name (e.g. React)" value={newSkill.name} onChange={e => setNewSkill({...newSkill, name: e.target.value})} style={{...inputStyle, flex:2}} />
-              <input placeholder="Icon (e.g. ⚛️)" value={newSkill.icon} onChange={e => setNewSkill({...newSkill, icon: e.target.value})} style={{...inputStyle, flex:1}} />
-            </div>
-            <button onClick={handleSaveSkill} style={btnStyle}>Add Skill</button>
+             <div style={{ display: 'grid', gap: '20px' }}>
+                {experiences.map(e => (
+                  <ItemCard key={e._id} title={e.title} subtitle={`${e.company} • ${e.year}`} bg={cardBg} border={border} 
+                    onEdit={() => {setEditingId(e._id); setNewExp(e); window.scrollTo(0,0);}} 
+                    onDelete={() => handleDelete('experience', e._id)} />
+                ))}
+             </div>
           </div>
+        )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '20px' }}>
-            {skills.map(s => (
-              <div key={s._id} style={{ border: `1px solid ${border}`, padding: '15px', borderRadius: '8px', background: cardBg, textAlign:'center' }}>
-                <div style={{ fontSize: '2rem', marginBottom:'5px' }}>{s.icon}</div>
-                <h4 style={{ margin: 0 }}>{s.name}</h4>
-                <button onClick={() => handleDelete('skills', s._id)} style={{...deleteBtn, marginTop:'10px', width:'100%'}}>Delete</button>
-              </div>
-            ))}
+        {/* --- BLOGS TAB --- */}
+        {activeTab === 'blogs' && (
+          <div style={{ maxWidth: '900px' }}>
+             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px' }}>
+                <h2>Blogs ({blogs.length})</h2>
+                {editingId && <button onClick={resetForms} style={{...btnStyle, background:'#64748b'}}>Cancel Edit</button>}
+             </div>
+             
+             <div style={{ background: cardBg, padding: '30px', borderRadius: '16px', border: `1px solid ${border}`, marginBottom: '40px' }}>
+                <input placeholder="Article Title" value={newBlog.title} onChange={e => setNewBlog({...newBlog, title: e.target.value})} style={inputStyle} />
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
+                  <select value={newBlog.category} onChange={e => setNewBlog({...newBlog, category: e.target.value})} style={inputStyle}>
+                      <option>Article</option><option>Opinion</option><option>Research Note</option>
+                  </select>
+                  <input placeholder="Cover Image URL" value={newBlog.image} onChange={e => setNewBlog({...newBlog, image: e.target.value})} style={inputStyle} />
+                </div>
+                <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
+                  <ReactQuill theme="snow" value={newBlog.content} onChange={val => setNewBlog({...newBlog, content: val})} modules={modules} />
+                </div>
+                <button onClick={handleSaveBlog} style={{...btnStyle, width:'100%', opacity: loading ? 0.7 : 1}} disabled={loading}>
+                  {loading ? "Publishing..." : (editingId ? "Update Article" : "Publish Article")}
+                </button>
+             </div>
+
+             <div style={{ display: 'grid', gap: '20px' }}>
+                {blogs.map(b => (
+                  <ItemCard key={b._id} title={b.title} subtitle={b.category} bg={cardBg} border={border} 
+                    onEdit={() => {setEditingId(b._id); setNewBlog(b); window.scrollTo(0,0);}} 
+                    onDelete={() => handleDelete('blogs', b._id)} />
+                ))}
+             </div>
           </div>
-        </div>
-      )}
+        )}
 
+        {/* --- SKILLS TAB --- */}
+        {activeTab === 'skills' && (
+          <div style={{ maxWidth: '900px' }}>
+             <h2>Skills ({skills.length})</h2>
+             <div style={{ background: cardBg, padding: '30px', borderRadius: '16px', border: `1px solid ${border}`, marginBottom: '40px', marginTop:'20px' }}>
+                <div style={{ display:'flex', gap:'20px' }}>
+                   <input placeholder="Name (e.g. React)" value={newSkill.name} onChange={e => setNewSkill({...newSkill, name: e.target.value})} style={{...inputStyle, marginBottom:0, flex:2}} />
+                   <input placeholder="Icon (e.g. ⚛️)" value={newSkill.icon} onChange={e => setNewSkill({...newSkill, icon: e.target.value})} style={{...inputStyle, marginBottom:0, flex:1}} />
+                   <button onClick={handleSaveSkill} style={btnStyle}>Add</button>
+                </div>
+             </div>
+
+             <div style={{ display: 'flex', flexWrap:'wrap', gap: '15px' }}>
+                {skills.map(s => (
+                   <div key={s._id} style={{ background: cardBg, border: `1px solid ${border}`, padding: '10px 20px', borderRadius: '50px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize:'1.2rem' }}>{s.icon}</span>
+                      <span style={{ fontWeight:'bold' }}>{s.name}</span>
+                      <button onClick={() => handleDelete('skills', s._id)} style={{ background:'none', border:'none', cursor:'pointer', marginLeft:'5px', color:'#ef4444' }}>✕</button>
+                   </div>
+                ))}
+             </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+// --- HELPER COMPONENTS ---
+
+function StatCard({ title, count, icon, bg, border }) {
+  return (
+    <div style={{ background: bg, padding: '25px', borderRadius: '16px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div style={{ fontSize: '2.5rem' }}>{icon}</div>
+      <div>
+        <h3 style={{ margin: 0, fontSize: '2rem' }}>{count}</h3>
+        <span style={{ opacity: 0.7 }}>{title}</span>
+      </div>
+    </div>
+  );
+}
+
+function ItemCard({ title, subtitle, bg, border, onEdit, onDelete }) {
+  return (
+    <div style={{ background: bg, padding: '20px', borderRadius: '12px', border: `1px solid ${border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>
+        <h4 style={{ margin: '0 0 5px 0' }}>{title}</h4>
+        <span style={{ fontSize: '0.85rem', opacity: 0.6 }}>{subtitle}</span>
+      </div>
+      <div style={{ display:'flex', gap:'10px' }}>
+        <button onClick={onEdit} style={{ background:'#f59e0b', color:'white', border:'none', padding:'6px 12px', borderRadius:'6px', cursor:'pointer', fontSize:'0.8rem' }}>Edit</button>
+        <button onClick={onDelete} style={{ background:'#ef4444', color:'white', border:'none', padding:'6px 12px', borderRadius:'6px', cursor:'pointer', fontSize:'0.8rem' }}>Delete</button>
+      </div>
     </div>
   );
 }
