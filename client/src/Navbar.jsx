@@ -3,138 +3,100 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
 
 function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
-  const path = location.pathname;
   const isDark = theme === 'dark';
-
-  // --- STYLES ---
-  const navBg = isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.85)';
-  const navBorder = isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)';
-  const textColor = isDark ? '#f1f5f9' : '#334155';
   
-  // BRAND TEXT COLOR
-  const brandColor = isDark ? '#ffffff' : '#000000'; 
-  const highlightColor = '#2563eb';
+  // State for Mobile Menu
+  const [isOpen, setIsOpen] = useState(false);
 
-  const linkStyle = (route) => ({
-    textDecoration: 'none',
-    color: path === route ? highlightColor : textColor,
-    fontWeight: path === route ? 'bold' : '500',
-    fontSize: '1rem',
-    transition: 'color 0.3s ease',
-    position: 'relative',
-    padding: '5px 0'
-  });
+  // Styles
+  const navBg = isDark ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.8)';
+  const textColor = isDark ? '#f1f5f9' : '#1e293b';
+  const accent = '#2563eb';
+  const border = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  // Links Configuration
+  const links = [
+    { name: 'Home', path: '/' },
+    { name: 'Projects', path: '/projects' },
+    { name: 'Contact', path: '/contact' },
+    { name: 'Admin', path: '/admin' } // Kept Admin for your easy access
+  ];
 
   return (
-    <>
-      <style>{`
-        /* LOAD YOUR CUSTOM FONT HERE */
-        @font-face {
-          font-family: 'MyCustomFont';
-          src: url('/custom.ttf') format('truetype');
-          font-weight: normal;
-          font-style: normal;
-        }
-
-        .desktop-links { display: flex; gap: 30px; align-items: center; }
-        .mobile-btn { display: none; }
+    <nav style={{ 
+      position: 'sticky', top: 0, zIndex: 100, 
+      backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+      background: navBg, borderBottom: `1px solid ${border}`,
+      padding: '15px 20px'
+    }}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         
-        @media (max-width: 768px) {
-          .desktop-links { display: none; }
-          .mobile-btn { display: flex; }
-        }
-      `}</style>
-
-      {/* 1. THE NAVBAR */}
-      <nav style={{ 
-        position: 'sticky', top: 0, zIndex: 1000,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-        padding: '15px 5%', 
-        background: navBg, 
-        backdropFilter: 'blur(12px)',
-        borderBottom: navBorder,
-        transition: 'background 0.3s, border 0.3s'
-      }}>
-        
-        {/* LEFT: LOGO + NAME */}
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          
-          <img 
-            src="/logo.png" 
-            alt="Logo" 
-            style={{ 
-              height: '45px', 
-              width: 'auto'
-            }} 
-          />
-          
-          <h2 style={{ 
-            margin: 0, 
-            fontSize: '1.8rem', 
-            color: brandColor, 
-            fontFamily: "'MyCustomFont', sans-serif" 
-          }}>
-            Furkan Shakib
-          </h2>
+        {/* LOGO */}
+        <Link to="/" style={{ fontSize: '1.2rem', fontWeight: 'bold', color: textColor, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '1.5rem' }}>⚡</span> Portfolio
         </Link>
 
-        {/* CENTER: DESKTOP LINKS */}
-        <div className="desktop-links">
-          <Link to="/" style={linkStyle('/')}>Home</Link>
-          <Link to="/experience" style={linkStyle('/experience')}>Experience</Link>
-          <Link to="/projects" style={linkStyle('/projects')}>Projects</Link>
-          <Link to="/blogs" style={linkStyle('/blogs')}>Blogs</Link>
-          {/* 👇 UPDATED: Points to /contact page now */}
-          <Link to="/contact" style={linkStyle('/contact')}>Contact</Link>
-        </div>
-
-        {/* RIGHT: ACTIONS */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', padding: '5px' }} title="Toggle Theme">
+        {/* DESKTOP LINKS (Hidden on Mobile) */}
+        <div className="desktop-menu" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          {links.map(link => (
+            <Link key={link.name} to={link.path} style={{ 
+              textDecoration: 'none', 
+              color: location.pathname === link.path ? accent : textColor, 
+              fontWeight: location.pathname === link.path ? 'bold' : 'normal',
+              fontSize: '0.95rem'
+            }}>
+              {link.name}
+            </Link>
+          ))}
+          <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>
             {isDark ? '☀️' : '🌙'}
           </button>
-
-          <button className="mobile-btn" onClick={toggleMenu} style={{ background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: '5px' }}>
-            <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
-            <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
-            <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
-            <span style={{ width: '25px', height: '2px', background: textColor, borderRadius: '2px' }}></span>
-          </button>
         </div>
-      </nav>
 
-      {/* 2. MOBILE SIDEBAR */}
-      <div style={{ 
-        position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', 
-        background: 'rgba(0,0,0,0.5)', zIndex: 1100, 
-        opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? 'all' : 'none', transition: 'opacity 0.3s' 
-      }} onClick={toggleMenu}></div>
-
-      <div style={{ 
-        position: 'fixed', top: 0, right: 0,
-        width: '260px', height: '100vh', 
-        background: isDark ? '#1e293b' : 'white', 
-        boxShadow: '-5px 0 15px rgba(0,0,0,0.1)', 
-        zIndex: 1200, 
-        transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.3s ease',
-        padding: '30px', boxSizing: 'border-box',
-        display: 'flex', flexDirection: 'column', gap: '20px'
-      }}>
-        <button onClick={toggleMenu} style={{ alignSelf: 'flex-end', background: 'none', border: 'none', fontSize: '1.5rem', color: textColor, cursor: 'pointer' }}>✕</button>
-        <Link to="/" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🏠 Home</Link>
-        <Link to="/experience" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🎓 Experience</Link>
-        <Link to="/projects" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>🚀 Projects</Link>
-        <Link to="/blogs" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>📝 Blogs</Link>
-        {/* 👇 UPDATED: Mobile link updated as well */}
-        <Link to="/contact" onClick={toggleMenu} style={{ fontSize: '1.2rem', textDecoration: 'none', color: textColor, fontWeight: 'bold' }}>📞 Contact</Link>
+        {/* MOBILE TOGGLE (Visible on Mobile) */}
+        <button className="mobile-toggle" onClick={() => setIsOpen(!isOpen)} style={{ background: 'none', border: 'none', color: textColor, fontSize: '1.5rem', cursor: 'pointer' }}>
+          {isOpen ? '✕' : '☰'}
+        </button>
       </div>
-    </>
+
+      {/* MOBILE DROPDOWN */}
+      {isOpen && (
+        <div style={{ 
+          background: isDark ? '#1e293b' : 'white', 
+          borderTop: `1px solid ${border}`, 
+          padding: '20px', 
+          display: 'flex', flexDirection: 'column', gap: '15px',
+          position: 'absolute', top: '100%', left: 0, width: '100%', boxSizing: 'border-box', boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+        }}>
+          {links.map(link => (
+            <Link key={link.name} to={link.path} onClick={() => setIsOpen(false)} style={{ 
+              textDecoration: 'none', 
+              color: location.pathname === link.path ? accent : textColor, 
+              fontSize: '1.1rem', fontWeight: '500', display: 'block', padding: '10px 0', borderBottom: `1px solid ${border}`
+            }}>
+              {link.name}
+            </Link>
+          ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px' }}>
+             <span style={{ color: textColor }}>Theme</span>
+             <button onClick={toggleTheme} style={{ background: 'none', border: `1px solid ${border}`, padding:'5px 10px', borderRadius:'6px', cursor: 'pointer', fontSize: '1.2rem', color: textColor }}>
+                {isDark ? 'Switch to Light ☀️' : 'Switch to Dark 🌙'}
+             </button>
+          </div>
+        </div>
+      )}
+
+      {/* CSS FOR MEDIA QUERIES */}
+      <style>{`
+        .mobile-toggle { display: none; }
+        @media (max-width: 768px) {
+          .desktop-menu { display: none !important; }
+          .mobile-toggle { display: block !important; }
+        }
+      `}</style>
+    </nav>
   );
 }
 

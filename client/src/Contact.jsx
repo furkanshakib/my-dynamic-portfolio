@@ -44,7 +44,7 @@ function Contact() {
         
         {/* 1. LEFT SIDE: INFO */}
         <div style={{ flex: '1', minWidth: '300px' }}>
-          <h1 style={{ fontSize: '3rem', marginBottom: '20px', lineHeight: '1.2' }}>Let's work <br/> <span style={{ color: '#2563eb' }}>together.</span></h1>
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', marginBottom: '20px', lineHeight: '1.2' }}>Let's work <br/> <span style={{ color: '#2563eb' }}>together.</span></h1>
           <p style={{ color: textSub, fontSize: '1.1rem', marginBottom: '40px', lineHeight: '1.6' }}>
             I am always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
           </p>
