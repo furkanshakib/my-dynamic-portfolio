@@ -21,14 +21,14 @@ function BlogPost() {
   const pageBg = isDark ? '#0f172a' : '#fff';
   const text = isDark ? '#f1f5f9' : '#333';
 
-  // 🧼 IMPROVED HELPER: Strips styles with single OR double quotes
+  // 🧼 DEEP CLEANER: Removes hidden 'class' and 'style' attributes saved by the editor
   const cleanHTML = (html) => {
     if (!html) return "";
     return html
-      .replace(/style="[^"]*"/g, "")  // Remove style="..."
-      .replace(/style='[^']*'/g, "")  // Remove style='...'
-      .replace(/class="[^"]*"/g, "")  // Remove class="..."
-      .replace(/class='[^']*'/g, ""); // Remove class='...'
+      .replace(/\sclass="[^"]*"/g, "")  // Remove class="..."
+      .replace(/\sstyle="[^"]*"/g, "")  // Remove style="..."
+      .replace(/\sclass='[^']*'/g, "")  // Remove class='...'
+      .replace(/\sstyle='[^']*'/g, ""); // Remove style='...'
   };
 
   return (
@@ -36,6 +36,7 @@ function BlogPost() {
       <Navbar />
       
       <style>{`
+        /* Local CSS to ensure images and spacing look good */
         .blog-content img {
           max-width: 100%;
           height: auto;
@@ -43,13 +44,12 @@ function BlogPost() {
           margin: 20px 0;
           display: block;
         }
-        /* Ensure specific spacing for lists */
+        .blog-content p {
+          margin-bottom: 1.5em; /* Nice gap between paragraphs */
+        }
         .blog-content ul, .blog-content ol {
           margin-bottom: 20px;
           padding-left: 20px;
-        }
-        .blog-content p {
-          margin-bottom: 1.5em;
         }
       `}</style>
 
@@ -60,7 +60,7 @@ function BlogPost() {
             <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
         
-        {/* The container has the class that our new CSS targets specifically */}
+        {/* Render the Cleaned HTML */}
         <div 
           className="blog-content" 
           dangerouslySetInnerHTML={{ __html: cleanHTML(blog.content) }}

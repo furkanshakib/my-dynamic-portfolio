@@ -1,21 +1,28 @@
-/* 1. TYPOGRAPHY RESET (Fixes the text breaking issue) */
-* {
-  box-sizing: border-box;
-  /* 👇 This tells the browser: "Never split a word in the middle unless it's a super long URL" */
+/* 1. TYPOGRAPHY RESET (The "Iron-Clad" Fix) */
+/* We target body and #root specifically to overpower the editor's styles */
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  /* 👇 This overrides the "break-all" rule from React Quill */
+  word-break: normal !important; 
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  line-height: 1.6;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: inherit;
+}
+
+/* Also force common text tags to behave */
+p, span, div, h1, h2, h3, h4, h5, h6, li, a {
   word-break: normal !important; 
   overflow-wrap: break-word !important;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6; /* Adds breathing room between lines */
-}
-
-/* 2. CUSTOM SCROLLBAR (Optional: Makes scrolling look nice) */
+/* 2. CUSTOM SCROLLBAR */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -30,16 +37,20 @@ body {
   background: #94a3b8;
 }
 
-/* 3. QUILL EDITOR FIXES (For your Admin Dashboard) */
+/* 3. EDITOR FIXES (Only allow breaking INSIDE the editor) */
+.ql-editor {
+  word-break: break-word !important; 
+  min-height: 150px;
+}
 .ql-container {
   font-family: 'Inter', sans-serif !important;
   font-size: 1rem !important;
 }
-.ql-editor {
-  min-height: 150px;
-}
 
 /* 4. UTILITIES */
+* {
+  box-sizing: border-box;
+}
 a {
   text-decoration: none;
   color: inherit;
@@ -50,36 +61,4 @@ button {
 img {
   max-width: 100%;
   display: block;
-}
-/* ... keep your existing codes ... */
-
-/* 👇 PASTE THIS AT THE VERY BOTTOM OF index.css 👇 */
-
-/* 1. Force override specificity by chaining selectors */
-body #root div, 
-body #root p, 
-body #root span, 
-body #root h1, 
-body #root h2, 
-body #root h3, 
-body #root h4, 
-body #root h5, 
-body #root h6, 
-body #root li, 
-body #root a {
-  word-break: normal !important;        /* Stop breaking words like "Man-hattan" */
-  overflow-wrap: break-word !important; /* Only break if the word is too long for the screen */
-  white-space: normal !important;       /* Force natural wrapping */
-  hyphens: none !important;             /* Stop auto-hyphenation */
-}
-
-/* 2. Specific fix for the Blog Content container */
-.blog-content, .blog-content * {
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
-}
-
-/* 3. Ensure the Editor (Quill) itself can still break words if it needs to */
-.ql-editor {
-  word-break: break-word !important; 
 }
