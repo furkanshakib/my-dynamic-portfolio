@@ -51,3 +51,35 @@ img {
   max-width: 100%;
   display: block;
 }
+/* ... keep your existing codes ... */
+
+/* 👇 PASTE THIS AT THE VERY BOTTOM OF index.css 👇 */
+
+/* 1. Force override specificity by chaining selectors */
+body #root div, 
+body #root p, 
+body #root span, 
+body #root h1, 
+body #root h2, 
+body #root h3, 
+body #root h4, 
+body #root h5, 
+body #root h6, 
+body #root li, 
+body #root a {
+  word-break: normal !important;        /* Stop breaking words like "Man-hattan" */
+  overflow-wrap: break-word !important; /* Only break if the word is too long for the screen */
+  white-space: normal !important;       /* Force natural wrapping */
+  hyphens: none !important;             /* Stop auto-hyphenation */
+}
+
+/* 2. Specific fix for the Blog Content container */
+.blog-content, .blog-content * {
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+/* 3. Ensure the Editor (Quill) itself can still break words if it needs to */
+.ql-editor {
+  word-break: break-word !important; 
+}

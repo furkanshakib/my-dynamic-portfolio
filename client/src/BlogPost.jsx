@@ -21,12 +21,14 @@ function BlogPost() {
   const pageBg = isDark ? '#0f172a' : '#fff';
   const text = isDark ? '#f1f5f9' : '#333';
 
-  // 🧼 HELPER: Clean HTML attributes
+  // 🧼 IMPROVED HELPER: Strips styles with single OR double quotes
   const cleanHTML = (html) => {
     if (!html) return "";
     return html
-      .replace(/style="[^"]*"/g, "")
-      .replace(/class="[^"]*"/g, ""); 
+      .replace(/style="[^"]*"/g, "")  // Remove style="..."
+      .replace(/style='[^']*'/g, "")  // Remove style='...'
+      .replace(/class="[^"]*"/g, "")  // Remove class="..."
+      .replace(/class='[^']*'/g, ""); // Remove class='...'
   };
 
   return (
@@ -34,7 +36,6 @@ function BlogPost() {
       <Navbar />
       
       <style>{`
-        /* IMAGES */
         .blog-content img {
           max-width: 100%;
           height: auto;
@@ -42,23 +43,14 @@ function BlogPost() {
           margin: 20px 0;
           display: block;
         }
-
-        /* 👇 THE NUCLEAR TEXT FIX */
-        /* This targets the container AND every element inside it (p, div, span) */
-        .blog-content, 
-        .blog-content * {
-            word-break: normal !important;      /* Stop snapping words */
-            overflow-wrap: break-word !important; /* Only break if line is full */
-            white-space: normal !important;     /* Wrap text naturally */
-            hyphens: none !important;           /* Stop adding hyphens */
-            text-align: left !important;        /* Force left align */
-            line-height: 1.8 !important;
-            max-width: 100%;
+        /* Ensure specific spacing for lists */
+        .blog-content ul, .blog-content ol {
+          margin-bottom: 20px;
+          padding-left: 20px;
         }
-        
-        /* Spacing */
-        .blog-content p { margin-bottom: 20px; }
-        .blog-content ul, .blog-content ol { margin-bottom: 20px; padding-left: 20px; }
+        .blog-content p {
+          margin-bottom: 1.5em;
+        }
       `}</style>
 
       <article style={{ maxWidth: '700px', margin: '0 auto', padding: '60px 20px' }}>
@@ -68,6 +60,7 @@ function BlogPost() {
             <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
         
+        {/* The container has the class that our new CSS targets specifically */}
         <div 
           className="blog-content" 
           dangerouslySetInnerHTML={{ __html: cleanHTML(blog.content) }}
