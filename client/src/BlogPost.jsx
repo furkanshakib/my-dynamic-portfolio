@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
-import 'react-quill-new/dist/quill.snow.css';
+
+// ❌ REMOVED THE QUILL CSS IMPORT (It was causing the text break issue)
 
 function BlogPost() {
   const { id } = useParams();
@@ -42,13 +43,15 @@ function BlogPost() {
           margin: 20px 0;
           display: block;
         }
-        /* 👇 THE FIX: Typography Rules */
+        /* 👇 THE FIX: Strict Typography Rules */
         .blog-content {
-           word-break: normal !important;      /* Never split words in middle */
-           overflow-wrap: break-word !important; /* Only break really long URLs */
-           line-height: 1.8;                   /* Better readability */
+           word-break: break-word !important;   /* Only break if word is too long for screen */
+           overflow-wrap: break-word !important; 
+           white-space: normal !important;      /* Force normal spacing */
+           line-height: 1.8;
            font-size: 1.1rem;
            text-align: left;
+           color: inherit;
         }
         .blog-content p {
            margin-bottom: 20px;
