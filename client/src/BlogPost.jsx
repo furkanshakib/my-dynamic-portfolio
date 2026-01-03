@@ -4,8 +4,6 @@ import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
 
-// ❌ REMOVED THE QUILL CSS IMPORT (It was causing the text break issue)
-
 function BlogPost() {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
@@ -23,7 +21,7 @@ function BlogPost() {
   const pageBg = isDark ? '#0f172a' : '#fff';
   const text = isDark ? '#f1f5f9' : '#333';
 
-  // 🧼 HELPER: Strip styles and classes
+  // 🧼 HELPER: Clean HTML attributes
   const cleanHTML = (html) => {
     if (!html) return "";
     return html
@@ -36,6 +34,7 @@ function BlogPost() {
       <Navbar />
       
       <style>{`
+        /* IMAGES */
         .blog-content img {
           max-width: 100%;
           height: auto;
@@ -43,23 +42,23 @@ function BlogPost() {
           margin: 20px 0;
           display: block;
         }
-        /* 👇 THE FIX: Strict Typography Rules */
-        .blog-content {
-           word-break: break-word !important;   /* Only break if word is too long for screen */
-           overflow-wrap: break-word !important; 
-           white-space: normal !important;      /* Force normal spacing */
-           line-height: 1.8;
-           font-size: 1.1rem;
-           text-align: left;
-           color: inherit;
+
+        /* 👇 THE NUCLEAR TEXT FIX */
+        /* This targets the container AND every element inside it (p, div, span) */
+        .blog-content, 
+        .blog-content * {
+            word-break: normal !important;      /* Stop snapping words */
+            overflow-wrap: break-word !important; /* Only break if line is full */
+            white-space: normal !important;     /* Wrap text naturally */
+            hyphens: none !important;           /* Stop adding hyphens */
+            text-align: left !important;        /* Force left align */
+            line-height: 1.8 !important;
+            max-width: 100%;
         }
-        .blog-content p {
-           margin-bottom: 20px;
-        }
-        .blog-content ul, .blog-content ol {
-           margin-bottom: 20px;
-           padding-left: 20px;
-        }
+        
+        /* Spacing */
+        .blog-content p { margin-bottom: 20px; }
+        .blog-content ul, .blog-content ol { margin-bottom: 20px; padding-left: 20px; }
       `}</style>
 
       <article style={{ maxWidth: '700px', margin: '0 auto', padding: '60px 20px' }}>
@@ -70,8 +69,7 @@ function BlogPost() {
         </div>
         
         <div 
-          className="fix-text-layout blog-content" 
-          style={{ padding: 0 }} 
+          className="blog-content" 
           dangerouslySetInnerHTML={{ __html: cleanHTML(blog.content) }}
         ></div>
       </article>
