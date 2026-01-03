@@ -42,16 +42,30 @@ function BlogPost() {
           margin: 20px 0;
           display: block;
         }
+        /* 👇 THE FIX: Typography Rules */
+        .blog-content {
+           word-break: normal !important;      /* Never split words in middle */
+           overflow-wrap: break-word !important; /* Only break really long URLs */
+           line-height: 1.8;                   /* Better readability */
+           font-size: 1.1rem;
+           text-align: left;
+        }
+        .blog-content p {
+           margin-bottom: 20px;
+        }
+        .blog-content ul, .blog-content ol {
+           margin-bottom: 20px;
+           padding-left: 20px;
+        }
       `}</style>
 
       <article style={{ maxWidth: '700px', margin: '0 auto', padding: '60px 20px' }}>
         {blog.image && <img src={blog.image} alt={blog.title} style={{ width: '100%', borderRadius: '10px', marginBottom: '30px' }} />}
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>{blog.title}</h1>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '10px', lineHeight: '1.2' }}>{blog.title}</h1>
         <div style={{ marginBottom: '30px', opacity: 0.7 }}>
             <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
         
-        {/* 👇 APPLIED THE FIX CLASS HERE */}
         <div 
           className="fix-text-layout blog-content" 
           style={{ padding: 0 }} 
