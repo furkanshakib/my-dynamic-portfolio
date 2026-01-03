@@ -3,13 +3,13 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import Contact from './Contact';
 import Login from './Login';
-
-// 👇 CORRECT IMPORT: Use the actual filename "PortfolioManager"
 import PortfolioManager from './PortfolioManager';
 
-// 👇 IMPORT THE PAGES
+// 👇 IMPORT ALL PAGES
 import ExperiencePage from './ExperiencePage'; 
 import ProjectsPage from './ProjectsPage';     
+import BlogPage from './BlogPage';  // New
+import BlogPost from './BlogPost';  // New
 
 function App() {
   return (
@@ -20,10 +20,12 @@ function App() {
       <Route path="/experience" element={<ExperiencePage />} />
       <Route path="/projects" element={<ProjectsPage />} />
       
+      {/* 👇 NEW BLOG ROUTES */}
+      <Route path="/blogs" element={<BlogPage />} />
+      <Route path="/blogs/:id" element={<BlogPost />} />
+      
       <Route path="/contact" element={<Contact />} />
       <Route path="/admin" element={<Login />} />
-      
-      {/* 👇 CORRECT ROUTE: Render PortfolioManager here */}
       <Route path="/dashboard" element={<PortfolioManager />} />
     </Routes>
   );
