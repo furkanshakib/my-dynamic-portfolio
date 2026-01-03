@@ -9,7 +9,7 @@ import { useTheme } from './ThemeContext';
 Quill.register('modules/blotFormatter', BlotFormatter);
 
 function PortfolioManager() {
-  const [activeTab, setActiveTab] = useState('overview'); // Default to Overview
+  const [activeTab, setActiveTab] = useState('overview'); 
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   
@@ -31,15 +31,12 @@ function PortfolioManager() {
 
   const API_BASE = "https://furkanshakib.onrender.com/api";
 
-  // 👇 PASTE THIS NEW CODE INSTEAD
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin");
-    const token = localStorage.getItem("token"); // 1. Grab the token from storage
+    const token = localStorage.getItem("token"); 
 
-    // 2. If no admin flag OR no token, kick them out
     if (!isAdmin || !token) navigate("/admin");
     
-    // 3. IMPORTANT: Attach the token to the header of every Axios request
     if(token) axios.defaults.headers.common['x-auth-token'] = token; 
 
     fetchData();
@@ -58,6 +55,26 @@ function PortfolioManager() {
     setNewExp({ title: '', company: '', year: '', description: '', type: 'job' });
     setNewBlog({ title: '', category: 'Article', image: '', content: '' });
     setNewSkill({ name: '', icon: '' });
+  };
+
+  // 👇 NEW: IMAGE UPLOAD HANDLER (Base64)
+  const handleImageUpload = (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 1. Check Size (Limit to 2MB to keep DB happy)
+    if (file.size > 2 * 1024 * 1024) {
+      alert("❌ File is too big! Please use an image under 2MB.");
+      return;
+    }
+
+    // 2. Convert to String
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      if (type === 'project') setNewProject({ ...newProject, image: reader.result });
+      if (type === 'blog') setNewBlog({ ...newBlog, image: reader.result });
+    };
   };
 
   // --- SUBMIT HANDLERS ---
@@ -99,19 +116,18 @@ function PortfolioManager() {
   const activeColor = '#2563eb';
 
   const sidebarItemStyle = (tabName) => ({
-    padding: '12px 20px',
-    margin: '5px 0',
-    borderRadius: '8px',
-    cursor: 'pointer',
+    padding: '12px 20px', margin: '5px 0', borderRadius: '8px', cursor: 'pointer',
     color: activeTab === tabName ? 'white' : text,
     background: activeTab === tabName ? activeColor : 'transparent',
     fontWeight: activeTab === tabName ? 'bold' : 'normal',
-    display: 'flex', alignItems: 'center', gap: '10px',
-    transition: 'all 0.2s'
+    display: 'flex', alignItems: 'center', gap: '10px', transition: 'all 0.2s'
   });
 
   const btnStyle = { padding: '10px 20px', background: activeColor, color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' };
   const inputStyle = { padding: '12px', borderRadius: '8px', border: `1px solid ${border}`, background: inputBg, color: text, width: '100%', marginBottom: '15px', outline: 'none' };
+  
+  // File Input Style
+  const fileInputStyle = { ...inputStyle, padding: '10px', background: isDark ? '#1e293b' : '#fff' };
 
   // --- EDITOR MODULES ---
   const modules = useMemo(() => ({
@@ -144,7 +160,7 @@ function PortfolioManager() {
         </div>
       </div>
 
-      {/* 2. MAIN CONTENT AREA */}
+      {/* 2. MAIN CONTENT */}
       <div style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
         
         {/* --- OVERVIEW TAB --- */}
@@ -152,7 +168,6 @@ function PortfolioManager() {
           <div>
             <h1 style={{ marginBottom: '10px' }}>Welcome back, Furkan! 👋</h1>
             <p style={{ opacity: 0.7, marginBottom: '40px' }}>Here is what's happening on your portfolio.</p>
-            
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
               <StatCard title="Projects" count={projects.length} icon="🚀" bg={cardBg} border={border} />
               <StatCard title="Experience" count={experiences.length} icon="🎓" bg={cardBg} border={border} />
@@ -170,15 +185,23 @@ function PortfolioManager() {
                 {editingId && <button onClick={resetForms} style={{...btnStyle, background:'#64748b'}}>Cancel Edit</button>}
              </div>
              
-             {/* FORM */}
-             <div style={{ background: cardBg, padding: '30px', borderRadius: '16px', border: `1px solid ${border}`, marginBottom: '40px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+             <div style={{ background: cardBg, padding: '30px', borderRadius: '16px', border: `1px solid ${border}`, marginBottom: '40px' }}>
                 <input placeholder="Project Title" value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} style={inputStyle} />
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
                   <select value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})} style={inputStyle}>
                       <option>Research</option><option>Web Dev</option><option>Video</option><option>Articles</option>
                   </select>
-                  <input placeholder="Image URL" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} style={inputStyle} />
+                  
+                  {/* 👇 IMAGE UPLOAD INPUT */}
+                  <div style={{ marginBottom: '15px' }}>
+                     <label style={{ fontSize:'0.8rem', opacity:0.7, display:'block', marginBottom:'5px' }}>Project Cover Image</label>
+                     <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'project')} style={fileInputStyle} />
+                  </div>
                 </div>
+                
+                {/* PREVIEW */}
+                {newProject.image && <img src={newProject.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit:'cover', borderRadius:'6px', marginBottom:'15px', border:`1px solid ${border}` }} />}
+
                 <input placeholder="Project Link" value={newProject.link} onChange={e => setNewProject({...newProject, link: e.target.value})} style={inputStyle} />
                 <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
                   <ReactQuill theme="snow" value={newProject.description} onChange={val => setNewProject({...newProject, description: val})} modules={modules} placeholder="Describe your project..." />
@@ -186,7 +209,6 @@ function PortfolioManager() {
                 <button onClick={handleSaveProject} style={{...btnStyle, width:'100%'}}>{editingId ? "Update Project" : "Add Project"}</button>
              </div>
 
-             {/* LIST */}
              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                 {projects.map(p => (
                   <ItemCard key={p._id} title={p.title} subtitle={p.category} bg={cardBg} border={border} 
@@ -244,8 +266,17 @@ function PortfolioManager() {
                   <select value={newBlog.category} onChange={e => setNewBlog({...newBlog, category: e.target.value})} style={inputStyle}>
                       <option>Article</option><option>Opinion</option><option>Research Note</option>
                   </select>
-                  <input placeholder="Cover Image URL" value={newBlog.image} onChange={e => setNewBlog({...newBlog, image: e.target.value})} style={inputStyle} />
+                  
+                  {/* 👇 IMAGE UPLOAD INPUT */}
+                  <div style={{ marginBottom: '15px' }}>
+                     <label style={{ fontSize:'0.8rem', opacity:0.7, display:'block', marginBottom:'5px' }}>Article Cover Image</label>
+                     <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'blog')} style={fileInputStyle} />
+                  </div>
                 </div>
+
+                {/* PREVIEW */}
+                {newBlog.image && <img src={newBlog.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit:'cover', borderRadius:'6px', marginBottom:'15px', border:`1px solid ${border}` }} />}
+
                 <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
                   <ReactQuill theme="snow" value={newBlog.content} onChange={val => setNewBlog({...newBlog, content: val})} modules={modules} />
                 </div>
