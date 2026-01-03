@@ -1,41 +1,53 @@
-:root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-}
-
+/* 1. TYPOGRAPHY RESET (Fixes the text breaking issue) */
 * {
   box-sizing: border-box;
+  /* 👇 This tells the browser: "Never split a word in the middle unless it's a super long URL" */
+  word-break: normal !important; 
+  overflow-wrap: break-word !important;
 }
 
 body {
   margin: 0;
   padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  overflow-x: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6; /* Adds breathing room between lines */
 }
 
-/* 🟢 THE MAGIC CLASS: Apply this to any text container */
-.fix-text-layout, 
-.fix-text-layout * {
-  word-break: normal !important;        /* Never break words in the middle */
-  overflow-wrap: break-word !important; /* Wrap long words only if needed */
-  white-space: pre-wrap !important;     /* Preserve paragraph spacing but wrap lines */
-  hyphens: none !important;             /* Disable auto-hyphenation */
-  text-align: left !important;          /* Force left align to prevent weird gaps */
-  max-width: 100% !important;
+/* 2. CUSTOM SCROLLBAR (Optional: Makes scrolling look nice) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-/* Quill Editor Fixes */
+/* 3. QUILL EDITOR FIXES (For your Admin Dashboard) */
+.ql-container {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 1rem !important;
+}
 .ql-editor {
-  height: auto !important;
-  padding: 0 !important;
-}
-.ql-editor ul, .ql-editor ol {
-  padding-left: 20px !important;
+  min-height: 150px;
 }
 
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+/* 4. UTILITIES */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+button {
+  font-family: inherit;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
