@@ -10,8 +10,9 @@ require('dotenv').config();
 const Project = require('./models/Project');
 const Experience = require('./models/Experience');
 const Blog = require('./models/Blog');
-const Skill = require('./models/SkillItem'); 
+const Skill = require('./models/SkillItem');
 const Admin = require('./models/Admin');
+const Profile = require('./models/Profile'); // 👈 NEW PROFILE MODEL
 
 const app = express();
 const SECRET_KEY = process.env.JWT_SECRET || "super_secret_key_123";
@@ -79,6 +80,18 @@ app.put('/api/blogs/:id', auth, async (req, res) => {
 app.get('/api/skills', async (req, res) => { const data = await Skill.find(); res.json(data); });
 app.post('/api/skills', auth, async (req, res) => { const newS = new Skill(req.body); await newS.save(); res.json(newS); });
 app.delete('/api/skills/:id', auth, async (req, res) => { await Skill.findByIdAndDelete(req.params.id); res.json({ msg: "Deleted" }); });
+
+// 5. PROFILE
+app.get('/api/profile', async (req, res) => {
+  const profile = await Profile.findOne();
+  res.json(profile || {});
+});
+
+app.post('/api/profile', auth, async (req, res) => {
+  // Upsert: update if exists, insert if not
+  const updated = await Profile.findOneAndUpdate({}, req.body, { new: true, upsert: true });
+  res.json(updated);
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
