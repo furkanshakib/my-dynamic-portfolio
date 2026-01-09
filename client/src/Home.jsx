@@ -115,13 +115,14 @@ function Home() {
             .bio-content p, .bio-content span, .bio-content li, .bio-content div { 
               margin-bottom: 10px; 
               word-break: normal !important;
-              overflow-wrap: normal !important;
+              overflow-wrap: break-word !important;
+              white-space: normal !important;
               hyphens: none !important;
             }
           `}</style>
           <div
             className="bio-content"
-            style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px', wordBreak: 'normal', overflowWrap: 'normal' }}
+            style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px', wordBreak: 'normal', overflowWrap: 'break-word' }}
             dangerouslySetInnerHTML={{ __html: profile?.bio || "A Social Science Graduate & Tech Enthusiast. I bridge the gap between social science and modern technology." }}
           />
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
