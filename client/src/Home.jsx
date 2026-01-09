@@ -75,7 +75,7 @@ function Home() {
       <Navbar />
 
       <style>{`
-        .bento-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+        .bento-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
         .bento-card { background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; }
         
         /* Mobile Layouts */
