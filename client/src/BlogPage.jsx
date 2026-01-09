@@ -32,7 +32,7 @@ function BlogPage() {
       <Navbar />
       <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '60px 20px' }}>
         <h1 style={{ textAlign: 'center', fontSize: '2.5rem', marginBottom: '40px' }}>Blogs & Articles</h1>
-        
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
           {blogs.map(blog => (
             <div key={blog._id} style={{ background: cardBg, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
@@ -40,7 +40,7 @@ function BlogPage() {
               <div style={{ padding: '20px' }}>
                 <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 'bold' }}>{blog.category}</span>
                 <h2 style={{ fontSize: '1.4rem', margin: '10px 0' }}>{blog.title}</h2>
-                <div style={{ fontSize: '0.9rem', opacity: 0.8, marginBottom: '20px' }}>
+                <div style={{ fontSize: '0.9rem', opacity: 0.8, marginBottom: '20px', wordBreak: 'normal', overflowWrap: 'break-word' }}>
                   {/* 👇 FIXED: Using stripHtml to fix &nbsp; issues */}
                   {stripHtml(blog.content).substring(0, 100)}...
                 </div>

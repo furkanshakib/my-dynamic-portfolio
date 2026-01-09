@@ -5,7 +5,7 @@ import { useTheme } from './ThemeContext';
 function Experience() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  
+
   const [experiences, setExperiences] = useState([]);
   const API_URL = "https://furkanshakib.onrender.com/api/experience";
 
@@ -55,21 +55,21 @@ function Experience() {
             </div>
 
             <div style={{ background: cardBg, padding: '25px', borderRadius: '12px', border: cardBorder, boxShadow: shadow, transition: 'transform 0.3s ease' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
               <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
                 <span style={{ background: isEdu ? eduBadge.bg : jobBadge.bg, color: isEdu ? eduBadge.text : jobBadge.text, padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold' }}>{item.year}</span>
               </div>
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
-              
+
               {/* 👇 APPLIED THE FIX CLASS HERE */}
-              <div 
+              <div
                 className="fix-text-layout"
-                style={{ color: cardDesc, fontSize: '1rem' }} 
+                style={{ color: cardDesc, fontSize: '1rem', wordBreak: 'normal', overflowWrap: 'break-word' }}
                 dangerouslySetInnerHTML={{ __html: cleanHTML(item.description) }}
               ></div>
-            
+
             </div>
           </div>
         );
