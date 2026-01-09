@@ -101,7 +101,7 @@ function ProjectsPage() {
                 <h3 style={{ margin: '0 0 10px 0', fontSize: '1.25rem' }}>{p.title}</h3>
                 
                 {/* Preview Description (Stripped of HTML) */}
-                <p style={{ color: subText, fontSize: '0.95rem', lineHeight: '1.6', flex: 1, marginBottom: '20px' }}>
+                <p style={{ color: subText, fontSize: '0.95rem', lineHeight: '1.6', flex: 1, marginBottom: '20px', wordBreak: 'normal', overflowWrap: 'break-word' }}>
                   {p.description ? stripHtml(p.description).substring(0, 100) + "..." : "No description available."}
                 </p>
 
