@@ -108,9 +108,17 @@ function Home() {
         >
           <img src={profile?.profilePicture || "/profile.png"} alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'contain', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
-          <p style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px' }}>
-            {profile?.bio || "A Social Science Graduate & Tech Enthusiast. I bridge the gap between social science and modern technology."}
-          </p>
+          {/* Rich Text Bio */}
+          <style>{`
+            .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
+            .bio-content li { margin-bottom: 5px; }
+            .bio-content p { margin-bottom: 10px; }
+          `}</style>
+          <div
+            className="bio-content"
+            style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px', wordBreak: 'normal', overflowWrap: 'break-word' }}
+            dangerouslySetInnerHTML={{ __html: profile?.bio || "A Social Science Graduate & Tech Enthusiast. I bridge the gap between social science and modern technology." }}
+          />
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
             <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>

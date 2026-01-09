@@ -352,15 +352,18 @@ function PortfolioManager() {
                 <input value={profile.name} onChange={e => setProfile({ ...profile, name: e.target.value })} style={inputStyle} placeholder="Your Name" />
               </div>
 
-              {/* 👇 NEW: BIO INPUT */}
+              {/* 👇 NEW: BIO INPUT (Rich Text) */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Bio / Description</label>
-                <textarea
-                  value={profile.bio || ''}
-                  onChange={e => setProfile({ ...profile, bio: e.target.value })}
-                  style={{ ...inputStyle, minHeight: '100px', resize: 'vertical' }}
-                  placeholder="A Social Science Graduate & Tech Enthusiast..."
-                />
+                <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
+                  <ReactQuill
+                    theme="snow"
+                    value={profile.bio || ''}
+                    onChange={val => setProfile({ ...profile, bio: val })}
+                    modules={modules}
+                    placeholder="A Social Science Graduate & Tech Enthusiast..."
+                  />
+                </div>
               </div>
 
               <button onClick={handleSaveProfile} style={{ ...btnStyle, width: '100%' }}>Save Profile</button>
