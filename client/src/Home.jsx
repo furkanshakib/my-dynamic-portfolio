@@ -114,7 +114,7 @@ useEffect(() => {
           <img src={profile?.profilePicture || "/profile.png"} alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
           {/* Rich Text Bio */}
-       <style>{`
+      <style>{`
   .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
   .bio-content li { margin-bottom: 5px; }
   .bio-content * {
@@ -136,10 +136,8 @@ useEffect(() => {
   dangerouslySetInnerHTML={{
     __html: profile?.bio 
       ? profile.bio
-          .replace(/<p style="[^"]*">/gi, '<p>') // Remove inline styles from <p>
-          .replace(/<strong style="[^"]*">/gi, '<strong>') // Remove inline styles from <strong>
-          .replace(/<span style="[^"]*">/gi, '<span>') // Remove inline styles from <span>
-          .replace(/<em style="[^"]*">/gi, '<em>') // Remove inline styles from <em>
+          .replace(/\s+style="[^"]*"/gi, '') // Remove ALL style attributes
+          .replace(/\s+style='[^']*'/gi, '') // Remove ALL style attributes (single quotes)
       : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
   }}
 />

@@ -29,13 +29,10 @@ mongoose.connect(process.env.MONGO_URI)
 function cleanHTML(html) {
   if (!html) return html;
   
-  // Remove problematic inline styles that cause word breaking
+  // Remove ALL style attributes completely
   let cleaned = html
-    .replace(/overflow-wrap:\s*break-word;?/gi, '')
-    .replace(/word-break:\s*keep-all;?/gi, '')
-    .replace(/white-space:\s*normal;?/gi, '')
-    .replace(/style=""/gi, '') // Remove empty style attributes
-    .replace(/style="\s*"/gi, ''); // Remove whitespace-only style attributes
+    .replace(/\s+style="[^"]*"/gi, '')
+    .replace(/\s+style='[^']*'/gi, '');
   
   return cleaned;
 }
