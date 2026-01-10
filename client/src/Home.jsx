@@ -112,7 +112,7 @@ function Home() {
           variants={fadeUp}
           whileHover={hoverEffect} // 👈 Added Hover Here
         >
-          <h1 style={{ fontSize: '2rem', margin: '0 0 0 0', textAlign: 'center' }}>{profile?.name || "Furkan Shakib"}</h1>
+          <h1 style={{ fontSize: '2.5rem', margin: '0 0 0 0', textAlign: 'center', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.5px' }}>{profile?.name || "Furkan Shakib"}</h1>
 
           {/* POP-OUT PHOTO EFFECT */}
           <div className="profile-popout" style={{ margin: '0 0 30px 0' }}>
