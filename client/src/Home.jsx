@@ -114,43 +114,27 @@ useEffect(() => {
           <img src={profile?.profilePicture || "/profile.png"} alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
           {/* Rich Text Bio */}
-         <style>{`
+        <style>{`
   .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
   .bio-content li { margin-bottom: 5px; }
-  .bio-content p, .bio-content span, .bio-content strong, .bio-content em, .bio-content div { 
-    margin-bottom: 10px;
-    display: inline;
-  }
-  .bio-content {
-    word-spacing: normal;
-    white-space: normal;
-    text-align: left;
-    hyphens: none;
-  }
-  @media (max-width: 768px) {
-    .bio-content {
-      font-size: 0.95rem !important;
-      line-height: 1.7 !important;
-    }
-  }
 `}</style>
-         <div
+<div
   className="bio-content"
   style={{ 
     color: subText, 
     fontSize: '1rem', 
     lineHeight: '1.6', 
     marginBottom: '20px',
-    maxWidth: '100%',
-    wordSpacing: 'normal'
+    textAlign: 'left',
+    wordWrap: 'break-word',
+    overflowWrap: 'anywhere'
   }}
-  dangerouslySetInnerHTML={{ 
-    __html: (profile?.bio || "A Social Science Graduate & Tech Enthusiast. I bridge the gap between social science and modern technology.")
-      .replace(/<strong style="[^"]*">/gi, '<strong>')
-      .replace(/<p style="[^"]*">/gi, '<p>')
-      .replace(/<span style="[^"]*">/gi, '<span>')
-  }}
-/>
+>
+  {profile?.bio ? 
+    profile.bio.replace(/<[^>]*>/g, '') // Strip all HTML tags
+    : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
+  }
+</div>
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
             <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>
