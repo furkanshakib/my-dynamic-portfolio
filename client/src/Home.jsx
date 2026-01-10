@@ -122,21 +122,29 @@ useEffect(() => {
               hyphens: auto;
             }
           `}</style>
-          <div
+         <div
   className="bio-content"
   style={{ 
     color: subText, 
     fontSize: '1rem', 
     lineHeight: '1.6', 
-    marginBottom: '20px',
-    wordBreak: 'normal',
-    overflowWrap: 'normal'
+    marginBottom: '20px'
+  }}
+  ref={(el) => {
+    if (el) {
+      // Remove all inline styles from child elements after render
+      setTimeout(() => {
+        const allChildren = el.querySelectorAll('*');
+        allChildren.forEach(child => {
+          if (child.hasAttribute('style')) {
+            child.removeAttribute('style');
+          }
+        });
+      }, 0);
+    }
   }}
   dangerouslySetInnerHTML={{ 
-    __html: (profile?.bio || "I’m Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka.")
-      .replace(/overflow-wrap:\s*break-word/gi, 'overflow-wrap: normal')
-      .replace(/word-break:\s*keep-all/gi, 'word-break: normal')
-      .replace(/white-space:\s*normal/gi, '')
+    __html: profile?.bio || "I’m Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
   }}
 />
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
