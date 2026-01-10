@@ -108,7 +108,7 @@ function Home() {
         {/* 1. PROFILE BOX */}
         <motion.div
           className="bento-card profile-box"
-          style={{ gridRow: 'span 2' }}
+          style={{ gridRow: 'span 2', alignItems: 'center', textAlign: 'center' }}
           variants={fadeUp}
           whileHover={hoverEffect} // 👈 Added Hover Here
         >
