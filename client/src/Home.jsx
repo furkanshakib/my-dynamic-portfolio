@@ -125,21 +125,11 @@ useEffect(() => {
     fontSize: '1rem', 
     lineHeight: '1.6', 
     marginBottom: '20px',
-    textAlign: 'left',
-    wordWrap: 'break-word',
-    overflowWrap: 'anywhere'
+    textAlign: 'left'
   }}
-  dangerouslySetInnerHTML={{
-    __html: profile?.bio 
-      ? profile.bio
-          .replace(/<[^>]*>/g, '') // Strip HTML tags
-          .replace(/&nbsp;/g, ' ') // Convert &nbsp; to spaces
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .replace(/&amp;/g, '&')
-      : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
-  }}
-/>
+>
+  I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka.
+</div>
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
             <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>
