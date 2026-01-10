@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const auth = require('./middleware/auth'); // 👈 IMPORT THE BOUNCER
+const auth = require('./middleware/auth');
 require('dotenv').config();
 
 // Import Models
@@ -12,7 +12,7 @@ const Experience = require('./models/Experience');
 const Blog = require('./models/Blog');
 const Skill = require('./models/SkillItem');
 const Admin = require('./models/Admin');
-const Profile = require('./models/Profile'); // 👈 NEW PROFILE MODEL
+const Profile = require('./models/Profile');
 
 const app = express();
 const SECRET_KEY = process.env.JWT_SECRET || "super_secret_key_123";
@@ -24,6 +24,21 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
+
+// 🔧 HELPER FUNCTION: Clean HTML from React Quill
+function cleanHTML(html) {
+  if (!html) return html;
+  
+  // Remove problematic inline styles that cause word breaking
+  let cleaned = html
+    .replace(/overflow-wrap:\s*break-word;?/gi, '')
+    .replace(/word-break:\s*keep-all;?/gi, '')
+    .replace(/white-space:\s*normal;?/gi, '')
+    .replace(/style=""/gi, '') // Remove empty style attributes
+    .replace(/style="\s*"/gi, ''); // Remove whitespace-only style attributes
+  
+  return cleaned;
+}
 
 // --- AUTH ROUTES ---
 app.post('/api/auth/register', async (req, res) => {
@@ -46,13 +61,36 @@ app.post('/api/auth/login', async (req, res) => {
   res.json({ token, admin: { username: admin.username } });
 });
 
-// --- PROTECTED ROUTES (Added 'auth' middleware) ---
+// --- PROTECTED ROUTES ---
 
 // 1. PROJECTS
-app.get('/api/projects', async (req, res) => { const data = await Project.find(); res.json(data); });
-app.post('/api/projects', auth, async (req, res) => { const newP = new Project(req.body); await newP.save(); res.json(newP); });
-app.delete('/api/projects/:id', auth, async (req, res) => { await Project.findByIdAndDelete(req.params.id); res.json({ msg: "Deleted" }); });
+app.get('/api/projects', async (req, res) => { 
+  const data = await Project.find(); 
+  // Clean descriptions
+  const cleanedData = data.map(project => ({
+    ...project.toObject(),
+    description: cleanHTML(project.description)
+  }));
+  res.json(cleanedData); 
+});
+app.post('/api/projects', auth, async (req, res) => { 
+  // Clean description before saving
+  if (req.body.description) {
+    req.body.description = cleanHTML(req.body.description);
+  }
+  const newP = new Project(req.body); 
+  await newP.save(); 
+  res.json(newP); 
+});
+app.delete('/api/projects/:id', auth, async (req, res) => { 
+  await Project.findByIdAndDelete(req.params.id); 
+  res.json({ msg: "Deleted" }); 
+});
 app.put('/api/projects/:id', auth, async (req, res) => {
+  // Clean description before updating
+  if (req.body.description) {
+    req.body.description = cleanHTML(req.body.description);
+  }
   const updated = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(updated);
 });
@@ -67,11 +105,45 @@ app.put('/api/experience/:id', auth, async (req, res) => {
 });
 
 // 3. BLOGS
-app.get('/api/blogs', async (req, res) => { const data = await Blog.find(); res.json(data); });
-app.get('/api/blogs/:id', async (req, res) => { const data = await Blog.findById(req.params.id); res.json(data); });
-app.post('/api/blogs', auth, async (req, res) => { const newB = new Blog(req.body); await newB.save(); res.json(newB); });
-app.delete('/api/blogs/:id', auth, async (req, res) => { await Blog.findByIdAndDelete(req.params.id); res.json({ msg: "Deleted" }); });
+app.get('/api/blogs', async (req, res) => { 
+  const data = await Blog.find(); 
+  // Clean blog content
+  const cleanedData = data.map(blog => ({
+    ...blog.toObject(),
+    content: cleanHTML(blog.content)
+  }));
+  res.json(cleanedData); 
+});
+app.get('/api/blogs/:id', async (req, res) => { 
+  const data = await Blog.findById(req.params.id); 
+  if (data) {
+    const cleaned = {
+      ...data.toObject(),
+      content: cleanHTML(data.content)
+    };
+    res.json(cleaned);
+  } else {
+    res.json(data);
+  }
+});
+app.post('/api/blogs', auth, async (req, res) => { 
+  // Clean content before saving
+  if (req.body.content) {
+    req.body.content = cleanHTML(req.body.content);
+  }
+  const newB = new Blog(req.body); 
+  await newB.save(); 
+  res.json(newB); 
+});
+app.delete('/api/blogs/:id', auth, async (req, res) => { 
+  await Blog.findByIdAndDelete(req.params.id); 
+  res.json({ msg: "Deleted" }); 
+});
 app.put('/api/blogs/:id', auth, async (req, res) => {
+  // Clean content before updating
+  if (req.body.content) {
+    req.body.content = cleanHTML(req.body.content);
+  }
   const updated = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(updated);
 });
@@ -84,10 +156,24 @@ app.delete('/api/skills/:id', auth, async (req, res) => { await Skill.findByIdAn
 // 5. PROFILE
 app.get('/api/profile', async (req, res) => {
   const profile = await Profile.findOne();
-  res.json(profile || {});
+  if (profile && profile.bio) {
+    // Clean the bio before sending
+    const cleanedProfile = {
+      ...profile.toObject(),
+      bio: cleanHTML(profile.bio)
+    };
+    res.json(cleanedProfile);
+  } else {
+    res.json(profile || {});
+  }
 });
 
 app.post('/api/profile', auth, async (req, res) => {
+  // Clean bio before saving
+  if (req.body.bio) {
+    req.body.bio = cleanHTML(req.body.bio);
+  }
+  
   // Upsert: update if exists, insert if not
   const updated = await Profile.findOneAndUpdate({}, req.body, { new: true, upsert: true });
   res.json(updated);
