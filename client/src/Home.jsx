@@ -120,10 +120,10 @@ function Home() {
               bottom: 0,
               width: '100%',
               height: '180px', // The colored box height
-              background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', // Indigo to Purple (Premium look)
+              background: 'linear-gradient(135deg, #fb923c 0%, #ea580c 100%)', // Orange Gradient (Sunset vibe)
               borderRadius: '24px',
               zIndex: 0,
-              boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)'
+              boxShadow: '0 10px 30px rgba(234, 88, 12, 0.3)'
             }}></div>
 
             {/* 2. The Transparent Photo */}
