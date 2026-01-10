@@ -112,10 +112,10 @@ function Home() {
           variants={fadeUp}
           whileHover={hoverEffect} // 👈 Added Hover Here
         >
-          <h1 style={{ fontSize: '2rem', margin: '0 0 20px 0' }}>{profile?.name || "Furkan Shakib"}</h1>
+          <h1 style={{ fontSize: '2rem', margin: '0 0 0 0', textAlign: 'center' }}>{profile?.name || "Furkan Shakib"}</h1>
 
           {/* POP-OUT PHOTO EFFECT */}
-          <div className="profile-popout">
+          <div className="profile-popout" style={{ margin: '0 0 30px 0' }}>
             {/* 1. The Background Shape */}
             <div style={{
               position: 'absolute',
@@ -164,7 +164,7 @@ function Home() {
               fontSize: '1rem',
               lineHeight: '1.6',
               marginBottom: '20px',
-              textAlign: 'left',
+              textAlign: 'center', // 👈 Centered Alignment
             }}
             dangerouslySetInnerHTML={{
               __html: profile?.bio
@@ -172,11 +172,11 @@ function Home() {
                 : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
             }}
           />
-          <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
+          <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', width: '100%' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
             <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>
           </div>
-          <div style={{ display: 'flex', gap: '15px', marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${borderColor}` }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${borderColor}`, width: '100%' }}>
             <SocialIcon href="https://linkedin.com" color="#0077b5" iconPath={<path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68zm1.39 9.94v-8.37H5.5v8.37h2.77z" />} />
             <SocialIcon href="mailto:furkanshakib@gmail.com" color="#ef4444" iconPath={<path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />} />
             <SocialIcon href="https://wa.me/8801624767370" color="#22c55e" iconPath={<path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2z" />} />
