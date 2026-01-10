@@ -112,6 +112,8 @@ function Home() {
           variants={fadeUp}
           whileHover={hoverEffect} // 👈 Added Hover Here
         >
+          <h1 style={{ fontSize: '2rem', margin: '0 0 20px 0' }}>{profile?.name || "Furkan Shakib"}</h1>
+
           {/* POP-OUT PHOTO EFFECT */}
           <div className="profile-popout">
             {/* 1. The Background Shape */}
@@ -146,7 +148,6 @@ function Home() {
               />
             </div>
           </div>
-          <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
           {/* Rich Text Bio */}
           <style>{`
   .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
