@@ -114,7 +114,7 @@ useEffect(() => {
           <img src={profile?.profilePicture || "/profile.png"} alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
           {/* Rich Text Bio */}
-        <style>{`
+       <style>{`
   .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
   .bio-content li { margin-bottom: 5px; }
 `}</style>
@@ -129,12 +129,17 @@ useEffect(() => {
     wordWrap: 'break-word',
     overflowWrap: 'anywhere'
   }}
->
-  {profile?.bio ? 
-    profile.bio.replace(/<[^>]*>/g, '') // Strip all HTML tags
-    : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
-  }
-</div>
+  dangerouslySetInnerHTML={{
+    __html: profile?.bio 
+      ? profile.bio
+          .replace(/<[^>]*>/g, '') // Strip HTML tags
+          .replace(/&nbsp;/g, ' ') // Convert &nbsp; to spaces
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&amp;/g, '&')
+      : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
+  }}
+/>
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
             <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>
