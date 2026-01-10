@@ -1,12 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill, { Quill } from 'react-quill-new';
-import BlotFormatter from 'quill-blot-formatter';
-import 'react-quill-new/dist/quill.snow.css';
+import DefaultEditor from 'react-simple-wysiwyg';
 import { useTheme } from './ThemeContext';
-
-Quill.register('modules/blotFormatter', BlotFormatter);
 
 function PortfolioManager() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -22,7 +18,7 @@ function PortfolioManager() {
   const [experiences, setExperiences] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [profile, setProfile] = useState({ profilePicture: '', name: '' }); // 👈 NEW PROFILE STATE 
+  const [profile, setProfile] = useState({ profilePicture: '', name: '', bio: '' });
 
   // --- INPUT STATES ---
   const [newProject, setNewProject] = useState({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
@@ -48,7 +44,7 @@ function PortfolioManager() {
     axios.get(`${API_BASE}/experience`).then(res => setExperiences(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/blogs`).then(res => setBlogs(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/skills`).then(res => setSkills(res.data.reverse())).catch(console.error);
-    axios.get(`${API_BASE}/profile`).then(res => { if (res.data) setProfile(res.data); }).catch(console.error); // 👈 FETCH PROFILE
+    axios.get(`${API_BASE}/profile`).then(res => { if (res.data) setProfile(res.data); }).catch(console.error);
   };
 
   const resetForms = () => {
@@ -59,24 +55,21 @@ function PortfolioManager() {
     setNewSkill({ name: '', icon: '' });
   };
 
-  // 👇 NEW: IMAGE UPLOAD HANDLER (Base64)
   const handleImageUpload = (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 1. Check Size (Limit to 2MB to keep DB happy)
     if (file.size > 2 * 1024 * 1024) {
       alert("❌ File is too big! Please use an image under 2MB.");
       return;
     }
 
-    // 2. Convert to String
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
       if (type === 'project') setNewProject({ ...newProject, image: reader.result });
       if (type === 'blog') setNewBlog({ ...newBlog, image: reader.result });
-      if (type === 'profile') setProfile({ ...profile, profilePicture: reader.result }); // 👈 HANDLE PROFILE IMAGE
+      if (type === 'profile') setProfile({ ...profile, profilePicture: reader.result });
     };
   };
 
@@ -105,7 +98,6 @@ function PortfolioManager() {
       .catch(err => alert("❌ Error: " + err.message));
   };
 
-  // 👇 SAVE PROFILE
   const handleSaveProfile = () => {
     axios.post(`${API_BASE}/profile`, profile)
       .then(() => alert("✅ Profile Updated!"))
@@ -135,21 +127,16 @@ function PortfolioManager() {
 
   const btnStyle = { padding: '10px 20px', background: activeColor, color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' };
   const inputStyle = { padding: '12px', borderRadius: '8px', border: `1px solid ${border}`, background: inputBg, color: text, width: '100%', marginBottom: '15px', outline: 'none' };
-
-  // File Input Style
   const fileInputStyle = { ...inputStyle, padding: '10px', background: isDark ? '#1e293b' : '#fff' };
 
-  // --- EDITOR MODULES ---
-  const modules = useMemo(() => ({
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['link', 'image', 'video'],
-      ['clean']
-    ],
-    blotFormatter: {}
-  }), []);
+  // Editor wrapper style
+  const editorStyle = {
+    border: `1px solid ${border}`,
+    borderRadius: '8px',
+    overflow: 'hidden',
+    marginBottom: '20px',
+    minHeight: '200px'
+  };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Inter', sans-serif" }}>
@@ -163,7 +150,7 @@ function PortfolioManager() {
         <div style={sidebarItemStyle('experience')} onClick={() => { setActiveTab('experience'); resetForms(); }}>🎓 Experience</div>
         <div style={sidebarItemStyle('blogs')} onClick={() => { setActiveTab('blogs'); resetForms(); }}>📝 Blogs</div>
         <div style={sidebarItemStyle('skills')} onClick={() => { setActiveTab('skills'); resetForms(); }}>⚡ Skills</div>
-        <div style={sidebarItemStyle('profile')} onClick={() => { setActiveTab('profile'); }}>⚙️ Profile</div> {/* 👈 PROFILE TAB */}
+        <div style={sidebarItemStyle('profile')} onClick={() => { setActiveTab('profile'); }}>⚙️ Profile</div>
 
         <div style={{ marginTop: 'auto', borderTop: `1px solid ${border}`, paddingTop: '20px' }}>
           <button onClick={() => window.open('/', '_blank')} style={{ ...sidebarItemStyle(''), justifyContent: 'center', background: isDark ? '#334155' : '#e2e8f0' }}>👀 View Site</button>
@@ -203,19 +190,17 @@ function PortfolioManager() {
                   <option>Research</option><option>Web Dev</option><option>Video</option><option>Articles</option>
                 </select>
 
-                {/* 👇 IMAGE UPLOAD INPUT */}
                 <div style={{ marginBottom: '15px' }}>
                   <label style={{ fontSize: '0.8rem', opacity: 0.7, display: 'block', marginBottom: '5px' }}>Project Cover Image</label>
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'project')} style={fileInputStyle} />
                 </div>
               </div>
 
-              {/* PREVIEW */}
               {newProject.image && <img src={newProject.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '6px', marginBottom: '15px', border: `1px solid ${border}` }} />}
 
               <input placeholder="Project Link" value={newProject.link} onChange={e => setNewProject({ ...newProject, link: e.target.value })} style={inputStyle} />
-              <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
-                <ReactQuill theme="snow" value={newProject.description} onChange={val => setNewProject({ ...newProject, description: val })} modules={modules} placeholder="Describe your project..." />
+              <div style={editorStyle}>
+                <DefaultEditor value={newProject.description} onChange={e => setNewProject({ ...newProject, description: e.target.value })} />
               </div>
               <button onClick={handleSaveProject} style={{ ...btnStyle, width: '100%' }}>{editingId ? "Update Project" : "Add Project"}</button>
             </div>
@@ -247,8 +232,8 @@ function PortfolioManager() {
               <select value={newExp.type} onChange={e => setNewExp({ ...newExp, type: e.target.value })} style={inputStyle}>
                 <option value="job">Job Experience</option><option value="education">Education</option>
               </select>
-              <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
-                <ReactQuill theme="snow" value={newExp.description} onChange={val => setNewExp({ ...newExp, description: val })} modules={modules} />
+              <div style={editorStyle}>
+                <DefaultEditor value={newExp.description} onChange={e => setNewExp({ ...newExp, description: e.target.value })} />
               </div>
               <button onClick={handleSaveExp} style={{ ...btnStyle, width: '100%' }}>{editingId ? "Update Item" : "Add Item"}</button>
             </div>
@@ -278,18 +263,16 @@ function PortfolioManager() {
                   <option>Article</option><option>Opinion</option><option>Research Note</option>
                 </select>
 
-                {/* 👇 IMAGE UPLOAD INPUT */}
                 <div style={{ marginBottom: '15px' }}>
                   <label style={{ fontSize: '0.8rem', opacity: 0.7, display: 'block', marginBottom: '5px' }}>Article Cover Image</label>
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'blog')} style={fileInputStyle} />
                 </div>
               </div>
 
-              {/* PREVIEW */}
               {newBlog.image && <img src={newBlog.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '6px', marginBottom: '15px', border: `1px solid ${border}` }} />}
 
-              <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
-                <ReactQuill theme="snow" value={newBlog.content} onChange={val => setNewBlog({ ...newBlog, content: val })} modules={modules} />
+              <div style={editorStyle}>
+                <DefaultEditor value={newBlog.content} onChange={e => setNewBlog({ ...newBlog, content: e.target.value })} />
               </div>
               <button onClick={handleSaveBlog} style={{ ...btnStyle, width: '100%', opacity: loading ? 0.7 : 1 }} disabled={loading}>
                 {loading ? "Publishing..." : (editingId ? "Update Article" : "Publish Article")}
@@ -336,7 +319,6 @@ function PortfolioManager() {
             <h2>Edit Profile</h2>
             <div style={{ background: cardBg, padding: '30px', borderRadius: '16px', border: `1px solid ${border}`, marginTop: '20px' }}>
 
-              {/* Image Upload */}
               <div style={{ marginBottom: '20px', textAlign: 'center' }}>
                 <div style={{ width: '150px', height: '150px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 20px auto', border: `4px solid ${border}`, background: '#333' }}>
                   <img src={profile.profilePicture || '/profile.png'} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -352,16 +334,12 @@ function PortfolioManager() {
                 <input value={profile.name} onChange={e => setProfile({ ...profile, name: e.target.value })} style={inputStyle} placeholder="Your Name" />
               </div>
 
-              {/* 👇 NEW: BIO INPUT (Rich Text) */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Bio / Description</label>
-                <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', color: 'black' }}>
-                  <ReactQuill
-                    theme="snow"
-                    value={profile.bio || ''}
-                    onChange={val => setProfile({ ...profile, bio: val })}
-                    modules={modules}
-                    placeholder="A Social Science Graduate & Tech Enthusiast..."
+                <div style={editorStyle}>
+                  <DefaultEditor 
+                    value={profile.bio || ''} 
+                    onChange={e => setProfile({ ...profile, bio: e.target.value })}
                   />
                 </div>
               </div>
