@@ -1,12 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
+import { Helmet } from 'react-helmet-async';
 
+function ShareButtons({ title, id }) {
+  // 🔗 SMART LINK: Points to Backend Proxy for correct preview
+  const smartLink = `https://furkanshakib.onrender.com/api/share/blogs/${id}`;
 
-function ShareButtons({ title }) {
-  const url = window.location.href;
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
@@ -17,11 +20,11 @@ function ShareButtons({ title }) {
   };
 
   const shareLinks = [
-    { name: 'Copy Link', icon: '🔗', action: () => { navigator.clipboard.writeText(url); alert('Link copied!'); } },
-    { name: 'Facebook', icon: '📘', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
-    { name: 'WhatsApp', icon: '💬', href: `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + url)}` },
-    { name: 'LinkedIn', icon: '💼', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}` },
-    { name: 'Twitter', icon: '🐦', href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}` },
+    { name: 'Copy Link', icon: '🔗', action: () => { navigator.clipboard.writeText(smartLink); alert('Smart Link copied!'); } },
+    { name: 'Facebook', icon: '📘', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(smartLink)}` },
+    { name: 'WhatsApp', icon: '💬', href: `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + smartLink)}` },
+    { name: 'LinkedIn', icon: '💼', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(smartLink)}` },
+    { name: 'Twitter', icon: '🐦', href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(smartLink)}&text=${encodeURIComponent(title)}` },
   ];
 
   return (
@@ -69,6 +72,16 @@ function BlogPost() {
 
   return (
     <div style={{ minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Segoe UI', sans-serif" }}>
+      <Helmet>
+        <title>{blog.title} | Furkan Shakib</title>
+        <meta name="description" content={`Read about ${blog.title} by Furkan Shakib.`} />
+        {/* Note: Standard OG tags here only work for basic scrapers, 
+            smart sharing (server-side) is needed for FB/WhatsApp */}
+        <meta property="og:title" content={blog.title} />
+        <meta property="og:description" content={`Read about ${blog.title} by Furkan Shakib.`} />
+        {blog.image && <meta property="og:image" content={blog.image} />}
+      </Helmet>
+
       <Navbar />
 
       <style>{`
@@ -96,7 +109,7 @@ function BlogPost() {
           <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
 
-        <ShareButtons title={blog.title} />
+        <ShareButtons title={blog.title} id={id} />
 
         {/* Render the Cleaned HTML */}
         <div

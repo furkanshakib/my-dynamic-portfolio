@@ -28,12 +28,12 @@ mongoose.connect(process.env.MONGO_URI)
 // 🔧 HELPER FUNCTION: Clean HTML from React Quill
 function cleanHTML(html) {
   if (!html) return html;
-  
+
   // Remove ALL style attributes completely
   let cleaned = html
     .replace(/\s+style="[^"]*"/gi, '')
     .replace(/\s+style='[^']*'/gi, '');
-  
+
   return cleaned;
 }
 
@@ -61,27 +61,27 @@ app.post('/api/auth/login', async (req, res) => {
 // --- PROTECTED ROUTES ---
 
 // 1. PROJECTS
-app.get('/api/projects', async (req, res) => { 
-  const data = await Project.find(); 
+app.get('/api/projects', async (req, res) => {
+  const data = await Project.find();
   // Clean descriptions
   const cleanedData = data.map(project => ({
     ...project.toObject(),
     description: cleanHTML(project.description)
   }));
-  res.json(cleanedData); 
+  res.json(cleanedData);
 });
-app.post('/api/projects', auth, async (req, res) => { 
+app.post('/api/projects', auth, async (req, res) => {
   // Clean description before saving
   if (req.body.description) {
     req.body.description = cleanHTML(req.body.description);
   }
-  const newP = new Project(req.body); 
-  await newP.save(); 
-  res.json(newP); 
+  const newP = new Project(req.body);
+  await newP.save();
+  res.json(newP);
 });
-app.delete('/api/projects/:id', auth, async (req, res) => { 
-  await Project.findByIdAndDelete(req.params.id); 
-  res.json({ msg: "Deleted" }); 
+app.delete('/api/projects/:id', auth, async (req, res) => {
+  await Project.findByIdAndDelete(req.params.id);
+  res.json({ msg: "Deleted" });
 });
 app.put('/api/projects/:id', auth, async (req, res) => {
   // Clean description before updating
@@ -102,17 +102,17 @@ app.put('/api/experience/:id', auth, async (req, res) => {
 });
 
 // 3. BLOGS
-app.get('/api/blogs', async (req, res) => { 
-  const data = await Blog.find(); 
+app.get('/api/blogs', async (req, res) => {
+  const data = await Blog.find();
   // Clean blog content
   const cleanedData = data.map(blog => ({
     ...blog.toObject(),
     content: cleanHTML(blog.content)
   }));
-  res.json(cleanedData); 
+  res.json(cleanedData);
 });
-app.get('/api/blogs/:id', async (req, res) => { 
-  const data = await Blog.findById(req.params.id); 
+app.get('/api/blogs/:id', async (req, res) => {
+  const data = await Blog.findById(req.params.id);
   if (data) {
     const cleaned = {
       ...data.toObject(),
@@ -123,18 +123,18 @@ app.get('/api/blogs/:id', async (req, res) => {
     res.json(data);
   }
 });
-app.post('/api/blogs', auth, async (req, res) => { 
+app.post('/api/blogs', auth, async (req, res) => {
   // Clean content before saving
   if (req.body.content) {
     req.body.content = cleanHTML(req.body.content);
   }
-  const newB = new Blog(req.body); 
-  await newB.save(); 
-  res.json(newB); 
+  const newB = new Blog(req.body);
+  await newB.save();
+  res.json(newB);
 });
-app.delete('/api/blogs/:id', auth, async (req, res) => { 
-  await Blog.findByIdAndDelete(req.params.id); 
-  res.json({ msg: "Deleted" }); 
+app.delete('/api/blogs/:id', auth, async (req, res) => {
+  await Blog.findByIdAndDelete(req.params.id);
+  res.json({ msg: "Deleted" });
 });
 app.put('/api/blogs/:id', auth, async (req, res) => {
   // Clean content before updating
@@ -143,6 +143,60 @@ app.put('/api/blogs/:id', auth, async (req, res) => {
   }
   const updated = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(updated);
+});
+
+// 🌟 SMART SHARE LINK: Server-Side Rendering for Social Previews
+app.get('/api/share/blogs/:id', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).send("Blog not found");
+
+    // The actual URL where the user should go
+    // Note: In production, this should be the deployed frontend URL (e.g., https://furkanshakib.vercel.app/blogs/...)
+    // For now, we assume standard routing
+    const targetUrl = `https://furkanshakib.vercel.app/blogs/${req.params.id}`;
+
+    // Clean HTML for description (remove tags, limit length)
+    const rawDesc = blog.content ? blog.content.replace(/<[^>]+>/g, '').substring(0, 150) + "..." : "Read this article on Furkan's Portfolio.";
+
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Social Meta Tags -->
+        <meta property="og:title" content="${blog.title}" />
+        <meta property="og:description" content="${rawDesc}" />
+        <meta property="og:image" content="${blog.image || 'https://furkanshakib.vercel.app/preview.png'}" />
+        <meta property="og:url" content="${targetUrl}" />
+        <meta property="og:type" content="article" />
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="${blog.title}">
+        <meta name="twitter:description" content="${rawDesc}">
+        <meta name="twitter:image" content="${blog.image || 'https://furkanshakib.vercel.app/preview.png'}">
+
+        <title>${blog.title}</title>
+
+        <!-- Immediate Client-Side Redirect -->
+        <script>
+            window.location.href = "${targetUrl}";
+        </script>
+      </head>
+      <body>
+        <p>Redirecting to article...</p>
+      </body>
+      </html>
+    `;
+
+    res.send(html);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
 });
 
 // 4. SKILLS
@@ -170,7 +224,7 @@ app.post('/api/profile', auth, async (req, res) => {
   if (req.body.bio) {
     req.body.bio = cleanHTML(req.body.bio);
   }
-  
+
   // Upsert: update if exists, insert if not
   const updated = await Profile.findOneAndUpdate({}, req.body, { new: true, upsert: true });
   res.json(updated);
