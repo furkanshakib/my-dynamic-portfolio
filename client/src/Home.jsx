@@ -30,30 +30,31 @@ function Home() {
   const [profile, setProfile] = useState(null); // 👈 NEW PROFILE STATE
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const API = "https://furkanshakib.onrender.com/api";
-        const [projRes, expRes, skillRes, profileRes] = await Promise.all([
-          axios.get(`${API}/projects`),
-          axios.get(`${API}/experience`),
-          axios.get(`${API}/skills`),
-          axios.get(`${API}/profile`)
-        ]);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const API = "https://furkanshakib.onrender.com/api";
+      const [projRes, expRes, skillRes, profileRes] = await Promise.all([
+        axios.get(`${API}/projects`),
+        axios.get(`${API}/experience`),
+        axios.get(`${API}/skills`),
+        axios.get(`${API}/profile`)
+      ]);
 
-        setProjects(projRes.data.reverse().slice(0, 4));
-        setExperience(expRes.data.reverse().slice(0, 3));
-        setSkills(skillRes.data);
-        setProfile(profileRes.data || null);
-        setTimeout(fixTextBreaking, 100);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+      setProjects(projRes.data.reverse().slice(0, 4));
+      setExperience(expRes.data.reverse().slice(0, 3));
+      setSkills(skillRes.data);
+      setProfile(profileRes.data || null);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+      // Run fix after content loads
+      setTimeout(fixTextBreaking, 200);
+    }
+  };
+  fetchData();
+}, []);
 
   // Styles
   const pageBg = isDark ? '#0f172a' : '#f8f9fa';
@@ -122,10 +123,22 @@ function Home() {
             }
           `}</style>
           <div
-            className="bio-content"
-            style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px', wordBreak: 'keep-all', overflowWrap: 'break-word' }}
-            dangerouslySetInnerHTML={{ __html: profile?.bio || "I’m Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka." }}
-          />
+  className="bio-content"
+  style={{ 
+    color: subText, 
+    fontSize: '1rem', 
+    lineHeight: '1.6', 
+    marginBottom: '20px',
+    wordBreak: 'normal',
+    overflowWrap: 'normal'
+  }}
+  dangerouslySetInnerHTML={{ 
+    __html: (profile?.bio || "I’m Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka.")
+      .replace(/overflow-wrap:\s*break-word/gi, 'overflow-wrap: normal')
+      .replace(/word-break:\s*keep-all/gi, 'word-break: normal')
+      .replace(/white-space:\s*normal/gi, '')
+  }}
+/>
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
             <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>
