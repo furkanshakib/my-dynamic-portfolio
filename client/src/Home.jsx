@@ -114,37 +114,41 @@ useEffect(() => {
           <img src={profile?.profilePicture || "/profile.png"} alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
           {/* Rich Text Bio */}
-          <style>{`
-            .bio-content p, .bio-content span, .bio-content li, .bio-content div { 
-             margin-bottom: 10px; 
-             word-break: keep-all;
-             overflow-wrap: break-word;
-              hyphens: auto;
-            }
-          `}</style>
+         <style>{`
+  .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
+  .bio-content li { margin-bottom: 5px; }
+  .bio-content p, .bio-content span, .bio-content strong, .bio-content em, .bio-content div { 
+    margin-bottom: 10px;
+    display: inline;
+  }
+  .bio-content {
+    word-spacing: normal;
+    white-space: normal;
+    text-align: left;
+    hyphens: none;
+  }
+  @media (max-width: 768px) {
+    .bio-content {
+      font-size: 0.95rem !important;
+      line-height: 1.7 !important;
+    }
+  }
+`}</style>
          <div
   className="bio-content"
   style={{ 
     color: subText, 
     fontSize: '1rem', 
     lineHeight: '1.6', 
-    marginBottom: '20px'
-  }}
-  ref={(el) => {
-    if (el) {
-      // Remove all inline styles from child elements after render
-      setTimeout(() => {
-        const allChildren = el.querySelectorAll('*');
-        allChildren.forEach(child => {
-          if (child.hasAttribute('style')) {
-            child.removeAttribute('style');
-          }
-        });
-      }, 0);
-    }
+    marginBottom: '20px',
+    maxWidth: '100%',
+    wordSpacing: 'normal'
   }}
   dangerouslySetInnerHTML={{ 
-    __html: profile?.bio || "I’m Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
+    __html: (profile?.bio || "A Social Science Graduate & Tech Enthusiast. I bridge the gap between social science and modern technology.")
+      .replace(/<strong style="[^"]*">/gi, '<strong>')
+      .replace(/<p style="[^"]*">/gi, '<p>')
+      .replace(/<span style="[^"]*">/gi, '<span>')
   }}
 />
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
