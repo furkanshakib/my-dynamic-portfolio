@@ -86,9 +86,11 @@ function Home() {
           .middle-col { grid-row: auto !important; } 
         }
         @media (max-width: 768px) {
-          .bento-grid { display: flex; flex-direction: column; gap: 20px; }
+          .bento-grid { display: flex; flex-direction: column; gap: 20px; padding: 0 15px; }
+          .bento-card { padding: 20px; } /* Reduce padding on mobile */
           .profile-box { flex-direction: column; text-align: center; }
           .profile-box img { width: 100% !important; height: auto !important; max-height: 350px; margin-bottom: 20px !important; }
+          .bio-content { width: 100%; max-width: 100%; word-break: break-word !important; } /* Ensure text wraps */
         }
       `}</style>
 
