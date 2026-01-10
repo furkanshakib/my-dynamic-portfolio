@@ -82,3 +82,21 @@ img {
   max-width: 100%;
   display: block;
 }
+/* NUCLEAR OPTION - Override ALL inline styles from React Quill */
+.bio-content[style],
+.bio-content *[style],
+.blog-content[style],
+.blog-content *[style],
+.project-content[style], 
+.project-content *[style],
+[class*="content"] *[style] {
+  word-break: keep-all !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+/* Target the exact issue - prevent word breaking in the middle */
+body * {
+  word-break: keep-all !important;
+  overflow-wrap: break-word !important;
+}
