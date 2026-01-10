@@ -1,3 +1,4 @@
+import { fixTextBreaking } from './fixTextBreaking';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -44,6 +45,7 @@ function Home() {
         setExperience(expRes.data.reverse().slice(0, 3));
         setSkills(skillRes.data);
         setProfile(profileRes.data || null);
+        setTimeout(fixTextBreaking, 100);
       } catch (error) {
         console.error(error);
       } finally {
