@@ -4,6 +4,52 @@ import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
 
+
+function ShareButtons({ title }) {
+  const url = window.location.href;
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const iconStyle = {
+    width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    border: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`, cursor: 'pointer', transition: 'all 0.2s',
+    background: isDark ? '#1e293b' : 'white', color: isDark ? '#f1f5f9' : '#333', textDecoration: 'none'
+  };
+
+  const shareLinks = [
+    { name: 'Copy Link', icon: '🔗', action: () => { navigator.clipboard.writeText(url); alert('Link copied!'); } },
+    { name: 'Facebook', icon: '📘', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
+    { name: 'WhatsApp', icon: '💬', href: `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + url)}` },
+    { name: 'LinkedIn', icon: '💼', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}` },
+    { name: 'Twitter', icon: '🐦', href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}` },
+  ];
+
+  return (
+    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '30px', paddingBottom: '20px', borderBottom: `1px solid ${isDark ? '#334155' : '#e2e8f0'}` }}>
+      <span style={{ fontSize: '0.9rem', fontWeight: 'bold', marginRight: '5px' }}>Share:</span>
+      {shareLinks.map(s => (
+        s.action ? (
+          <button key={s.name} onClick={s.action} title={s.name}
+            style={iconStyle}
+            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            {s.icon}
+          </button>
+        ) : (
+          <a key={s.name} href={s.href} target="_blank" rel="noreferrer" title={s.name}
+            style={iconStyle}
+            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            {s.icon}
+          </a>
+        )
+      ))}
+    </div>
+  );
+}
+
 function BlogPost() {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
@@ -46,9 +92,11 @@ function BlogPost() {
       <article style={{ maxWidth: '700px', margin: '0 auto', padding: '60px 20px' }}>
         {blog.image && <img src={blog.image} alt={blog.title} style={{ width: '100%', borderRadius: '10px', marginBottom: '30px' }} />}
         <h1 style={{ fontSize: '2.5rem', marginBottom: '10px', lineHeight: '1.2' }}>{blog.title}</h1>
-        <div style={{ marginBottom: '30px', opacity: 0.7 }}>
+        <div style={{ marginBottom: '20px', opacity: 0.7 }}>
           <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
+
+        <ShareButtons title={blog.title} />
 
         {/* Render the Cleaned HTML */}
         <div
