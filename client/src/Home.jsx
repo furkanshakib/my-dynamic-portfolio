@@ -79,19 +79,22 @@ function Home() {
         .bento-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
         .bento-card { background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; }
         
+        /* New Popout Styles */
+        .profile-popout { position: relative; height: 320px; display: flex; alignItems: flex-end; justifyContent: center; margin: 20px 0 30px 0; }
+        
         /* Mobile Layouts */
         @media (max-width: 1100px) {
           .bento-grid { grid-template-columns: 1fr 1fr; }
-          .profile-box { grid-column: span 2; flex-direction: row; align-items: center; gap: 30px; }
-          .profile-box img { width: 200px !important; height: 200px !important; margin-bottom: 0 !important; }
+          .profile-box { grid-column: span 2; flex-direction: row; align-items: center; gap: 40px; } 
+          .profile-popout { width: 300px; height: 300px; margin: 0; flex-shrink: 0; }
           .middle-col { grid-row: auto !important; } 
         }
         @media (max-width: 768px) {
           .bento-grid { display: flex; flex-direction: column; gap: 20px; padding: 0 15px; }
-          .bento-card { padding: 20px; } /* Reduce padding on mobile */
+          .bento-card { padding: 20px; } 
           .profile-box { flex-direction: column; text-align: center; }
-          .profile-box img { width: 100% !important; height: auto !important; max-height: 350px; margin-bottom: 20px !important; }
-          .bio-content { width: 100%; max-width: 100%; } /* Ensure text wraps correctly without splitting words */
+          .profile-popout { width: 100%; height: 280px; margin: 0 0 30px 0; }
+          .bio-content { width: 100%; max-width: 100%; } 
         }
       `}</style>
 
@@ -109,7 +112,40 @@ function Home() {
           variants={fadeUp}
           whileHover={hoverEffect} // 👈 Added Hover Here
         >
-          <img src={profile?.profilePicture || "/profile.png"} alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
+          {/* POP-OUT PHOTO EFFECT */}
+          <div className="profile-popout">
+            {/* 1. The Background Shape */}
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              width: '100%',
+              height: '180px', // The colored box height
+              background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)', // Vibrant gradient (matches example vibe)
+              borderRadius: '24px',
+              zIndex: 0,
+              boxShadow: '0 10px 30px rgba(255, 107, 107, 0.3)'
+            }}></div>
+
+            {/* 2. The Transparent Photo */}
+            <div style={{
+              position: 'relative',
+              zIndex: 1,
+              height: '100%',
+              display: 'flex',
+              alignItems: 'flex-end'
+            }}>
+              <img
+                src={profile?.profilePicture || "/profile.png"}
+                alt="Profile"
+                style={{
+                  height: '320px', // Total height allowing overlap
+                  width: 'auto',
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.2))' // Adds depth behind the person
+                }}
+              />
+            </div>
+          </div>
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
           {/* Rich Text Bio */}
           <style>{`
