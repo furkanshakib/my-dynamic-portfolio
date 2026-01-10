@@ -120,10 +120,10 @@ function Home() {
               bottom: 0,
               width: '100%',
               height: '180px', // The colored box height
-              background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)', // Vibrant gradient (matches example vibe)
+              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', // Blue gradient to match "Let's Talk"
               borderRadius: '24px',
               zIndex: 0,
-              boxShadow: '0 10px 30px rgba(255, 107, 107, 0.3)'
+              boxShadow: '0 10px 30px rgba(37, 99, 235, 0.3)'
             }}></div>
 
             {/* 2. The Transparent Photo */}
