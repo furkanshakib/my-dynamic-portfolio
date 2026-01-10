@@ -1,3 +1,15 @@
+/* ULTIMATE FIX - Override everything */
+* {
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+/* Allow breaking only between words when absolutely necessary */
+p, span, div {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: keep-all !important;
+}
 /* 1. TYPOGRAPHY RESET (The "Iron-Clad" Fix) */
 html, body, #root {
   width: 100%;

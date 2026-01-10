@@ -1,35 +1,32 @@
-// This script removes bad inline styles from React Quill content
 export const fixTextBreaking = () => {
-  // Target the bio content specifically
-  const bioContent = document.querySelector('.bio-content');
-  
-  if (bioContent) {
-    // Get all elements with inline styles
-    const elementsWithStyles = bioContent.querySelectorAll('[style]');
+  // Wait a bit for content to load
+  setTimeout(() => {
+    // Target ALL elements on the page
+    const allElements = document.querySelectorAll('*');
     
-    elementsWithStyles.forEach(el => {
-      // Get current style
-      const currentStyle = el.getAttribute('style');
-      
-      // Remove overflow-wrap: break-word and replace with normal
-      let newStyle = currentStyle
-        .replace(/overflow-wrap:\s*break-word/gi, 'overflow-wrap: normal')
-        .replace(/word-break:\s*keep-all/gi, 'word-break: normal')
-        .replace(/white-space:\s*normal/gi, 'white-space: normal');
-      
-      // Set the new style
-      el.setAttribute('style', newStyle);
-      
-      // Also set via style object to be sure
-      el.style.wordBreak = 'normal';
-      el.style.overflowWrap = 'normal';
-      el.style.whiteSpace = 'normal';
+    allElements.forEach(el => {
+      // Force remove bad styles directly
+      if (el.style) {
+        el.style.wordBreak = 'normal';
+        el.style.overflowWrap = 'normal';
+        el.style.whiteSpace = 'normal';
+        el.style.setProperty('word-break', 'normal', 'important');
+        el.style.setProperty('overflow-wrap', 'normal', 'important');
+      }
     });
-  }
-  
-  // Apply globally to catch all content
-  document.querySelectorAll('[style*="overflow-wrap"]').forEach(el => {
-    el.style.overflowWrap = 'normal';
-    el.style.wordBreak = 'normal';
-  });
+    
+    // Specifically target bio content
+    const bioElements = document.querySelectorAll('.bio-content, .bio-content *');
+    bioElements.forEach(el => {
+      if (el.hasAttribute('style')) {
+        let styleAttr = el.getAttribute('style');
+        // Remove the problematic styles from the attribute
+        styleAttr = styleAttr
+          .replace(/overflow-wrap:\s*[^;]+;?/gi, '')
+          .replace(/word-break:\s*[^;]+;?/gi, '')
+          .replace(/white-space:\s*[^;]+;?/gi, '');
+        el.setAttribute('style', styleAttr);
+      }
+    });
+  }, 100);
 };
