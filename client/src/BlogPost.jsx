@@ -5,53 +5,7 @@ import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
 import { Helmet } from 'react-helmet-async';
-
-function ShareButtons({ title, id }) {
-  // 🔗 SMART LINK: Points to Backend Proxy for correct preview
-  const smartLink = `https://furkanshakib.onrender.com/api/share/blogs/${id}`;
-
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
-  const iconStyle = {
-    width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    border: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`, cursor: 'pointer', transition: 'all 0.2s',
-    background: isDark ? '#1e293b' : 'white', color: isDark ? '#f1f5f9' : '#333', textDecoration: 'none'
-  };
-
-  const shareLinks = [
-    { name: 'Copy Link', icon: '🔗', action: () => { navigator.clipboard.writeText(smartLink); alert('Smart Link copied!'); } },
-    { name: 'Facebook', icon: '📘', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(smartLink)}` },
-    { name: 'WhatsApp', icon: '💬', href: `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + smartLink)}` },
-    { name: 'LinkedIn', icon: '💼', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(smartLink)}` },
-    { name: 'Twitter', icon: '🐦', href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(smartLink)}&text=${encodeURIComponent(title)}` },
-  ];
-
-  return (
-    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '30px', paddingBottom: '20px', borderBottom: `1px solid ${isDark ? '#334155' : '#e2e8f0'}` }}>
-      <span style={{ fontSize: '0.9rem', fontWeight: 'bold', marginRight: '5px' }}>Share:</span>
-      {shareLinks.map(s => (
-        s.action ? (
-          <button key={s.name} onClick={s.action} title={s.name}
-            style={iconStyle}
-            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            {s.icon}
-          </button>
-        ) : (
-          <a key={s.name} href={s.href} target="_blank" rel="noreferrer" title={s.name}
-            style={iconStyle}
-            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            {s.icon}
-          </a>
-        )
-      ))}
-    </div>
-  );
-}
+import ShareButtons from './ShareButtons';
 
 function BlogPost() {
   const { id } = useParams();

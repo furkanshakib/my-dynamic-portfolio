@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useTheme } from './ThemeContext';
+import ShareButtons from './ShareButtons';
 
 function BlogPage() {
   const [blogs, setBlogs] = useState([]);
@@ -44,7 +45,10 @@ function BlogPage() {
                   {/* 👇 FIXED: Using stripHtml to fix &nbsp; issues */}
                   {stripHtml(blog.content).substring(0, 100)}...
                 </div>
-                <Link to={`/blogs/${blog._id}`} style={{ color: '#2563eb', fontWeight: 'bold', textDecoration: 'none' }}>Read Article →</Link>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
+                  <Link to={`/blogs/${blog._id}`} style={{ color: '#2563eb', fontWeight: 'bold', textDecoration: 'none' }}>Read Article →</Link>
+                  <ShareButtons title={blog.title} id={blog._id} compact={true} />
+                </div>
               </div>
             </div>
           ))}
