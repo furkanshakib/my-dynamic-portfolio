@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import DefaultEditor from 'react-simple-wysiwyg';
 import { useTheme } from './ThemeContext';
 
 function PortfolioManager() {
@@ -44,7 +43,13 @@ function PortfolioManager() {
     axios.get(`${API_BASE}/experience`).then(res => setExperiences(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/blogs`).then(res => setBlogs(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/skills`).then(res => setSkills(res.data.reverse())).catch(console.error);
-    axios.get(`${API_BASE}/profile`).then(res => { if (res.data) setProfile(res.data); }).catch(console.error);
+    axios.get(`${API_BASE}/profile`).then(res => { 
+      if (res.data) {
+        // Strip HTML tags when loading for editing
+        const cleanBio = res.data.bio ? res.data.bio.replace(/<[^>]*>/g, '') : '';
+        setProfile({...res.data, bio: cleanBio}); 
+      }
+    }).catch(console.error);
   };
 
   const resetForms = () => {
@@ -73,6 +78,38 @@ function PortfolioManager() {
     };
   };
 
+  // Helper function to wrap selected text with HTML tags
+  const wrapSelection = (tag, textareaRef) => {
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    
+    if (!selectedText) {
+      alert("Please select some text first!");
+      return;
+    }
+
+    const before = textarea.value.substring(0, start);
+    const after = textarea.value.substring(end);
+    const newText = `${before}<${tag}>${selectedText}</${tag}>${after}`;
+    
+    return newText;
+  };
+
+  // Bio formatting functions
+  const bioTextareaRef = React.useRef(null);
+  
+  const makeBold = () => {
+    const newBio = wrapSelection('strong', bioTextareaRef);
+    if (newBio) setProfile({ ...profile, bio: newBio });
+  };
+
+  const makeItalic = () => {
+    const newBio = wrapSelection('em', bioTextareaRef);
+    if (newBio) setProfile({ ...profile, bio: newBio });
+  };
+
   // --- SUBMIT HANDLERS ---
   const handleSaveProject = () => {
     const apiCall = editingId ? axios.put(`${API_BASE}/projects/${editingId}`, newProject) : axios.post(`${API_BASE}/projects`, newProject);
@@ -99,6 +136,7 @@ function PortfolioManager() {
   };
 
   const handleSaveProfile = () => {
+    // Save bio with HTML tags intact
     axios.post(`${API_BASE}/profile`, profile)
       .then(() => alert("✅ Profile Updated!"))
       .catch(err => alert("❌ Error: " + err.message));
@@ -128,15 +166,7 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: activeColor, color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' };
   const inputStyle = { padding: '12px', borderRadius: '8px', border: `1px solid ${border}`, background: inputBg, color: text, width: '100%', marginBottom: '15px', outline: 'none' };
   const fileInputStyle = { ...inputStyle, padding: '10px', background: isDark ? '#1e293b' : '#fff' };
-
-  // Editor wrapper style
-  const editorStyle = {
-    border: `1px solid ${border}`,
-    borderRadius: '8px',
-    overflow: 'hidden',
-    marginBottom: '20px',
-    minHeight: '200px'
-  };
+  const textareaStyle = { ...inputStyle, minHeight: '150px', resize: 'vertical', fontFamily: 'inherit', fontSize: '1rem', lineHeight: '1.6' };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Inter', sans-serif" }}>
@@ -199,9 +229,12 @@ function PortfolioManager() {
               {newProject.image && <img src={newProject.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '6px', marginBottom: '15px', border: `1px solid ${border}` }} />}
 
               <input placeholder="Project Link" value={newProject.link} onChange={e => setNewProject({ ...newProject, link: e.target.value })} style={inputStyle} />
-              <div style={editorStyle}>
-                <DefaultEditor value={newProject.description} onChange={e => setNewProject({ ...newProject, description: e.target.value })} />
-              </div>
+              <textarea 
+                placeholder="Describe your project..." 
+                value={newProject.description} 
+                onChange={e => setNewProject({ ...newProject, description: e.target.value })} 
+                style={textareaStyle} 
+              />
               <button onClick={handleSaveProject} style={{ ...btnStyle, width: '100%' }}>{editingId ? "Update Project" : "Add Project"}</button>
             </div>
 
@@ -232,9 +265,12 @@ function PortfolioManager() {
               <select value={newExp.type} onChange={e => setNewExp({ ...newExp, type: e.target.value })} style={inputStyle}>
                 <option value="job">Job Experience</option><option value="education">Education</option>
               </select>
-              <div style={editorStyle}>
-                <DefaultEditor value={newExp.description} onChange={e => setNewExp({ ...newExp, description: e.target.value })} />
-              </div>
+              <textarea 
+                placeholder="Description..." 
+                value={newExp.description} 
+                onChange={e => setNewExp({ ...newExp, description: e.target.value })} 
+                style={textareaStyle} 
+              />
               <button onClick={handleSaveExp} style={{ ...btnStyle, width: '100%' }}>{editingId ? "Update Item" : "Add Item"}</button>
             </div>
 
@@ -271,9 +307,12 @@ function PortfolioManager() {
 
               {newBlog.image && <img src={newBlog.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '6px', marginBottom: '15px', border: `1px solid ${border}` }} />}
 
-              <div style={editorStyle}>
-                <DefaultEditor value={newBlog.content} onChange={e => setNewBlog({ ...newBlog, content: e.target.value })} />
-              </div>
+              <textarea 
+                placeholder="Write your article content..." 
+                value={newBlog.content} 
+                onChange={e => setNewBlog({ ...newBlog, content: e.target.value })} 
+                style={{ ...textareaStyle, minHeight: '300px' }} 
+              />
               <button onClick={handleSaveBlog} style={{ ...btnStyle, width: '100%', opacity: loading ? 0.7 : 1 }} disabled={loading}>
                 {loading ? "Publishing..." : (editingId ? "Update Article" : "Publish Article")}
               </button>
@@ -336,11 +375,26 @@ function PortfolioManager() {
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Bio / Description</label>
-                <div style={editorStyle}>
-                  <DefaultEditor 
-                    value={profile.bio || ''} 
-                    onChange={e => setProfile({ ...profile, bio: e.target.value })}
-                  />
+                <div style={{ marginBottom: '10px', display: 'flex', gap: '10px' }}>
+                  <button onClick={makeBold} style={{ ...btnStyle, padding: '8px 15px', background: '#64748b' }}>
+                    <strong>B</strong> Bold
+                  </button>
+                  <button onClick={makeItalic} style={{ ...btnStyle, padding: '8px 15px', background: '#64748b' }}>
+                    <em>I</em> Italic
+                  </button>
+                  <span style={{ fontSize: '0.85rem', opacity: 0.6, alignSelf: 'center', marginLeft: '10px' }}>
+                    Select text first, then click formatting button
+                  </span>
+                </div>
+                <textarea 
+                  ref={bioTextareaRef}
+                  placeholder="I'm Your Name, a professional description..." 
+                  value={profile.bio || ''} 
+                  onChange={e => setProfile({ ...profile, bio: e.target.value })} 
+                  style={textareaStyle} 
+                />
+                <div style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '5px' }}>
+                  💡 Tip: Type your bio, select the text you want to format, then click Bold or Italic
                 </div>
               </div>
 
