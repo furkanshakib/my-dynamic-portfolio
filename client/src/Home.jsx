@@ -1,4 +1,4 @@
-import { fixTextBreaking } from './fixTextBreaking';
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -30,31 +30,29 @@ function Home() {
   const [profile, setProfile] = useState(null); // 👈 NEW PROFILE STATE
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const API = "https://furkanshakib.onrender.com/api";
-      const [projRes, expRes, skillRes, profileRes] = await Promise.all([
-        axios.get(`${API}/projects`),
-        axios.get(`${API}/experience`),
-        axios.get(`${API}/skills`),
-        axios.get(`${API}/profile`)
-      ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const API = "https://furkanshakib.onrender.com/api";
+        const [projRes, expRes, skillRes, profileRes] = await Promise.all([
+          axios.get(`${API}/projects`),
+          axios.get(`${API}/experience`),
+          axios.get(`${API}/skills`),
+          axios.get(`${API}/profile`)
+        ]);
 
-      setProjects(projRes.data.reverse().slice(0, 4));
-      setExperience(expRes.data.reverse().slice(0, 3));
-      setSkills(skillRes.data);
-      setProfile(profileRes.data || null);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-      // Run fix after content loads
-      setTimeout(fixTextBreaking, 200);
-    }
-  };
-  fetchData();
-}, []);
+        setProjects(projRes.data.reverse().slice(0, 4));
+        setExperience(expRes.data.reverse().slice(0, 3));
+        setSkills(skillRes.data);
+        setProfile(profileRes.data || null);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   // Styles
   const pageBg = isDark ? '#0f172a' : '#f8f9fa';
@@ -114,7 +112,7 @@ useEffect(() => {
           <img src={profile?.profilePicture || "/profile.png"} alt="Profile" style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '16px', marginBottom: '20px', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
           {/* Rich Text Bio */}
-      <style>{`
+          <style>{`
   .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
   .bio-content li { margin-bottom: 5px; }
   .bio-content * {
@@ -122,25 +120,21 @@ useEffect(() => {
     overflow-wrap: anywhere !important;
   }
 `}</style>
-<div
-  className="bio-content"
-  style={{ 
-    color: subText, 
-    fontSize: '1rem', 
-    lineHeight: '1.6', 
-    marginBottom: '20px',
-    textAlign: 'left',
-    wordWrap: 'break-word',
-    overflowWrap: 'anywhere'
-  }}
-  dangerouslySetInnerHTML={{
-    __html: profile?.bio 
-      ? profile.bio
-          .replace(/\s+style="[^"]*"/gi, '') // Remove ALL style attributes
-          .replace(/\s+style='[^']*'/gi, '') // Remove ALL style attributes (single quotes)
-      : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
-  }}
-/>
+          <div
+            className="bio-content"
+            style={{
+              color: subText,
+              fontSize: '1rem',
+              lineHeight: '1.6',
+              marginBottom: '20px',
+              textAlign: 'left',
+            }}
+            dangerouslySetInnerHTML={{
+              __html: profile?.bio
+                ? profile.bio
+                : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
+            }}
+          />
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
             <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>

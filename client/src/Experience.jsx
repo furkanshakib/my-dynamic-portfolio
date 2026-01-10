@@ -29,14 +29,6 @@ function Experience() {
   const jobBadge = { bg: isDark ? '#1e3a8a' : '#eff6ff', text: isDark ? '#60a5fa' : '#2563eb' };
   const eduBadge = { bg: isDark ? '#064e3b' : '#ecfdf5', text: isDark ? '#34d399' : '#059669' };
 
-  // 🧼 HELPER: Aggressively strip styles AND classes
-  const cleanHTML = (html) => {
-    if (!html) return "";
-    return html
-      .replace(/style="[^"]*"/g, "")  // Remove inline styles
-      .replace(/class="[^"]*"/g, ""); // Remove inline classes (like ql-align-justify)
-  };
-
   const renderTimeline = (items, isEdu) => (
     <div style={{ position: 'relative', paddingLeft: '20px', marginTop: '30px' }}>
       <div style={{ position: 'absolute', left: '29px', top: '10px', bottom: '0', width: '2px', background: timelineLine, borderRadius: '2px' }}></div>
@@ -63,11 +55,10 @@ function Experience() {
               <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem', color: cardTitle }}>{item.title}</h3>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: cardSubtitle, fontWeight: '500' }}>{item.company}</h4>
 
-              {/* 👇 APPLIED THE FIX CLASS HERE */}
               <div
                 className="fix-text-layout"
-                style={{ color: cardDesc, fontSize: '1rem', wordBreak: 'normal', overflowWrap: 'break-word' }}
-                dangerouslySetInnerHTML={{ __html: cleanHTML(item.description) }}
+                style={{ color: cardDesc, fontSize: '1rem' }}
+                dangerouslySetInnerHTML={{ __html: item.description }}
               ></div>
 
             </div>

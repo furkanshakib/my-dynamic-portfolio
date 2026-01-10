@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Editor } from 'react-draft-wysiwyg';
-import { EditorState, ContentState, convertToRaw, convertFromHTML } from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useTheme } from './ThemeContext';
+import TiptapEditor from './TiptapEditor';
 
 function PortfolioManager() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -22,12 +19,6 @@ function PortfolioManager() {
   const [blogs, setBlogs] = useState([]);
   const [skills, setSkills] = useState([]);
   const [profile, setProfile] = useState({ profilePicture: '', name: '', bio: '' });
-
-  // --- EDITOR STATES ---
-  const [bioEditorState, setBioEditorState] = useState(EditorState.createEmpty());
-  const [projectEditorState, setProjectEditorState] = useState(EditorState.createEmpty());
-  const [expEditorState, setExpEditorState] = useState(EditorState.createEmpty());
-  const [blogEditorState, setBlogEditorState] = useState(EditorState.createEmpty());
 
   // --- INPUT STATES ---
   const [newProject, setNewProject] = useState({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
@@ -53,19 +44,8 @@ function PortfolioManager() {
     axios.get(`${API_BASE}/experience`).then(res => setExperiences(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/blogs`).then(res => setBlogs(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/skills`).then(res => setSkills(res.data.reverse())).catch(console.error);
-    axios.get(`${API_BASE}/profile`).then(res => { 
-      if (res.data) {
-        setProfile(res.data);
-        // Load bio into editor
-        if (res.data.bio) {
-          const blocksFromHTML = convertFromHTML(res.data.bio);
-          const contentState = ContentState.createFromBlockArray(
-            blocksFromHTML.contentBlocks,
-            blocksFromHTML.entityMap
-          );
-          setBioEditorState(EditorState.createWithContent(contentState));
-        }
-      }
+    axios.get(`${API_BASE}/profile`).then(res => {
+      if (res.data) setProfile(res.data);
     }).catch(console.error);
   };
 
@@ -75,9 +55,6 @@ function PortfolioManager() {
     setNewExp({ title: '', company: '', year: '', description: '', type: 'job' });
     setNewBlog({ title: '', category: 'Article', image: '', content: '' });
     setNewSkill({ name: '', icon: '' });
-    setProjectEditorState(EditorState.createEmpty());
-    setExpEditorState(EditorState.createEmpty());
-    setBlogEditorState(EditorState.createEmpty());
   };
 
   const handleImageUpload = (e, type) => {
@@ -100,24 +77,21 @@ function PortfolioManager() {
 
   // --- SUBMIT HANDLERS ---
   const handleSaveProject = () => {
-    const description = draftToHtml(convertToRaw(projectEditorState.getCurrentContent()));
-    const projectData = { ...newProject, description };
+    const projectData = { ...newProject };
     const apiCall = editingId ? axios.put(`${API_BASE}/projects/${editingId}`, projectData) : axios.post(`${API_BASE}/projects`, projectData);
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
 
   const handleSaveExp = () => {
-    const description = draftToHtml(convertToRaw(expEditorState.getCurrentContent()));
-    const expData = { ...newExp, description };
+    const expData = { ...newExp };
     const apiCall = editingId ? axios.put(`${API_BASE}/experience/${editingId}`, expData) : axios.post(`${API_BASE}/experience`, expData);
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
 
   const handleSaveBlog = () => {
-    const content = draftToHtml(convertToRaw(blogEditorState.getCurrentContent()));
-    if (!newBlog.title || !content) return alert("Title and Content required!");
+    if (!newBlog.title || !newBlog.content) return alert("Title and Content required!");
     setLoading(true);
-    const blogData = { ...newBlog, content };
+    const blogData = { ...newBlog };
     const apiCall = editingId ? axios.put(`${API_BASE}/blogs/${editingId}`, blogData) : axios.post(`${API_BASE}/blogs`, blogData);
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Published!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message)).finally(() => setLoading(false));
   };
@@ -130,9 +104,7 @@ function PortfolioManager() {
   };
 
   const handleSaveProfile = () => {
-    const bio = draftToHtml(convertToRaw(bioEditorState.getCurrentContent()));
-    const profileData = { ...profile, bio };
-    axios.post(`${API_BASE}/profile`, profileData)
+    axios.post(`${API_BASE}/profile`, profile)
       .then(() => alert("✅ Profile Updated!"))
       .catch(err => alert("❌ Error: " + err.message));
   };
@@ -141,41 +113,16 @@ function PortfolioManager() {
     if (window.confirm("Delete this?")) axios.delete(`${API_BASE}/${type}/${id}`).then(fetchData);
   };
 
-  // Load content into editor when editing
   const handleEdit = (type, item) => {
     setEditingId(item._id);
     window.scrollTo(0, 0);
-    
+
     if (type === 'project') {
       setNewProject(item);
-      if (item.description) {
-        const blocksFromHTML = convertFromHTML(item.description);
-        const contentState = ContentState.createFromBlockArray(
-          blocksFromHTML.contentBlocks,
-          blocksFromHTML.entityMap
-        );
-        setProjectEditorState(EditorState.createWithContent(contentState));
-      }
     } else if (type === 'experience') {
       setNewExp(item);
-      if (item.description) {
-        const blocksFromHTML = convertFromHTML(item.description);
-        const contentState = ContentState.createFromBlockArray(
-          blocksFromHTML.contentBlocks,
-          blocksFromHTML.entityMap
-        );
-        setExpEditorState(EditorState.createWithContent(contentState));
-      }
     } else if (type === 'blog') {
       setNewBlog(item);
-      if (item.content) {
-        const blocksFromHTML = convertFromHTML(item.content);
-        const contentState = ContentState.createFromBlockArray(
-          blocksFromHTML.contentBlocks,
-          blocksFromHTML.entityMap
-        );
-        setBlogEditorState(EditorState.createWithContent(contentState));
-      }
     }
   };
 
@@ -199,26 +146,6 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: activeColor, color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' };
   const inputStyle = { padding: '12px', borderRadius: '8px', border: `1px solid ${border}`, background: inputBg, color: text, width: '100%', marginBottom: '15px', outline: 'none' };
   const fileInputStyle = { ...inputStyle, padding: '10px', background: isDark ? '#1e293b' : '#fff' };
-
-  const editorWrapperStyle = {
-    border: `1px solid ${border}`,
-    borderRadius: '8px',
-    marginBottom: '20px',
-    background: 'white'
-  };
-
-  const editorToolbarConfig = {
-    options: ['inline', 'list', 'textAlign', 'link', 'remove'],
-    inline: {
-      options: ['bold', 'italic', 'underline']
-    },
-    list: {
-      options: ['unordered', 'ordered']
-    },
-    textAlign: {
-      options: ['left', 'center', 'right']
-    }
-  };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Inter', sans-serif" }}>
@@ -281,17 +208,15 @@ function PortfolioManager() {
               {newProject.image && <img src={newProject.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '6px', marginBottom: '15px', border: `1px solid ${border}` }} />}
 
               <input placeholder="Project Link" value={newProject.link} onChange={e => setNewProject({ ...newProject, link: e.target.value })} style={inputStyle} />
-              
-              <div style={editorWrapperStyle}>
-                <Editor
-                  editorState={projectEditorState}
-                  onEditorStateChange={setProjectEditorState}
-                  toolbar={editorToolbarConfig}
+
+              <div style={{ marginBottom: '20px' }}>
+                <TiptapEditor
+                  content={newProject.description}
+                  onChange={(html) => setNewProject({ ...newProject, description: html })}
                   placeholder="Describe your project..."
-                  editorStyle={{ minHeight: '150px', padding: '10px' }}
                 />
               </div>
-              
+
               <button onClick={handleSaveProject} style={{ ...btnStyle, width: '100%' }}>{editingId ? "Update Project" : "Add Project"}</button>
             </div>
 
@@ -322,17 +247,15 @@ function PortfolioManager() {
               <select value={newExp.type} onChange={e => setNewExp({ ...newExp, type: e.target.value })} style={inputStyle}>
                 <option value="job">Job Experience</option><option value="education">Education</option>
               </select>
-              
-              <div style={editorWrapperStyle}>
-                <Editor
-                  editorState={expEditorState}
-                  onEditorStateChange={setExpEditorState}
-                  toolbar={editorToolbarConfig}
-                  placeholder="Description..."
-                  editorStyle={{ minHeight: '150px', padding: '10px' }}
+
+              <div style={{ marginBottom: '20px' }}>
+                <TiptapEditor
+                  content={newExp.description}
+                  onChange={(html) => setNewExp({ ...newExp, description: html })}
+                  placeholder="Job/Education description..."
                 />
               </div>
-              
+
               <button onClick={handleSaveExp} style={{ ...btnStyle, width: '100%' }}>{editingId ? "Update Item" : "Add Item"}</button>
             </div>
 
@@ -369,16 +292,14 @@ function PortfolioManager() {
 
               {newBlog.image && <img src={newBlog.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '6px', marginBottom: '15px', border: `1px solid ${border}` }} />}
 
-              <div style={editorWrapperStyle}>
-                <Editor
-                  editorState={blogEditorState}
-                  onEditorStateChange={setBlogEditorState}
-                  toolbar={editorToolbarConfig}
+              <div style={{ marginBottom: '20px' }}>
+                <TiptapEditor
+                  content={newBlog.content}
+                  onChange={(html) => setNewBlog({ ...newBlog, content: html })}
                   placeholder="Write your article content..."
-                  editorStyle={{ minHeight: '300px', padding: '10px' }}
                 />
               </div>
-              
+
               <button onClick={handleSaveBlog} style={{ ...btnStyle, width: '100%', opacity: loading ? 0.7 : 1 }} disabled={loading}>
                 {loading ? "Publishing..." : (editingId ? "Update Article" : "Publish Article")}
               </button>
@@ -441,15 +362,11 @@ function PortfolioManager() {
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Bio / Description</label>
-                <div style={editorWrapperStyle}>
-                  <Editor
-                    editorState={bioEditorState}
-                    onEditorStateChange={setBioEditorState}
-                    toolbar={editorToolbarConfig}
-                    placeholder="I'm Your Name, a professional description..."
-                    editorStyle={{ minHeight: '150px', padding: '10px' }}
-                  />
-                </div>
+                <TiptapEditor
+                  content={profile.bio}
+                  onChange={(html) => setProfile({ ...profile, bio: html })}
+                  placeholder="I'm Your Name, a professional description..."
+                />
               </div>
 
               <button onClick={handleSaveProfile} style={{ ...btnStyle, width: '100%' }}>Save Profile</button>

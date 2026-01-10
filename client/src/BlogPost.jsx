@@ -16,25 +16,15 @@ function BlogPost() {
       .catch(console.error);
   }, [id]);
 
-  if (!blog) return <div style={{ padding: '50px', textAlign: 'center', color: isDark?'white':'black' }}>Loading...</div>;
+  if (!blog) return <div style={{ padding: '50px', textAlign: 'center', color: isDark ? 'white' : 'black' }}>Loading...</div>;
 
   const pageBg = isDark ? '#0f172a' : '#fff';
   const text = isDark ? '#f1f5f9' : '#333';
 
-  // 🧼 DEEP CLEANER: Removes hidden 'class' and 'style' attributes saved by the editor
-  const cleanHTML = (html) => {
-    if (!html) return "";
-    return html
-      .replace(/\sclass="[^"]*"/g, "")  // Remove class="..."
-      .replace(/\sstyle="[^"]*"/g, "")  // Remove style="..."
-      .replace(/\sclass='[^']*'/g, "")  // Remove class='...'
-      .replace(/\sstyle='[^']*'/g, ""); // Remove style='...'
-  };
-
   return (
     <div style={{ minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Segoe UI', sans-serif" }}>
       <Navbar />
-      
+
       <style>{`
         /* Local CSS to ensure images and spacing look good */
         .blog-content img {
@@ -57,13 +47,13 @@ function BlogPost() {
         {blog.image && <img src={blog.image} alt={blog.title} style={{ width: '100%', borderRadius: '10px', marginBottom: '30px' }} />}
         <h1 style={{ fontSize: '2.5rem', marginBottom: '10px', lineHeight: '1.2' }}>{blog.title}</h1>
         <div style={{ marginBottom: '30px', opacity: 0.7 }}>
-            <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
+          <span>{new Date(blog.date).toLocaleDateString()}</span> • <span>{blog.category}</span>
         </div>
-        
+
         {/* Render the Cleaned HTML */}
-        <div 
-          className="blog-content" 
-          dangerouslySetInnerHTML={{ __html: cleanHTML(blog.content) }}
+        <div
+          className="blog-content"
+          dangerouslySetInnerHTML={{ __html: blog.content }}
         ></div>
       </article>
     </div>

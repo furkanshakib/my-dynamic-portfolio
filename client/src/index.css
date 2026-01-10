@@ -1,114 +1,172 @@
-/* ULTIMATE FIX - Override everything */
-* {
-  word-break: normal !important;
-  overflow-wrap: normal !important;
-}
-
-/* Allow breaking only between words when absolutely necessary */
-p, span, div {
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
-  word-break: keep-all !important;
-}
-/* 1. TYPOGRAPHY RESET (The "Iron-Clad" Fix) */
-html, body, #root {
+/* Standard Reset & Typography */
+html,
+body,
+#root {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  word-break: keep-all !important; 
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
   line-height: 1.6;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   color: inherit;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
-/* Force all text elements to not break words */
-p, span, div, h1, h2, h3, h4, h5, h6, li, a, strong, em, b, i, u {
-  word-break: keep-all !important; 
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
-}
-
-/* 2. REACT QUILL OUTPUT FIX - This is the KEY fix! */
-/* Target any content that comes from React Quill */
-.ql-editor p,
-.ql-editor span,
-.ql-editor div,
-.ql-editor strong,
-.ql-editor em,
-.ql-editor *,
-[class*="bio-content"] *,
-[class*="blog-content"] *,
-[class*="project-content"] *,
-[class*="description"] *,
-.rendered-content *,
-.rich-text * {
-  word-break: keep-all !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
-  hyphens: auto !important;
-}
-
-/* 3. CUSTOM SCROLLBAR */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* 4. EDITOR FIXES (Only for the editing interface) */
-.ql-editor {
-  word-break: keep-all !important; 
-  overflow-wrap: break-word !important;
-  min-height: 150px;
-}
-.ql-container {
-  font-family: 'Inter', sans-serif !important;
-  font-size: 1rem !important;
-}
-
-/* 5. UTILITIES */
+/* Utilities */
 * {
   box-sizing: border-box;
 }
+
 a {
   text-decoration: none;
   color: inherit;
 }
+
 button {
   font-family: inherit;
 }
+
 img {
   max-width: 100%;
   display: block;
 }
-/* NUCLEAR OPTION - Override ALL inline styles from React Quill */
-.bio-content[style],
-.bio-content *[style],
-.blog-content[style],
-.blog-content *[style],
-.project-content[style], 
-.project-content *[style],
-[class*="content"] *[style] {
-  word-break: keep-all !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Target the exact issue - prevent word breaking in the middle */
-body * {
-  word-break: keep-all !important;
-  overflow-wrap: break-word !important;
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* --- RICH TEXT STYLES (Editor & Display) --- */
+
+/* Editor Container Specifics */
+.ProseMirror {
+  outline: none;
+  min-height: 100px;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Shared Typography for Rich Text Content */
+.ProseMirror,
+.fix-text-layout,
+.bio-content,
+.blog-content,
+.project-content {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Lists */
+.ProseMirror ul,
+.fix-text-layout ul,
+.bio-content ul,
+.blog-content ul,
+.project-content ul,
+.ProseMirror ol,
+.fix-text-layout ol,
+.bio-content ol,
+.blog-content ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+  list-style-position: outside;
+}
+
+.ProseMirror ul,
+.fix-text-layout ul,
+.bio-content ul,
+.blog-content ul,
+.project-content ul {
+  list-style-type: disc;
+}
+
+.ProseMirror ol,
+.fix-text-layout ol,
+.bio-content ol,
+.blog-content ol,
+.project-content ol {
+  list-style-type: decimal;
+}
+
+/* Headings */
+.ProseMirror h1,
+.fix-text-layout h1,
+.bio-content h1,
+.blog-content h1,
+.project-content h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.6em 0;
+  line-height: 1.2;
+}
+
+.ProseMirror h2,
+.fix-text-layout h2,
+.bio-content h2,
+.blog-content h2,
+.project-content h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.5em 0;
+  line-height: 1.3;
+}
+
+/* Blockquotes */
+.ProseMirror blockquote,
+.fix-text-layout blockquote,
+.bio-content blockquote,
+.blog-content blockquote,
+.project-content blockquote {
+  border-left: 4px solid #cbd5e1;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Links */
+.ProseMirror a,
+.fix-text-layout a,
+.bio-content a,
+.blog-content a,
+.project-content a {
+  color: #2563eb;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ProseMirror a:hover,
+.fix-text-layout a:hover,
+.bio-content a:hover,
+.blog-content a:hover,
+.project-content a:hover {
+  text-decoration: none;
+}
+
+/* Paragraphs */
+.ProseMirror p,
+.fix-text-layout p,
+.bio-content p,
+.blog-content p,
+.project-content p {
+  margin-bottom: 1em;
 }
