@@ -90,7 +90,7 @@ function Home() {
           .bento-card { padding: 20px; } /* Reduce padding on mobile */
           .profile-box { flex-direction: column; text-align: center; }
           .profile-box img { width: 100% !important; height: auto !important; max-height: 350px; margin-bottom: 20px !important; }
-          .bio-content { width: 100%; max-width: 100%; word-break: break-word !important; } /* Ensure text wraps */
+          .bio-content { width: 100%; max-width: 100%; } /* Ensure text wraps correctly without splitting words */
         }
       `}</style>
 
@@ -112,20 +112,17 @@ function Home() {
           <h1 style={{ fontSize: '2rem', margin: '0 0 10px 0' }}>{profile?.name || "Furkan Shakib"} 👋</h1>
           {/* Rich Text Bio */}
           <style>{`
-            .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
-            .bio-content li { margin-bottom: 5px; }
             .bio-content p, .bio-content span, .bio-content li, .bio-content div { 
-              margin-bottom: 10px; 
-              word-break: normal !important;
-              overflow-wrap: break-word !important;
-              white-space: normal !important;
-              hyphens: none !important;
+             margin-bottom: 10px; 
+             word-break: keep-all;
+             overflow-wrap: break-word;
+              hyphens: auto;
             }
           `}</style>
           <div
             className="bio-content"
-            style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px', wordBreak: 'normal', overflowWrap: 'break-word' }}
-            dangerouslySetInnerHTML={{ __html: profile?.bio || "A Social Science Graduate & Tech Enthusiast. I bridge the gap between social science and modern technology." }}
+            style={{ color: subText, fontSize: '1rem', lineHeight: '1.6', marginBottom: '20px', wordBreak: 'keep-all', overflowWrap: 'break-word' }}
+            dangerouslySetInnerHTML={{ __html: profile?.bio || "I’m Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka." }}
           />
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
