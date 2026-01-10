@@ -145,6 +145,33 @@ app.put('/api/blogs/:id', auth, async (req, res) => {
   res.json(updated);
 });
 
+// 🖼️ IMAGE PROXY: Serve Base64 images as real Files
+app.get('/api/blogs/:id/image', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog || !blog.image) return res.status(404).send("Image not found");
+
+    // Expecting format: "data:image/png;base64,iVBORw0KGgo..."
+    const matches = blog.image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+
+    if (!matches || matches.length !== 3) {
+      return res.status(400).send('Invalid image string');
+    }
+
+    const type = matches[1];
+    const buffer = Buffer.from(matches[2], 'base64');
+
+    res.writeHead(200, {
+      'Content-Type': type,
+      'Content-Length': buffer.length
+    });
+    res.end(buffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 // 🌟 SMART SHARE LINK: Server-Side Rendering for Social Previews
 app.get('/api/share/blogs/:id', async (req, res) => {
   try {
@@ -155,6 +182,9 @@ app.get('/api/share/blogs/:id', async (req, res) => {
     // Note: In production, this should be the deployed frontend URL (e.g., https://furkanshakib.vercel.app/blogs/...)
     // For now, we assume standard routing
     const targetUrl = `https://furkanshakib.vercel.app/blogs/${req.params.id}`;
+
+    // Use the PROXY URL for the image
+    const imageUrl = blog.image ? `https://furkanshakib.onrender.com/api/blogs/${blog._id}/image` : 'https://furkanshakib.vercel.app/preview.png';
 
     // Clean HTML for description (remove tags, limit length)
     const rawDesc = blog.content ? blog.content.replace(/<[^>]+>/g, '').substring(0, 150) + "..." : "Read this article on Furkan's Portfolio.";
@@ -169,14 +199,14 @@ app.get('/api/share/blogs/:id', async (req, res) => {
         <!-- Social Meta Tags -->
         <meta property="og:title" content="${blog.title}" />
         <meta property="og:description" content="${rawDesc}" />
-        <meta property="og:image" content="${blog.image || 'https://furkanshakib.vercel.app/preview.png'}" />
+        <meta property="og:image" content="${imageUrl}" />
         <meta property="og:url" content="${targetUrl}" />
         <meta property="og:type" content="article" />
 
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="${blog.title}">
         <meta name="twitter:description" content="${rawDesc}">
-        <meta name="twitter:image" content="${blog.image || 'https://furkanshakib.vercel.app/preview.png'}">
+        <meta name="twitter:image" content="${imageUrl}">
 
         <title>${blog.title}</title>
 
