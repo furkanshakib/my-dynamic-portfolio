@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Editor } from 'react-draft-wysiwyg';
+import { EditorState, ContentState, convertToRaw, convertFromHTML } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useTheme } from './ThemeContext';
 
 function PortfolioManager() {
@@ -18,6 +22,12 @@ function PortfolioManager() {
   const [blogs, setBlogs] = useState([]);
   const [skills, setSkills] = useState([]);
   const [profile, setProfile] = useState({ profilePicture: '', name: '', bio: '' });
+
+  // --- EDITOR STATES ---
+  const [bioEditorState, setBioEditorState] = useState(EditorState.createEmpty());
+  const [projectEditorState, setProjectEditorState] = useState(EditorState.createEmpty());
+  const [expEditorState, setExpEditorState] = useState(EditorState.createEmpty());
+  const [blogEditorState, setBlogEditorState] = useState(EditorState.createEmpty());
 
   // --- INPUT STATES ---
   const [newProject, setNewProject] = useState({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
@@ -45,9 +55,16 @@ function PortfolioManager() {
     axios.get(`${API_BASE}/skills`).then(res => setSkills(res.data.reverse())).catch(console.error);
     axios.get(`${API_BASE}/profile`).then(res => { 
       if (res.data) {
-        // Strip HTML tags when loading for editing
-        const cleanBio = res.data.bio ? res.data.bio.replace(/<[^>]*>/g, '') : '';
-        setProfile({...res.data, bio: cleanBio}); 
+        setProfile(res.data);
+        // Load bio into editor
+        if (res.data.bio) {
+          const blocksFromHTML = convertFromHTML(res.data.bio);
+          const contentState = ContentState.createFromBlockArray(
+            blocksFromHTML.contentBlocks,
+            blocksFromHTML.entityMap
+          );
+          setBioEditorState(EditorState.createWithContent(contentState));
+        }
       }
     }).catch(console.error);
   };
@@ -58,6 +75,9 @@ function PortfolioManager() {
     setNewExp({ title: '', company: '', year: '', description: '', type: 'job' });
     setNewBlog({ title: '', category: 'Article', image: '', content: '' });
     setNewSkill({ name: '', icon: '' });
+    setProjectEditorState(EditorState.createEmpty());
+    setExpEditorState(EditorState.createEmpty());
+    setBlogEditorState(EditorState.createEmpty());
   };
 
   const handleImageUpload = (e, type) => {
@@ -78,53 +98,27 @@ function PortfolioManager() {
     };
   };
 
-  // Helper function to wrap selected text with HTML tags
-  const wrapSelection = (tag, textareaRef) => {
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = textarea.value.substring(start, end);
-    
-    if (!selectedText) {
-      alert("Please select some text first!");
-      return;
-    }
-
-    const before = textarea.value.substring(0, start);
-    const after = textarea.value.substring(end);
-    const newText = `${before}<${tag}>${selectedText}</${tag}>${after}`;
-    
-    return newText;
-  };
-
-  // Bio formatting functions
-  const bioTextareaRef = React.useRef(null);
-  
-  const makeBold = () => {
-    const newBio = wrapSelection('strong', bioTextareaRef);
-    if (newBio) setProfile({ ...profile, bio: newBio });
-  };
-
-  const makeItalic = () => {
-    const newBio = wrapSelection('em', bioTextareaRef);
-    if (newBio) setProfile({ ...profile, bio: newBio });
-  };
-
   // --- SUBMIT HANDLERS ---
   const handleSaveProject = () => {
-    const apiCall = editingId ? axios.put(`${API_BASE}/projects/${editingId}`, newProject) : axios.post(`${API_BASE}/projects`, newProject);
+    const description = draftToHtml(convertToRaw(projectEditorState.getCurrentContent()));
+    const projectData = { ...newProject, description };
+    const apiCall = editingId ? axios.put(`${API_BASE}/projects/${editingId}`, projectData) : axios.post(`${API_BASE}/projects`, projectData);
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
 
   const handleSaveExp = () => {
-    const apiCall = editingId ? axios.put(`${API_BASE}/experience/${editingId}`, newExp) : axios.post(`${API_BASE}/experience`, newExp);
+    const description = draftToHtml(convertToRaw(expEditorState.getCurrentContent()));
+    const expData = { ...newExp, description };
+    const apiCall = editingId ? axios.put(`${API_BASE}/experience/${editingId}`, expData) : axios.post(`${API_BASE}/experience`, expData);
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Added!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message));
   };
 
   const handleSaveBlog = () => {
-    if (!newBlog.title || !newBlog.content) return alert("Title and Content required!");
+    const content = draftToHtml(convertToRaw(blogEditorState.getCurrentContent()));
+    if (!newBlog.title || !content) return alert("Title and Content required!");
     setLoading(true);
-    const apiCall = editingId ? axios.put(`${API_BASE}/blogs/${editingId}`, newBlog) : axios.post(`${API_BASE}/blogs`, newBlog);
+    const blogData = { ...newBlog, content };
+    const apiCall = editingId ? axios.put(`${API_BASE}/blogs/${editingId}`, blogData) : axios.post(`${API_BASE}/blogs`, blogData);
     apiCall.then(() => { alert(editingId ? "✅ Updated!" : "✅ Published!"); resetForms(); fetchData(); }).catch(err => alert("❌ Error: " + err.message)).finally(() => setLoading(false));
   };
 
@@ -136,14 +130,53 @@ function PortfolioManager() {
   };
 
   const handleSaveProfile = () => {
-    // Save bio with HTML tags intact
-    axios.post(`${API_BASE}/profile`, profile)
+    const bio = draftToHtml(convertToRaw(bioEditorState.getCurrentContent()));
+    const profileData = { ...profile, bio };
+    axios.post(`${API_BASE}/profile`, profileData)
       .then(() => alert("✅ Profile Updated!"))
       .catch(err => alert("❌ Error: " + err.message));
   };
 
   const handleDelete = (type, id) => {
     if (window.confirm("Delete this?")) axios.delete(`${API_BASE}/${type}/${id}`).then(fetchData);
+  };
+
+  // Load content into editor when editing
+  const handleEdit = (type, item) => {
+    setEditingId(item._id);
+    window.scrollTo(0, 0);
+    
+    if (type === 'project') {
+      setNewProject(item);
+      if (item.description) {
+        const blocksFromHTML = convertFromHTML(item.description);
+        const contentState = ContentState.createFromBlockArray(
+          blocksFromHTML.contentBlocks,
+          blocksFromHTML.entityMap
+        );
+        setProjectEditorState(EditorState.createWithContent(contentState));
+      }
+    } else if (type === 'experience') {
+      setNewExp(item);
+      if (item.description) {
+        const blocksFromHTML = convertFromHTML(item.description);
+        const contentState = ContentState.createFromBlockArray(
+          blocksFromHTML.contentBlocks,
+          blocksFromHTML.entityMap
+        );
+        setExpEditorState(EditorState.createWithContent(contentState));
+      }
+    } else if (type === 'blog') {
+      setNewBlog(item);
+      if (item.content) {
+        const blocksFromHTML = convertFromHTML(item.content);
+        const contentState = ContentState.createFromBlockArray(
+          blocksFromHTML.contentBlocks,
+          blocksFromHTML.entityMap
+        );
+        setBlogEditorState(EditorState.createWithContent(contentState));
+      }
+    }
   };
 
   // --- STYLES ---
@@ -166,7 +199,26 @@ function PortfolioManager() {
   const btnStyle = { padding: '10px 20px', background: activeColor, color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' };
   const inputStyle = { padding: '12px', borderRadius: '8px', border: `1px solid ${border}`, background: inputBg, color: text, width: '100%', marginBottom: '15px', outline: 'none' };
   const fileInputStyle = { ...inputStyle, padding: '10px', background: isDark ? '#1e293b' : '#fff' };
-  const textareaStyle = { ...inputStyle, minHeight: '150px', resize: 'vertical', fontFamily: 'inherit', fontSize: '1rem', lineHeight: '1.6' };
+
+  const editorWrapperStyle = {
+    border: `1px solid ${border}`,
+    borderRadius: '8px',
+    marginBottom: '20px',
+    background: 'white'
+  };
+
+  const editorToolbarConfig = {
+    options: ['inline', 'list', 'textAlign', 'link', 'remove'],
+    inline: {
+      options: ['bold', 'italic', 'underline']
+    },
+    list: {
+      options: ['unordered', 'ordered']
+    },
+    textAlign: {
+      options: ['left', 'center', 'right']
+    }
+  };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: pageBg, color: text, fontFamily: "'Inter', sans-serif" }}>
@@ -229,19 +281,24 @@ function PortfolioManager() {
               {newProject.image && <img src={newProject.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '6px', marginBottom: '15px', border: `1px solid ${border}` }} />}
 
               <input placeholder="Project Link" value={newProject.link} onChange={e => setNewProject({ ...newProject, link: e.target.value })} style={inputStyle} />
-              <textarea 
-                placeholder="Describe your project..." 
-                value={newProject.description} 
-                onChange={e => setNewProject({ ...newProject, description: e.target.value })} 
-                style={textareaStyle} 
-              />
+              
+              <div style={editorWrapperStyle}>
+                <Editor
+                  editorState={projectEditorState}
+                  onEditorStateChange={setProjectEditorState}
+                  toolbar={editorToolbarConfig}
+                  placeholder="Describe your project..."
+                  editorStyle={{ minHeight: '150px', padding: '10px' }}
+                />
+              </div>
+              
               <button onClick={handleSaveProject} style={{ ...btnStyle, width: '100%' }}>{editingId ? "Update Project" : "Add Project"}</button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
               {projects.map(p => (
                 <ItemCard key={p._id} title={p.title} subtitle={p.category} bg={cardBg} border={border}
-                  onEdit={() => { setEditingId(p._id); setNewProject(p); window.scrollTo(0, 0); }}
+                  onEdit={() => handleEdit('project', p)}
                   onDelete={() => handleDelete('projects', p._id)} />
               ))}
             </div>
@@ -265,19 +322,24 @@ function PortfolioManager() {
               <select value={newExp.type} onChange={e => setNewExp({ ...newExp, type: e.target.value })} style={inputStyle}>
                 <option value="job">Job Experience</option><option value="education">Education</option>
               </select>
-              <textarea 
-                placeholder="Description..." 
-                value={newExp.description} 
-                onChange={e => setNewExp({ ...newExp, description: e.target.value })} 
-                style={textareaStyle} 
-              />
+              
+              <div style={editorWrapperStyle}>
+                <Editor
+                  editorState={expEditorState}
+                  onEditorStateChange={setExpEditorState}
+                  toolbar={editorToolbarConfig}
+                  placeholder="Description..."
+                  editorStyle={{ minHeight: '150px', padding: '10px' }}
+                />
+              </div>
+              
               <button onClick={handleSaveExp} style={{ ...btnStyle, width: '100%' }}>{editingId ? "Update Item" : "Add Item"}</button>
             </div>
 
             <div style={{ display: 'grid', gap: '20px' }}>
               {experiences.map(e => (
                 <ItemCard key={e._id} title={e.title} subtitle={`${e.company} • ${e.year}`} bg={cardBg} border={border}
-                  onEdit={() => { setEditingId(e._id); setNewExp(e); window.scrollTo(0, 0); }}
+                  onEdit={() => handleEdit('experience', e)}
                   onDelete={() => handleDelete('experience', e._id)} />
               ))}
             </div>
@@ -307,12 +369,16 @@ function PortfolioManager() {
 
               {newBlog.image && <img src={newBlog.image} alt="Preview" style={{ width: '100px', height: '60px', objectFit: 'cover', borderRadius: '6px', marginBottom: '15px', border: `1px solid ${border}` }} />}
 
-              <textarea 
-                placeholder="Write your article content..." 
-                value={newBlog.content} 
-                onChange={e => setNewBlog({ ...newBlog, content: e.target.value })} 
-                style={{ ...textareaStyle, minHeight: '300px' }} 
-              />
+              <div style={editorWrapperStyle}>
+                <Editor
+                  editorState={blogEditorState}
+                  onEditorStateChange={setBlogEditorState}
+                  toolbar={editorToolbarConfig}
+                  placeholder="Write your article content..."
+                  editorStyle={{ minHeight: '300px', padding: '10px' }}
+                />
+              </div>
+              
               <button onClick={handleSaveBlog} style={{ ...btnStyle, width: '100%', opacity: loading ? 0.7 : 1 }} disabled={loading}>
                 {loading ? "Publishing..." : (editingId ? "Update Article" : "Publish Article")}
               </button>
@@ -321,7 +387,7 @@ function PortfolioManager() {
             <div style={{ display: 'grid', gap: '20px' }}>
               {blogs.map(b => (
                 <ItemCard key={b._id} title={b.title} subtitle={b.category} bg={cardBg} border={border}
-                  onEdit={() => { setEditingId(b._id); setNewBlog(b); window.scrollTo(0, 0); }}
+                  onEdit={() => handleEdit('blog', b)}
                   onDelete={() => handleDelete('blogs', b._id)} />
               ))}
             </div>
@@ -375,26 +441,14 @@ function PortfolioManager() {
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Bio / Description</label>
-                <div style={{ marginBottom: '10px', display: 'flex', gap: '10px' }}>
-                  <button onClick={makeBold} style={{ ...btnStyle, padding: '8px 15px', background: '#64748b' }}>
-                    <strong>B</strong> Bold
-                  </button>
-                  <button onClick={makeItalic} style={{ ...btnStyle, padding: '8px 15px', background: '#64748b' }}>
-                    <em>I</em> Italic
-                  </button>
-                  <span style={{ fontSize: '0.85rem', opacity: 0.6, alignSelf: 'center', marginLeft: '10px' }}>
-                    Select text first, then click formatting button
-                  </span>
-                </div>
-                <textarea 
-                  ref={bioTextareaRef}
-                  placeholder="I'm Your Name, a professional description..." 
-                  value={profile.bio || ''} 
-                  onChange={e => setProfile({ ...profile, bio: e.target.value })} 
-                  style={textareaStyle} 
-                />
-                <div style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '5px' }}>
-                  💡 Tip: Type your bio, select the text you want to format, then click Bold or Italic
+                <div style={editorWrapperStyle}>
+                  <Editor
+                    editorState={bioEditorState}
+                    onEditorStateChange={setBioEditorState}
+                    toolbar={editorToolbarConfig}
+                    placeholder="I'm Your Name, a professional description..."
+                    editorStyle={{ minHeight: '150px', padding: '10px' }}
+                  />
                 </div>
               </div>
 
