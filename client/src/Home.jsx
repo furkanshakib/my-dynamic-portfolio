@@ -297,6 +297,15 @@ function Home() {
           variants={fadeUp}
           whileHover={isHero ? {} : hoverEffect} // Remove hover shift in Hero mode
         >
+          <AnimatePresence>
+            {isHero && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ marginBottom: '10px', overflow: 'hidden' }}>
+                <span style={{ fontFamily: "'Caveat', cursive", fontSize: '1.8rem', color: 'var(--color-primary)', opacity: 0.9, letterSpacing: '2px', fontWeight: 'bold' }}>
+                  Welcome to the portfolio of
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <h1 className="name-title" style={{ fontSize: isHero ? '3.8rem' : '2.5rem', margin: '0', textAlign: 'center', fontFamily: "'Outfit', sans-serif" }}>
             {profile?.name || "Furkan Shakib"}
           </h1>
