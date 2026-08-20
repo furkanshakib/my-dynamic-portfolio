@@ -137,6 +137,48 @@ function Home() {
     fetchData();
   }, []);
 
+  // NEW: SCROLL STATE ENGINE
+  const [isHero, setIsHero] = useState(true);
+
+  useEffect(() => {
+    if (isHero) {
+      document.body.style.overflow = 'hidden';
+
+      const handleWheel = (e) => {
+        if (e.deltaY > 0) setIsHero(false);
+      };
+
+      let startY = 0;
+      const handleTouchStart = (e) => startY = e.touches[0].clientY;
+      const handleTouchMove = (e) => {
+        if (startY - e.touches[0].clientY > 40) setIsHero(false);
+      };
+      const handleKey = (e) => {
+        if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") setIsHero(false);
+      };
+
+      window.addEventListener('wheel', handleWheel);
+      window.addEventListener('touchstart', handleTouchStart);
+      window.addEventListener('touchmove', handleTouchMove);
+      window.addEventListener('keydown', handleKey);
+
+      return () => {
+        window.removeEventListener('wheel', handleWheel);
+        window.removeEventListener('touchstart', handleTouchStart);
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('keydown', handleKey);
+        document.body.style.overflow = '';
+      }
+    } else {
+      document.body.style.overflow = '';
+      const handleScroll = () => {
+        if (window.scrollY === 0) setIsHero(true);
+      };
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [isHero]);
+
   // Styles
   const pageBg = isDark ? '#0f172a' : '#f8f9fa';
   const cardBg = isDark ? '#1e293b' : '#ffffff';
@@ -155,15 +197,22 @@ function Home() {
   const hoverEffect = { y: -5, transition: { duration: 0.2 } };
 
   return (
-    <div className={isDark ? 'mesh-bg-dark' : 'mesh-bg-light'} style={{ minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px', transition: 'background 0.3s' }}>
-      <Navbar />
+    <div className={isDark ? 'mesh-bg-dark' : 'mesh-bg-light'} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: isHero ? '0' : '50px', transition: 'background 0.3s' }}>
+
+      {/* NAVBAR */}
+      <motion.div layout style={isHero ? { order: 2, marginTop: 'auto', marginBottom: '20px', width: '100%' } : { order: 0, zIndex: 100 }}>
+        <Navbar style={isHero ? { margin: '0 auto', top: 'auto', position: 'relative' } : {}} />
+      </motion.div>
 
       <style>{`
         .bento-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; position: relative; z-index: 10; }
         .bento-card { background: ${isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)'}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.6)'}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,${isDark ? 0.3 : 0.05}); }
         
         /* New Popout Styles */
-        .profile-popout { position: relative; height: 320px; display: flex; alignItems: flex-end; justifyContent: center; margin: 20px 0 30px 0; }
+        .profile-popout { position: relative; height: 320px; display: flex; align-items: flex-end; justify-content: center; margin: 20px 0 30px 0; }
+        
+        /* Hidden UI in Hero mode */
+        .hide-in-hero { display: none !important; opacity: 0; pointer-events: none; }
         
         /* Mobile Layouts */
         @media (max-width: 1100px) {
@@ -182,16 +231,19 @@ function Home() {
       `}</style>
 
       <motion.div
+        layout
         className="bento-grid"
         initial="hidden"
         animate="visible"
         variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+        style={isHero ? { display: 'flex', flex: 1, margin: '20px auto 0 auto', width: '100%', maxWidth: 'none', padding: '0 5vw' } : {}}
       >
 
         {/* 1. PROFILE BOX */}
         <motion.div
+          layout
           className="bento-card profile-box"
-          style={{ gridRow: 'span 2', alignItems: 'center', textAlign: 'center' }}
+          style={isHero ? { flex: 1, width: '100%', maxWidth: '1200px', margin: '0 auto', alignItems: 'center', textAlign: 'center', justifyContent: 'center' } : { gridRow: 'span 2', alignItems: 'center', textAlign: 'center' }}
           variants={fadeUp}
           whileHover={hoverEffect} // 👈 Added Hover Here
         >
@@ -235,7 +287,7 @@ function Home() {
         </motion.div>
 
         {/* 2. MIDDLE COLUMN */}
-        <div className="middle-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px', gridRow: 'span 2' }}>
+        <motion.div layout className={`middle-col ${isHero ? 'hide-in-hero' : ''}`} style={{ display: 'flex', flexDirection: 'column', gap: '20px', gridRow: 'span 2' }}>
 
           {/* Work Experience */}
           <motion.div
@@ -305,11 +357,12 @@ function Home() {
 
             </div>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* 3. RECENT PROJECTS */}
         <motion.div
-          className="bento-card projects-box"
+          layout
+          className={`bento-card projects-box ${isHero ? 'hide-in-hero' : ''}`}
           style={{ gridRow: 'span 2', overflow: 'hidden' }}
           variants={fadeUp}
           whileHover={hoverEffect} // 👈 Added Hover Here

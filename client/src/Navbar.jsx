@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
 
-function Navbar() {
+function Navbar({ style = {} }) {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const isDark = theme === 'dark';
@@ -29,7 +29,8 @@ function Navbar() {
       position: 'sticky', top: '15px', zIndex: 100, maxWidth: '1200px', margin: '15px auto', borderRadius: '50px',
       backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
       background: navBg, border: `1px solid ${border}`, boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-      padding: '12px 25px'
+      padding: '12px 25px',
+      ...style // User overrides applied here
     }}>
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', height: '40px'
