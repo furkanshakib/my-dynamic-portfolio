@@ -265,7 +265,6 @@ function Home() {
                 : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
             }}
           />
-          />
 
           {/* SCROLL INDICATOR (ONLY IN HERO MODE) */}
           <AnimatePresence>
