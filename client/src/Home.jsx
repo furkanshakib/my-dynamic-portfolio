@@ -42,9 +42,9 @@ function FloatingParticles() {
           <div key={i} style={{
             position: 'absolute', left: `${left}%`, bottom: '-10px',
             width: `${size}px`, height: `${size}px`,
-            background: 'rgba(255,255,255,0.8)', borderRadius: '50%',
+            background: 'rgba(255,255,255,0.6)', borderRadius: '50%',
             animation: `floatUp ${dur}s linear ${delay}s infinite`,
-            boxShadow: '0 0 15px rgba(255,255,255,1)'
+            willChange: 'transform, opacity'
           }}></div>
         );
       })}
@@ -74,9 +74,9 @@ function ImageCarousel({ images, isHero }) {
       {/* Background Shape */}
       <motion.div layout style={{
         position: 'absolute', bottom: 0, width: '100%', height: '180px',
-        background: 'radial-gradient(ellipse at bottom, rgba(99, 102, 241, 0.4) 0%, rgba(168, 85, 247, 0.1) 50%, transparent 100%)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-        borderRadius: '24px', zIndex: 0, boxShadow: '0 20px 40px rgba(99, 102, 241, 0.3)'
+        background: 'radial-gradient(ellipse at bottom, rgba(99, 102, 241, 0.9) 0%, rgba(168, 85, 247, 0.6) 45%, transparent 80%)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
+        borderRadius: '24px', zIndex: 0, boxShadow: '0 30px 100px rgba(99, 102, 241, 0.7)'
       }}></motion.div>
 
       {offsets.map((offset) => {
@@ -104,8 +104,9 @@ function ImageCarousel({ images, isHero }) {
               transform: `translateX(${translateX}px) scale(${scale})`,
               zIndex: zIndex,
               opacity: opacity,
-              transition: 'all 1.0s cubic-bezier(0.25, 1, 0.5, 1)',
-              transformOrigin: 'bottom center'
+              transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s',
+              transformOrigin: 'bottom center',
+              willChange: 'transform, opacity, z-index'
             }}
           >
             <img
@@ -115,8 +116,7 @@ function ImageCarousel({ images, isHero }) {
               style={{
                 height: isHero ? '400px' : '320px',
                 width: 'auto',
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))'
+                objectFit: 'contain'
               }}
             />
           </div>
@@ -229,7 +229,7 @@ function Home() {
 
       <style>{`
         .bento-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; position: relative; z-index: 10; }
-        .bento-card { transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); background: ${isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)'}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.6)'}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,${isDark ? 0.3 : 0.05}); }
+        .bento-card { transition: background 0.8s, border-color 0.8s, box-shadow 0.8s; background: ${isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)'}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.6)'}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,${isDark ? 0.3 : 0.05}); will-change: transform, opacity; }
         
         /* New Popout Styles */
         .profile-popout { position: relative; height: 320px; display: flex; align-items: flex-end; justify-content: center; margin: 20px 0 30px 0; }
@@ -240,8 +240,8 @@ function Home() {
         /* Premium Seamless Hero Layout */
         .hero-transparent {
            background: transparent !important;
-           backdrop-filter: none !important;
-           -webkit-backdrop-filter: none !important;
+           backdrop-filter: blur(0px) !important;
+           -webkit-backdrop-filter: blur(0px) !important;
            border-color: transparent !important;
            box-shadow: none !important;
         }
@@ -253,7 +253,8 @@ function Home() {
            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
            font-weight: 800;
            letter-spacing: -1px;
-           transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+           transition: font-size 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+           will-change: font-size;
         }
         
         /* Mobile Layouts */
@@ -315,7 +316,7 @@ function Home() {
               maxWidth: '800px',
               margin: '0 auto',
               textAlign: 'center',
-              transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)'
+              transition: 'font-size 0.8s, line-height 0.8s, margin 0.8s'
             }}
             dangerouslySetInnerHTML={{
               __html: profile?.bio
