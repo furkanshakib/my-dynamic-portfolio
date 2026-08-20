@@ -64,31 +64,39 @@ function ImageCarousel({ images }) {
 
         let isVisible = Math.abs(diff) <= 1;
 
-        let translateX = diff * 180; // Spread images significantly further apart
-        let scale = diff === 0 ? 1 : 0.85;
+        let translateX = diff * 250; // Increased spacing for clear side-by-side view
+        let scale = diff === 0 ? 1 : 0.75;
         let zIndex = diff === 0 ? 10 : (isVisible ? 5 : 0);
         let opacity = diff === 0 ? 1 : (isVisible ? 0.4 : 0);
 
         return (
-          <img
+          <div
             key={index}
-            src={img}
-            alt={`Profile Slide ${index}`}
-            className="floating-avatar"
             style={{
               position: 'absolute',
               bottom: '0px',
               height: '320px',
-              width: 'auto',
-              objectFit: 'contain',
-              filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))',
+              display: 'flex',
+              alignItems: 'flex-end',
               transform: `translateX(${translateX}px) scale(${scale})`,
               zIndex: zIndex,
               opacity: opacity,
               transition: 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)',
               transformOrigin: 'bottom center'
             }}
-          />
+          >
+            <img
+              src={img}
+              alt={`Profile Slide ${index}`}
+              className="floating-avatar"
+              style={{
+                height: '320px',
+                width: 'auto',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))'
+              }}
+            />
+          </div>
         );
       })}
     </div>
