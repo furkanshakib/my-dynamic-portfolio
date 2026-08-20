@@ -18,7 +18,7 @@ function PortfolioManager() {
   const [experiences, setExperiences] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [profile, setProfile] = useState({ profilePicture: '', name: '', bio: '' });
+  const [profile, setProfile] = useState({ profilePicture: '', profileImages: [], name: '', bio: '' });
 
   // --- INPUT STATES ---
   const [newProject, setNewProject] = useState({ title: '', category: 'Research', image: '', link: '', description: '', tags: '' });
@@ -71,7 +71,7 @@ function PortfolioManager() {
     reader.onloadend = () => {
       if (type === 'project') setNewProject({ ...newProject, image: reader.result });
       if (type === 'blog') setNewBlog({ ...newBlog, image: reader.result });
-      if (type === 'profile') setProfile({ ...profile, profilePicture: reader.result });
+      if (type === 'profile') setProfile({ ...profile, profileImages: [...(profile.profileImages || []), reader.result] });
     };
   };
 
@@ -345,14 +345,23 @@ function PortfolioManager() {
             <h2>Edit Profile</h2>
             <div style={{ background: cardBg, padding: '30px', borderRadius: '16px', border: `1px solid ${border}`, marginTop: '20px' }}>
 
-              <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                <div style={{ width: '150px', height: '150px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 20px auto', border: `4px solid ${border}`, background: '#333' }}>
-                  <img src={profile.profilePicture || '/profile.png'} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>Profile Images (Carousel)</label>
+                <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginBottom: '15px' }}>
+                  {(profile.profileImages || []).map((img, i) => (
+                    <div key={i} style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '10px', border: `2px solid ${border}`, overflow: 'hidden', background: '#333' }}>
+                      <img src={img} alt={`Profile ${i}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      <button
+                        onClick={() => setProfile({ ...profile, profileImages: profile.profileImages.filter((_, idx) => idx !== i) })}
+                        style={{ position: 'absolute', top: 5, right: 5, background: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >✕</button>
+                    </div>
+                  ))}
+                  <label style={{ width: '100px', height: '100px', borderRadius: '10px', border: `2px dashed ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)' }}>
+                    <span style={{ fontSize: '2rem', opacity: 0.5 }}>+</span>
+                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'profile')} style={{ display: 'none' }} />
+                  </label>
                 </div>
-                <label style={{ ...btnStyle, background: '#334155', cursor: 'pointer' }}>
-                  Change Photo
-                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'profile')} style={{ display: 'none' }} />
-                </label>
               </div>
 
               <div style={{ marginBottom: '20px' }}>

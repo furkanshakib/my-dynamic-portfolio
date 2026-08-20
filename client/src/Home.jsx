@@ -20,6 +20,81 @@ function SocialIcon({ href, iconPath, color }) {
   );
 }
 
+// NEW IMAGE CAROUSEL COMPONENT
+function ImageCarousel({ images }) {
+  const defaultImages = ["/profile.png", "/profile.png", "/profile.png"];
+  let displayImages = [];
+  if (images && images.length >= 3) {
+    displayImages = images;
+  } else if (images && images.length > 0) {
+    // Pad array to ensure we have exactly or more than 3 images for the carousel logic to loop correctly
+    displayImages = [...images];
+    while (displayImages.length < 3) displayImages.push(displayImages[0]);
+  } else {
+    displayImages = defaultImages;
+  }
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Moves left to right by decreasing the index
+      setCurrentIndex((prev) => (prev - 1 + displayImages.length) % displayImages.length);
+    }, 1000); // Transitions every 1 second
+    return () => clearInterval(interval);
+  }, [displayImages.length]);
+
+  return (
+    <div className="profile-popout" style={{ margin: '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '320px', perspective: '1000px', overflow: 'visible' }}>
+
+      {/* Background Shape */}
+      <div style={{
+        position: 'absolute', bottom: 0, width: '100%', height: '180px',
+        background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
+        borderRadius: '24px', zIndex: 0, boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)'
+      }}></div>
+
+      {displayImages.map((img, index) => {
+        let diff = (index - currentIndex + displayImages.length * 10) % displayImages.length;
+        if (diff > Math.floor(displayImages.length / 2)) {
+          diff -= displayImages.length;
+        }
+
+        // Only render the 3 immediate adjacent images (-1, 0, 1)
+        if (Math.abs(diff) > 1) return null;
+
+        let translateX = diff * 100; // -100px, 0px, +100px
+        let scale = diff === 0 ? 1 : 0.75;
+        let zIndex = diff === 0 ? 10 : 5;
+        let opacity = diff === 0 ? 1 : 0.6;
+
+        return (
+          <img
+            key={index}
+            src={img}
+            alt={`Profile Slide ${index}`}
+            className="floating-avatar"
+            style={{
+              position: 'absolute',
+              bottom: '0px',
+              height: '320px',
+              width: 'auto',
+              maxWidth: '100%',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))',
+              transform: `translateX(${translateX}px) scale(${scale})`,
+              zIndex: zIndex,
+              opacity: opacity,
+              transition: 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)',
+              transformOrigin: 'bottom center'
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 function Home() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -115,40 +190,7 @@ function Home() {
           <h1 style={{ fontSize: '2.5rem', margin: '0 0 0 0', textAlign: 'center', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.5px' }}>{profile?.name || "Furkan Shakib"}</h1>
 
           {/* POP-OUT PHOTO EFFECT */}
-          <div className="profile-popout" style={{ margin: '0 0 30px 0' }}>
-            {/* 1. The Background Shape */}
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              width: '100%',
-              height: '180px', // The colored box height
-              background: 'linear-gradient(135deg, #fb923c 0%, #ea580c 100%)', // Orange Gradient (Sunset vibe)
-              borderRadius: '24px',
-              zIndex: 0,
-              boxShadow: '0 10px 30px rgba(234, 88, 12, 0.3)'
-            }}></div>
-
-            {/* 2. The Transparent Photo */}
-            <div style={{
-              position: 'relative',
-              zIndex: 1,
-              height: '100%',
-              display: 'flex',
-              alignItems: 'flex-end'
-            }}>
-              <img
-                src={profile?.profilePicture || "/profile.png"}
-                alt="Profile"
-                className="floating-avatar"
-                style={{
-                  height: '320px', // Total height allowing overlap
-                  width: 'auto',
-                  objectFit: 'contain',
-                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.2))' // Adds depth behind the person
-                }}
-              />
-            </div>
-          </div>
+          <ImageCarousel images={profile?.profileImages} />
           {/* Rich Text Bio */}
           <style>{`
   .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
