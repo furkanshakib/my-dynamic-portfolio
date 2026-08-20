@@ -21,7 +21,7 @@ function SocialIcon({ href, iconPath, color }) {
 }
 
 // NEW IMAGE CAROUSEL COMPONENT
-function ImageCarousel({ images }) {
+function ImageCarousel({ images, isHero }) {
   const defaultImages = ["/profile.png", "/profile.png", "/profile.png"];
   let displayImages = (images && images.length > 0) ? images : defaultImages;
 
@@ -37,7 +37,7 @@ function ImageCarousel({ images }) {
   const offsets = [-2, -1, 0, 1, 2];
 
   return (
-    <motion.div layout className="profile-popout" style={{ width: '100%', margin: '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '320px', perspective: '1000px', overflow: 'visible' }}>
+    <motion.div layout className="profile-popout" style={{ width: '100%', margin: isHero ? '20px 0 60px 0' : '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: isHero ? '400px' : '320px', perspective: '1000px', overflow: 'visible' }}>
 
       {/* Background Shape */}
       <motion.div layout style={{
@@ -65,7 +65,7 @@ function ImageCarousel({ images }) {
             style={{
               position: 'absolute',
               bottom: '0px',
-              height: '320px',
+              height: isHero ? '400px' : '320px',
               display: 'flex',
               alignItems: 'flex-end',
               transform: `translateX(${translateX}px) scale(${scale})`,
@@ -80,7 +80,7 @@ function ImageCarousel({ images }) {
               alt={`Profile Slide ${absoluteIndex}`}
               className="floating-avatar"
               style={{
-                height: '320px',
+                height: isHero ? '400px' : '320px',
                 width: 'auto',
                 objectFit: 'contain',
                 filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))'
@@ -196,13 +196,32 @@ function Home() {
 
       <style>{`
         .bento-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; position: relative; z-index: 10; }
-        .bento-card { background: ${isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)'}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.6)'}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,${isDark ? 0.3 : 0.05}); }
+        .bento-card { transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); background: ${isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)'}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.6)'}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,${isDark ? 0.3 : 0.05}); }
         
         /* New Popout Styles */
         .profile-popout { position: relative; height: 320px; display: flex; align-items: flex-end; justify-content: center; margin: 20px 0 30px 0; }
         
         /* Hidden UI in Hero mode */
         .hide-in-hero { display: none !important; opacity: 0; pointer-events: none; }
+
+        /* Premium Seamless Hero Layout */
+        .hero-transparent {
+           background: transparent !important;
+           backdrop-filter: none !important;
+           -webkit-backdrop-filter: none !important;
+           border-color: transparent !important;
+           box-shadow: none !important;
+        }
+
+        .name-title {
+           background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+           -webkit-background-clip: text;
+           -webkit-text-fill-color: transparent;
+           filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+           font-weight: 800;
+           letter-spacing: -1px;
+           transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
         
         /* Mobile Layouts */
         @media (max-width: 1100px) {
@@ -232,15 +251,18 @@ function Home() {
         {/* 1. PROFILE BOX */}
         <motion.div
           layout
-          className="bento-card profile-box"
+          className={`bento-card profile-box ${isHero ? 'hero-transparent' : ''}`}
           style={isHero ? { flex: 1, overflow: 'hidden', width: '100%', maxWidth: '1200px', margin: '0 auto', alignItems: 'center', textAlign: 'center', justifyContent: 'center' } : { gridRow: 'span 2', overflow: 'hidden', alignItems: 'center', textAlign: 'center' }}
           variants={fadeUp}
-          whileHover={hoverEffect} // 👈 Added Hover Here
+          whileHover={isHero ? {} : hoverEffect} // Remove hover shift in Hero mode
         >
-          <h1 style={{ fontSize: '2.5rem', margin: '0 0 0 0', textAlign: 'center', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.5px' }}>{profile?.name || "Furkan Shakib"}</h1>
+          <h1 className="name-title" style={{ fontSize: isHero ? '3.8rem' : '2.5rem', margin: '0', textAlign: 'center', fontFamily: "'Outfit', sans-serif" }}>
+            {profile?.name || "Furkan Shakib"}
+          </h1>
 
           {/* POP-OUT PHOTO EFFECT */}
-          <ImageCarousel images={profile?.profileImages} />
+          <ImageCarousel images={profile?.profileImages} isHero={isHero} />
+
           {/* Rich Text Bio */}
           <style>{`
   .bio-content ul, .bio-content ol { padding-left: 20px; margin: 10px 0; }
@@ -254,10 +276,13 @@ function Home() {
             className="bio-content"
             style={{
               color: subText,
-              fontSize: '1rem',
-              lineHeight: '1.6',
-              marginBottom: '20px',
-              textAlign: 'center', // 👈 Centered Alignment
+              fontSize: isHero ? '1.15rem' : '1rem',
+              lineHeight: isHero ? '1.8' : '1.6',
+              marginBottom: isHero ? '40px' : '20px',
+              maxWidth: '800px',
+              margin: '0 auto',
+              textAlign: 'center',
+              transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)'
             }}
             dangerouslySetInnerHTML={{
               __html: profile?.bio
