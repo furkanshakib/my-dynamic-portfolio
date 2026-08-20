@@ -200,8 +200,8 @@ function Home() {
     <div className={isDark ? 'mesh-bg-dark' : 'mesh-bg-light'} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: isHero ? '0' : '50px', transition: 'background 0.3s' }}>
 
       {/* NAVBAR */}
-      <motion.div layout style={isHero ? { order: 2, marginTop: 'auto', marginBottom: '20px', width: '100%' } : { order: 0, zIndex: 100 }}>
-        <Navbar style={isHero ? { margin: '0 auto', top: 'auto', position: 'relative' } : {}} />
+      <motion.div layout style={{ order: 0, zIndex: 100 }}>
+        <Navbar />
       </motion.div>
 
       <style>{`
