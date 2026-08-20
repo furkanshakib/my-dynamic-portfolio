@@ -20,6 +20,38 @@ function SocialIcon({ href, iconPath, color }) {
   );
 }
 
+// 🚀 FLOATING PARTICLES ENGINE
+function FloatingParticles() {
+  const particles = Array.from({ length: 15 });
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
+      <style>{`
+        @keyframes floatUp {
+          0% { transform: translateY(100vh) scale(0); opacity: 0; }
+          20% { opacity: 0.6; }
+          80% { opacity: 0.6; }
+          100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+        }
+      `}</style>
+      {particles.map((_, i) => {
+        const size = Math.random() * 4 + 2;
+        const left = Math.random() * 100;
+        const dur = Math.random() * 15 + 10;
+        const delay = Math.random() * -15; // Negative delay to pre-warm the screen!
+        return (
+          <div key={i} style={{
+            position: 'absolute', left: `${left}%`, bottom: '-10px',
+            width: `${size}px`, height: `${size}px`,
+            background: 'rgba(255,255,255,0.8)', borderRadius: '50%',
+            animation: `floatUp ${dur}s linear ${delay}s infinite`,
+            boxShadow: '0 0 15px rgba(255,255,255,1)'
+          }}></div>
+        );
+      })}
+    </motion.div>
+  );
+}
+
 // NEW IMAGE CAROUSEL COMPONENT
 function ImageCarousel({ images, isHero }) {
   const defaultImages = ["/profile.png", "/profile.png", "/profile.png"];
@@ -42,8 +74,9 @@ function ImageCarousel({ images, isHero }) {
       {/* Background Shape */}
       <motion.div layout style={{
         position: 'absolute', bottom: 0, width: '100%', height: '180px',
-        background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-        borderRadius: '24px', zIndex: 0, boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)'
+        background: 'radial-gradient(ellipse at bottom, rgba(99, 102, 241, 0.4) 0%, rgba(168, 85, 247, 0.1) 50%, transparent 100%)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+        borderRadius: '24px', zIndex: 0, boxShadow: '0 20px 40px rgba(99, 102, 241, 0.3)'
       }}></motion.div>
 
       {offsets.map((offset) => {
@@ -308,9 +341,13 @@ function Home() {
             )}
           </AnimatePresence>
 
-          <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', width: '100%' }}>
-            <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
-            <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>
+          <style>{`
+            .cta-btn { transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+            .cta-btn:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.1); }
+          `}</style>
+          <div style={{ display: 'flex', gap: '15px', marginTop: 'auto', width: '100%', justifyContent: 'center' }}>
+            <Link to="/contact" className="cta-btn" style={{ flex: 1, maxWidth: '300px', textAlign: 'center', background: 'linear-gradient(180deg, rgba(37,99,235,1) 0%, rgba(29,78,216,1) 100%)', color: 'white', padding: '14px', borderRadius: '12px', textDecoration: 'none', fontWeight: '600', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 20px rgba(37,99,235,0.3)' }}>Let's Talk</Link>
+            <a href="/cv.pdf" download className="cta-btn" style={{ flex: 1, maxWidth: '300px', textAlign: 'center', background: 'rgba(255,255,255,0.03)', border: `1px solid ${borderColor}`, color: textColor, padding: '14px', borderRadius: '12px', textDecoration: 'none', fontWeight: '600', backdropFilter: 'blur(10px)', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>View CV</a>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${borderColor}`, width: '100%' }}>
             <SocialIcon href="https://linkedin.com" color="#0077b5" iconPath={<path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68zm1.39 9.94v-8.37H5.5v8.37h2.77z" />} />
