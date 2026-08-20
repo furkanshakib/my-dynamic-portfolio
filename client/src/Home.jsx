@@ -27,9 +27,11 @@ function ImageCarousel({ images }) {
   if (images && images.length >= 3) {
     displayImages = images;
   } else if (images && images.length > 0) {
-    // Pad array to ensure we have exactly or more than 3 images for the carousel logic to loop correctly
+    // Pad array to ensure we have at least 4 images for the carousel logic to loop safely without ghosting
     displayImages = [...images];
-    while (displayImages.length < 3) displayImages.push(displayImages[0]);
+    while (displayImages.length < 4) {
+      displayImages.push(displayImages[displayImages.length % images.length]);
+    }
   } else {
     displayImages = defaultImages;
   }
@@ -45,7 +47,7 @@ function ImageCarousel({ images }) {
   }, [displayImages.length]);
 
   return (
-    <div className="profile-popout" style={{ margin: '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '320px', perspective: '1000px', overflow: 'visible' }}>
+    <div className="profile-popout" style={{ width: '100%', margin: '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '320px', perspective: '1000px', overflow: 'visible' }}>
 
       {/* Background Shape */}
       <div style={{
@@ -60,13 +62,12 @@ function ImageCarousel({ images }) {
           diff -= displayImages.length;
         }
 
-        // Only render the 3 immediate adjacent images (-1, 0, 1)
-        if (Math.abs(diff) > 1) return null;
+        let isVisible = Math.abs(diff) <= 1;
 
-        let translateX = diff * 100; // -100px, 0px, +100px
-        let scale = diff === 0 ? 1 : 0.75;
-        let zIndex = diff === 0 ? 10 : 5;
-        let opacity = diff === 0 ? 1 : 0.6;
+        let translateX = diff * 180; // Spread images significantly further apart
+        let scale = diff === 0 ? 1 : 0.85;
+        let zIndex = diff === 0 ? 10 : (isVisible ? 5 : 0);
+        let opacity = diff === 0 ? 1 : (isVisible ? 0.4 : 0);
 
         return (
           <img
@@ -79,7 +80,6 @@ function ImageCarousel({ images }) {
               bottom: '0px',
               height: '320px',
               width: 'auto',
-              maxWidth: '100%',
               objectFit: 'contain',
               filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))',
               transform: `translateX(${translateX}px) scale(${scale})`,
