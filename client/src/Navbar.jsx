@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
 
 function Navbar({ style = {} }) {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, colorTheme, changeColorTheme, colorThemesMap } = useTheme();
   const location = useLocation();
   const isDark = theme === 'dark';
 
@@ -12,7 +12,7 @@ function Navbar({ style = {} }) {
   // Colors
   const navBg = isDark ? 'rgba(15, 23, 42, 0.5)' : 'rgba(255, 255, 255, 0.6)';
   const textColor = isDark ? '#f1f5f9' : '#1e293b';
-  const accent = '#2563eb';
+  const accent = 'var(--color-primary)';
   const border = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
   // 👇 ADDED "BLOGS" HERE
@@ -63,6 +63,23 @@ function Navbar({ style = {} }) {
 
         {/* RIGHT: THEME & MOBILE */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', zIndex: 10 }}>
+
+          {/* Theme Color Picker */}
+          <div className="color-picker" style={{ display: 'flex', gap: '8px', background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)', padding: '6px 12px', borderRadius: '20px' }}>
+            {colorThemesMap && Object.keys(colorThemesMap).map(key => (
+              <button
+                key={key}
+                onClick={() => changeColorTheme(key)}
+                style={{
+                  width: '16px', height: '16px', borderRadius: '50%', border: 'none', cursor: 'pointer', padding: 0,
+                  background: colorThemesMap[key].primary,
+                  boxShadow: colorTheme === key ? `0 0 0 2px ${navBg}, 0 0 0 4px ${colorThemesMap[key].primary}` : 'none',
+                  transition: 'all 0.2s'
+                }}
+              />
+            ))}
+          </div>
+
           <button onClick={toggleTheme} style={{ background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', border: 'none', borderRadius: '50%', width: '35px', height: '35px', cursor: 'pointer', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {isDark ? '☀️' : '🌙'}
           </button>
