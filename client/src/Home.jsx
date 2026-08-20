@@ -254,7 +254,7 @@ function Home() {
         }
 
         .name-title {
-           background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+           background: var(--title-gradient);
            -webkit-background-clip: text;
            -webkit-text-fill-color: transparent;
            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
@@ -354,7 +354,7 @@ function Home() {
             .cta-btn:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.1); }
           `}</style>
           <div style={{ display: 'flex', gap: '15px', marginTop: 'auto', width: '100%', justifyContent: 'center' }}>
-            <Link to="/contact" className="cta-btn" style={{ flex: 1, maxWidth: '300px', textAlign: 'center', background: 'linear-gradient(180deg, rgba(37,99,235,1) 0%, rgba(29,78,216,1) 100%)', color: 'white', padding: '14px', borderRadius: '12px', textDecoration: 'none', fontWeight: '600', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 20px rgba(37,99,235,0.3)' }}>Let's Talk</Link>
+            <Link to="/contact" className="cta-btn" style={{ flex: 1, maxWidth: '300px', textAlign: 'center', background: 'var(--gradient-btn)', color: 'white', padding: '14px', borderRadius: '12px', textDecoration: 'none', fontWeight: '600', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 20px rgba(0,0,0,0.15)', transition: 'all 0.3s' }}>Let's Talk</Link>
             <a href="/cv.pdf" download className="cta-btn" style={{ flex: 1, maxWidth: '300px', textAlign: 'center', background: 'rgba(255,255,255,0.03)', border: `1px solid ${borderColor}`, color: textColor, padding: '14px', borderRadius: '12px', textDecoration: 'none', fontWeight: '600', backdropFilter: 'blur(10px)', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>View CV</a>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${borderColor}`, width: '100%' }}>
