@@ -67,7 +67,7 @@ function ImageCarousel({ images }) {
         let translateX = diff * 130; // Keeps images comfortably within the Profile card
         let scale = diff === 0 ? 1 : 0.75;
         let zIndex = diff === 0 ? 10 : (isVisible ? 5 : 0);
-        let opacity = diff === 0 ? 1 : (isVisible ? 0.4 : 0);
+        let opacity = isVisible ? 1 : 0; // Keeping side images at 100% opacity
 
         return (
           <div
