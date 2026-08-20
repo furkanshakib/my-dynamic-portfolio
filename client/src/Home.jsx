@@ -37,14 +37,14 @@ function ImageCarousel({ images }) {
   const offsets = [-2, -1, 0, 1, 2];
 
   return (
-    <div className="profile-popout" style={{ width: '100%', margin: '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '320px', perspective: '1000px', overflow: 'visible' }}>
+    <motion.div layout className="profile-popout" style={{ width: '100%', margin: '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '320px', perspective: '1000px', overflow: 'visible' }}>
 
       {/* Background Shape */}
-      <div style={{
+      <motion.div layout style={{
         position: 'absolute', bottom: 0, width: '100%', height: '180px',
         background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
         borderRadius: '24px', zIndex: 0, boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)'
-      }}></div>
+      }}></motion.div>
 
       {offsets.map((offset) => {
         const absoluteIndex = currIndex + offset;
@@ -233,7 +233,7 @@ function Home() {
         <motion.div
           layout
           className="bento-card profile-box"
-          style={isHero ? { flex: 1, width: '100%', maxWidth: '1200px', margin: '0 auto', alignItems: 'center', textAlign: 'center', justifyContent: 'center' } : { gridRow: 'span 2', alignItems: 'center', textAlign: 'center' }}
+          style={isHero ? { flex: 1, overflow: 'hidden', width: '100%', maxWidth: '1200px', margin: '0 auto', alignItems: 'center', textAlign: 'center', justifyContent: 'center' } : { gridRow: 'span 2', overflow: 'hidden', alignItems: 'center', textAlign: 'center' }}
           variants={fadeUp}
           whileHover={hoverEffect} // 👈 Added Hover Here
         >
@@ -384,24 +384,24 @@ function Home() {
             )}
           </div>
         </motion.div>
-
-        {/* SCROLL INDICATOR (ONLY IN HERO MODE) */}
-        <AnimatePresence>
-          {isHero && (
-            <motion.div
-              initial={{ opacity: 0, bottom: -50 }}
-              animate={{ opacity: 1, bottom: 20 }}
-              exit={{ opacity: 0, bottom: -50 }}
-              style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', color: subText, zIndex: 100 }}
-            >
-              <span style={{ fontSize: '0.8rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 'bold' }}>Scroll Down</span>
-              <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}>
-                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.div>
+
+      {/* SCROLL INDICATOR (ONLY IN HERO MODE) */}
+      <AnimatePresence>
+        {isHero && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            style={{ position: 'fixed', bottom: '30px', left: '50%', x: '-50%', display: 'flex', flexDirection: 'column', alignItems: 'center', color: subText, zIndex: 1000 }}
+          >
+            <span style={{ fontSize: '0.8rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 'bold', textShadow: '0 2px 10px rgba(0,0,0,0.5)', WebkitTextStroke: '0.2px rgba(255,255,255,0.2)' }}>Scroll Down</span>
+            <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}>
+              <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
