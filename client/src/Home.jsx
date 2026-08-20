@@ -89,7 +89,7 @@ function ImageCarousel({ images }) {
           </div>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
 
