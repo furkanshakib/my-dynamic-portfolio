@@ -72,12 +72,12 @@ function Home() {
   const hoverEffect = { y: -5, transition: { duration: 0.2 } };
 
   return (
-    <div style={{ background: pageBg, minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px', transition: 'background 0.3s' }}>
+    <div className={isDark ? 'mesh-bg-dark' : 'mesh-bg-light'} style={{ minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px', transition: 'background 0.3s' }}>
       <Navbar />
 
       <style>{`
-        .bento-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
-        .bento-card { background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; }
+        .bento-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 20px; max-width: 1400px; margin: 40px auto; padding: 0 20px; position: relative; z-index: 10; }
+        .bento-card { background: ${isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)'}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.6)'}; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,${isDark ? 0.3 : 0.05}); }
         
         /* New Popout Styles */
         .profile-popout { position: relative; height: 320px; display: flex; alignItems: flex-end; justifyContent: center; margin: 20px 0 30px 0; }
@@ -139,6 +139,7 @@ function Home() {
               <img
                 src={profile?.profilePicture || "/profile.png"}
                 alt="Profile"
+                className="floating-avatar"
                 style={{
                   height: '320px', // Total height allowing overlap
                   width: 'auto',

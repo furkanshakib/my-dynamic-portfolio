@@ -36,8 +36,8 @@ function ProjectsPage() {
   // --- STYLES ---
   const pageBg = isDark ? '#0f172a' : '#f8f9fa';
   const textColor = isDark ? '#f1f5f9' : '#1e293b';
-  const cardBg = isDark ? '#1e293b' : 'white';
-  const cardBorder = isDark ? '1px solid #334155' : '1px solid #e2e8f0';
+  const cardBg = isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)';
+  const cardBorder = isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(255,255,255,0.6)';
   const subText = isDark ? '#94a3b8' : '#64748b';
   const highlight = '#2563eb';
 
@@ -60,7 +60,7 @@ function ProjectsPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: pageBg, color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
+    <div className={isDark ? 'mesh-bg-dark' : 'mesh-bg-light'} style={{ minHeight: '100vh', color: textColor, fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
       <Navbar />
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px' }}>
@@ -80,7 +80,7 @@ function ProjectsPage() {
         {/* Projects Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
           {filteredProjects.map(p => (
-            <div key={p._id} style={{ background: cardBg, borderRadius: '16px', border: cardBorder, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s' }}
+            <div key={p._id} style={{ background: cardBg, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderRadius: '16px', border: cardBorder, boxShadow: isDark ? '0 8px 32px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.05)', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s' }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >

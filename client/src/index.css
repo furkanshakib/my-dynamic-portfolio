@@ -170,3 +170,29 @@ img {
 .project-content p {
   margin-bottom: 1em;
 }
+
+/* --- PREMIUM UI UPGRADES --- */
+@keyframes meshMovement {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.mesh-bg-dark {
+  background: linear-gradient(120deg, #0f172a, #1e1b4b, #172554, #0a0f1d);
+  background-size: 200% 200%;
+  animation: meshMovement 20s ease infinite;
+}
+.mesh-bg-light {
+  background: linear-gradient(120deg, #f8f9fa, #eef2ff, #f3f4f6, #f8f9fa);
+  background-size: 200% 200%;
+  animation: meshMovement 20s ease infinite;
+}
+
+@keyframes floatFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+.floating-avatar {
+  animation: floatFloat 6s ease-in-out infinite;
+}
