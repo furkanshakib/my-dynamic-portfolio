@@ -15,7 +15,9 @@ function TechStack() {
       whiteSpace: 'nowrap',
       position: 'relative',
       padding: '40px 0',
-      background: bg,
+      background: 'transparent',
+      WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+      maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
     },
     track: {
       display: 'inline-block',
@@ -30,6 +32,8 @@ function TechStack() {
       fontSize: '1.2rem',
       fontWeight: 'bold',
       color: iconColor,
+      transition: 'transform 0.3s, color 0.3s',
+      cursor: 'default'
     }
   };
 
@@ -38,6 +42,13 @@ function TechStack() {
     @keyframes scroll {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
+    }
+    .hover-pause:hover {
+      animation-play-state: paused !important;
+    }
+    .hover-scale:hover {
+      transform: scale(1.15);
+      color: #2563eb !important;
     }
   `;
 
@@ -56,10 +67,10 @@ function TechStack() {
   return (
     <div style={styles.wrapper}>
       <style>{keyframes}</style>
-      <div style={styles.track}>
+      <div style={styles.track} className="hover-pause">
         {/* We double the list to create a seamless loop */}
         {[...skills, ...skills].map((skill, index) => (
-          <div key={index} style={styles.item}>
+          <div key={index} style={styles.item} className="hover-scale">
             <span>{skill.icon}</span>
             <span>{skill.name}</span>
           </div>

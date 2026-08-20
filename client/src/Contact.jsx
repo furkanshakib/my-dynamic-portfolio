@@ -57,50 +57,72 @@ function Contact() {
         </div>
 
         {/* 2. RIGHT SIDE: FORM */}
-        <div style={{ flex: '1', minWidth: '300px', background: cardBg, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', padding: '40px', borderRadius: '24px', border: `1px solid ${border}`, boxShadow: isDark ? '0 8px 32px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.05)', position: 'relative' }}>
+        <div style={{ flex: '1', minWidth: '300px', position: 'relative' }}>
 
-          <h3 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Send me a message 🚀</h3>
+          {/* Glassmorphic Ambient Orb */}
+          <div style={{
+            position: 'absolute', top: '50%', left: '50%', width: '120%', height: '120%', transform: 'translate(-50%, -50%)',
+            background: isDark ? 'radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, rgba(168, 85, 247, 0.1) 40%, transparent 70%)' : 'radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.05) 40%, transparent 70%)',
+            zIndex: 0, animation: 'orbitOrb 10s linear infinite', filter: 'blur(30px)', pointerEvents: 'none'
+          }}></div>
 
-          {/* SUCCESS MESSAGE BANNER */}
-          {status === 'success' && (
-            <div style={{ background: '#dcfce7', color: '#166534', padding: '15px', borderRadius: '10px', marginBottom: '20px', border: '1px solid #bbf7d0', animation: 'fadeIn 0.5s' }}>
-              ✅ <b>Message Sent!</b> I'll get back to you soon.
-            </div>
-          )}
+          <div style={{ background: cardBg, backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '40px', borderRadius: '24px', border: `1px solid ${border}`, boxShadow: isDark ? '0 8px 32px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.05)', position: 'relative', zIndex: 10 }}>
 
-          {/* ERROR MESSAGE BANNER */}
-          {status === 'error' && (
-            <div style={{ background: '#fee2e2', color: '#991b1b', padding: '15px', borderRadius: '10px', marginBottom: '20px', border: '1px solid #fecaca', animation: 'fadeIn 0.5s' }}>
-              ❌ <b>Failed to send.</b> Please try again later.
-            </div>
-          )}
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Send me a message 🚀</h3>
 
-          <form ref={form} onSubmit={sendEmail} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <input type="text" name="user_name" placeholder="Your Name" required
-              style={{ width: '100%', padding: '15px', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textMain, outline: 'none' }}
-            />
-            <input type="email" name="user_email" placeholder="Your Email" required
-              style={{ width: '100%', padding: '15px', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textMain, outline: 'none' }}
-            />
-            <textarea name="message" placeholder="Tell me about your project..." required rows="5"
-              style={{ width: '100%', padding: '15px', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textMain, outline: 'none', resize: 'none' }}
-            ></textarea>
+            {/* SUCCESS MESSAGE BANNER */}
+            {status === 'success' && (
+              <div style={{ background: '#dcfce7', color: '#166534', padding: '15px', borderRadius: '10px', marginBottom: '20px', border: '1px solid #bbf7d0', animation: 'fadeIn 0.5s' }}>
+                ✅ <b>Message Sent!</b> I'll get back to you soon.
+              </div>
+            )}
 
-            <button type="submit" disabled={status === 'sending' || status === 'success'} style={{
-              padding: '15px',
-              background: status === 'success' ? '#16a34a' : '#2563eb',
-              color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem', transition: 'all 0.3s',
-              opacity: status === 'sending' ? 0.7 : 1
-            }}>
-              {status === 'sending' ? "Sending... ⏳" : (status === 'success' ? "Sent! 🚀" : "Send Message")}
-            </button>
-          </form>
+            {/* ERROR MESSAGE BANNER */}
+            {status === 'error' && (
+              <div style={{ background: '#fee2e2', color: '#991b1b', padding: '15px', borderRadius: '10px', marginBottom: '20px', border: '1px solid #fecaca', animation: 'fadeIn 0.5s' }}>
+                ❌ <b>Failed to send.</b> Please try again later.
+              </div>
+            )}
+
+            <form ref={form} onSubmit={sendEmail} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <input type="text" name="user_name" placeholder="Your Name" required className="contact-input"
+                style={{ width: '100%', padding: '15px', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textMain, outline: 'none', transition: 'all 0.3s' }}
+              />
+              <input type="email" name="user_email" placeholder="Your Email" required className="contact-input"
+                style={{ width: '100%', padding: '15px', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textMain, outline: 'none', transition: 'all 0.3s' }}
+              />
+              <textarea name="message" placeholder="Tell me about your project..." required rows="5" className="contact-input"
+                style={{ width: '100%', padding: '15px', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textMain, outline: 'none', resize: 'none', transition: 'all 0.3s' }}
+              ></textarea>
+
+              <button type="submit" disabled={status === 'sending' || status === 'success'} style={{
+                padding: '15px',
+                background: status === 'success' ? '#16a34a' : '#2563eb',
+                color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem', transition: 'all 0.3s',
+                opacity: status === 'sending' ? 0.7 : 1
+              }}>
+                {status === 'sending' ? "Sending... ⏳" : (status === 'success' ? "Sent! 🚀" : "Send Message")}
+              </button>
+            </form>
+          </div>
         </div>
 
       </div>
 
       {/* Simple animation style */}
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes orbitOrb {
+          0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+          33% { transform: translate(-45%, -55%) rotate(120deg) scale(1.1); }
+          66% { transform: translate(-55%, -45%) rotate(240deg) scale(0.9); }
+          100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+        }
+        .contact-input:focus {
+           border-color: #2563eb !important;
+           box-shadow: 0 0 0 3px rgba(37,99,235,0.2) !important;
+        }
+      `}</style>
     </div>
   );
 }
