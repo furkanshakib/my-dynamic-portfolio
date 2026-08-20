@@ -265,6 +265,25 @@ function Home() {
                 : "I'm Furkan Azad Shakib, a Social Science graduate in Peace and Conflict Studies from the University of Dhaka."
             }}
           />
+          />
+
+          {/* SCROLL INDICATOR (ONLY IN HERO MODE) */}
+          <AnimatePresence>
+            {isHero && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: subText, paddingBottom: '20px', overflow: 'hidden' }}
+              >
+                <span style={{ fontSize: '0.8rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '4px', fontWeight: 'bold' }}>Scroll Down</span>
+                <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}>
+                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', width: '100%' }}>
             <Link to="/contact" style={{ flex: 1, textAlign: 'center', background: highlight, color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>Let's Talk</Link>
             <a href="/cv.pdf" download style={{ flex: 1, textAlign: 'center', background: 'transparent', border: `1px solid ${borderColor}`, color: textColor, padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View CV</a>
@@ -385,23 +404,6 @@ function Home() {
           </div>
         </motion.div>
       </motion.div>
-
-      {/* SCROLL INDICATOR (ONLY IN HERO MODE) */}
-      <AnimatePresence>
-        {isHero && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            style={{ position: 'fixed', bottom: '30px', left: '50%', x: '-50%', display: 'flex', flexDirection: 'column', alignItems: 'center', color: subText, zIndex: 1000 }}
-          >
-            <span style={{ fontSize: '0.8rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 'bold', textShadow: '0 2px 10px rgba(0,0,0,0.5)', WebkitTextStroke: '0.2px rgba(255,255,255,0.2)' }}>Scroll Down</span>
-            <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}>
-              <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
