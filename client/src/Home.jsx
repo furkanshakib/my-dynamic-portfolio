@@ -74,16 +74,16 @@ function ImageCarousel({ images, isHero }) {
       {/* Glow Ambient Layer (Behind) */}
       <motion.div layout style={{
         position: 'absolute', bottom: '20px', left: '10%', width: '80%', height: '100px',
-        background: 'rgba(99, 102, 241, 0.8)',
-        filter: 'blur(60px)', zIndex: 0, borderRadius: '50%'
+        background: 'var(--glow-color)',
+        filter: 'blur(60px)', zIndex: 0, borderRadius: '50%', transition: 'background 1s ease'
       }}></motion.div>
 
       {/* The Solid Plateau Surface (Foreground) */}
       <motion.div layout style={{
         position: 'absolute', bottom: 0, width: '100%', height: '180px',
-        background: 'linear-gradient(180deg, transparent 0%, rgba(99, 102, 241, 0.05) 50%, rgba(168, 85, 247, 0.2) 100%)',
+        background: 'var(--plateau-surface)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
-        borderRadius: '24px', zIndex: 0
+        borderRadius: '24px', zIndex: 0, transition: 'background 1s ease'
       }}></motion.div>
 
       {offsets.map((offset) => {
@@ -306,7 +306,7 @@ function Home() {
               </motion.div>
             )}
           </AnimatePresence>
-          <h1 className="name-title" style={{ fontSize: isHero ? '3.8rem' : '2.5rem', margin: '0', textAlign: 'center', fontFamily: "'Outfit', sans-serif" }}>
+          <h1 className="name-title" style={{ fontSize: isHero ? '3.8rem' : '2.5rem', margin: '0', textAlign: 'center', fontFamily: "'Cinzel', serif", textTransform: 'uppercase' }}>
             {profile?.name || "Furkan Shakib"}
           </h1>
 
