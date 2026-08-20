@@ -71,12 +71,19 @@ function ImageCarousel({ images, isHero }) {
   return (
     <motion.div layout className="profile-popout" style={{ width: '100%', margin: isHero ? '20px 0 60px 0' : '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: isHero ? '400px' : '320px', perspective: '1000px', overflow: 'visible' }}>
 
-      {/* Background Shape */}
+      {/* Glow Ambient Layer (Behind) */}
+      <motion.div layout style={{
+        position: 'absolute', bottom: '20px', left: '10%', width: '80%', height: '100px',
+        background: 'rgba(99, 102, 241, 0.8)',
+        filter: 'blur(60px)', zIndex: 0, borderRadius: '50%'
+      }}></motion.div>
+
+      {/* The Solid Plateau Surface (Foreground) */}
       <motion.div layout style={{
         position: 'absolute', bottom: 0, width: '100%', height: '180px',
-        background: 'radial-gradient(ellipse at bottom, rgba(99, 102, 241, 0.9) 0%, rgba(168, 85, 247, 0.6) 45%, transparent 80%)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
-        borderRadius: '24px', zIndex: 0, boxShadow: '0 30px 100px rgba(99, 102, 241, 0.7)'
+        background: 'linear-gradient(180deg, transparent 0%, rgba(99, 102, 241, 0.05) 50%, rgba(168, 85, 247, 0.2) 100%)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
+        borderRadius: '24px', zIndex: 0
       }}></motion.div>
 
       {offsets.map((offset) => {
