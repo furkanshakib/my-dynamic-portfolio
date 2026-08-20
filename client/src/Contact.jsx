@@ -44,7 +44,7 @@ function Contact() {
 
         {/* 1. LEFT SIDE: INFO */}
         <div style={{ flex: '1', minWidth: '300px' }}>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', marginBottom: '20px', lineHeight: '1.2' }}>Let's work <br /> <span style={{ color: '#2563eb' }}>together.</span></h1>
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', marginBottom: '20px', lineHeight: '1.2' }}>Let's work <br /> <span style={{ color: 'var(--color-primary)', transition: 'color 1s ease' }}>together.</span></h1>
           <p style={{ color: textSub, fontSize: '1.1rem', marginBottom: '40px', lineHeight: '1.6' }}>
             I am always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
           </p>
@@ -62,8 +62,8 @@ function Contact() {
           {/* Glassmorphic Ambient Orb */}
           <div style={{
             position: 'absolute', top: '50%', left: '50%', width: '120%', height: '120%', transform: 'translate(-50%, -50%)',
-            background: isDark ? 'radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, rgba(168, 85, 247, 0.1) 40%, transparent 70%)' : 'radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.05) 40%, transparent 70%)',
-            zIndex: 0, animation: 'orbitOrb 10s linear infinite', filter: 'blur(30px)', pointerEvents: 'none'
+            background: 'var(--contact-orb)',
+            zIndex: 0, animation: 'orbitOrb 10s linear infinite', filter: 'blur(30px)', pointerEvents: 'none', transition: 'background 1s ease'
           }}></div>
 
           <div style={{ background: cardBg, backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '40px', borderRadius: '24px', border: `1px solid ${border}`, boxShadow: isDark ? '0 8px 32px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.05)', position: 'relative', zIndex: 10 }}>
@@ -97,7 +97,7 @@ function Contact() {
 
               <button type="submit" disabled={status === 'sending' || status === 'success'} style={{
                 padding: '15px',
-                background: status === 'success' ? '#16a34a' : '#2563eb',
+                background: status === 'success' ? '#16a34a' : 'var(--gradient-btn)',
                 color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem', transition: 'all 0.3s',
                 opacity: status === 'sending' ? 0.7 : 1
               }}>
@@ -119,8 +119,8 @@ function Contact() {
           100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
         }
         .contact-input:focus {
-           border-color: #2563eb !important;
-           box-shadow: 0 0 0 3px rgba(37,99,235,0.2) !important;
+           border-color: var(--color-primary) !important;
+           box-shadow: 0 0 0 3px var(--glow-color) !important;
         }
       `}</style>
     </div>

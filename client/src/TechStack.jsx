@@ -48,7 +48,7 @@ function TechStack() {
     }
     .hover-scale:hover {
       transform: scale(1.15);
-      color: #2563eb !important;
+      color: var(--color-primary) !important;
     }
   `;
 

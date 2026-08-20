@@ -26,8 +26,8 @@ function Experience() {
   const cardDesc = isDark ? '#cbd5e1' : '#666';
   const cardBorder = isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(255,255,255,0.6)';
   const shadow = isDark ? '0 8px 32px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.05)';
-  const jobBadge = { bg: isDark ? '#1e3a8a' : '#eff6ff', text: isDark ? '#60a5fa' : '#2563eb' };
-  const eduBadge = { bg: isDark ? '#064e3b' : '#ecfdf5', text: isDark ? '#34d399' : '#059669' };
+  const jobBadge = { bg: isDark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.05)', text: 'var(--color-primary)' };
+  const eduBadge = { bg: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)', text: 'var(--color-primary)' };
 
   const renderTimeline = (items, isEdu) => (
     <div style={{ position: 'relative', paddingLeft: '20px', marginTop: '30px' }}>
