@@ -23,28 +23,18 @@ function SocialIcon({ href, iconPath, color }) {
 // NEW IMAGE CAROUSEL COMPONENT
 function ImageCarousel({ images }) {
   const defaultImages = ["/profile.png", "/profile.png", "/profile.png"];
-  let displayImages = [];
-  if (images && images.length >= 3) {
-    displayImages = images;
-  } else if (images && images.length > 0) {
-    // Pad array to ensure we have at least 4 images for the carousel logic to loop safely without ghosting
-    displayImages = [...images];
-    while (displayImages.length < 4) {
-      displayImages.push(displayImages[displayImages.length % images.length]);
-    }
-  } else {
-    displayImages = defaultImages;
-  }
+  let displayImages = (images && images.length > 0) ? images : defaultImages;
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currIndex, setCurrIndex] = useState(1000000); // Start at a massive absolute index to permit infinite backward/forward unconstrained movement
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Moves left to right by decreasing the index
-      setCurrentIndex((prev) => (prev - 1 + displayImages.length) % displayImages.length);
-    }, 1000); // Transitions every 1 second
+      setCurrIndex((prev) => prev - 1); // Decreasing correctly generates consistent unbroken 1-way sliding
+    }, 1200);
     return () => clearInterval(interval);
-  }, [displayImages.length]);
+  }, []);
+
+  const offsets = [-2, -1, 0, 1, 2];
 
   return (
     <div className="profile-popout" style={{ width: '100%', margin: '0 0 30px 0', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '320px', perspective: '1000px', overflow: 'visible' }}>
@@ -56,22 +46,22 @@ function ImageCarousel({ images }) {
         borderRadius: '24px', zIndex: 0, boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)'
       }}></div>
 
-      {displayImages.map((img, index) => {
-        let diff = (index - currentIndex + displayImages.length * 10) % displayImages.length;
-        if (diff > Math.floor(displayImages.length / 2)) {
-          diff -= displayImages.length;
-        }
+      {offsets.map((offset) => {
+        const absoluteIndex = currIndex + offset;
+        const imageIndex = absoluteIndex % displayImages.length;
+        const safeIndex = imageIndex < 0 ? imageIndex + displayImages.length : imageIndex;
+        const img = displayImages[safeIndex];
 
-        let isVisible = Math.abs(diff) <= 1;
+        let isVisible = Math.abs(offset) <= 1;
 
-        let translateX = diff * 130; // Keeps images comfortably within the Profile card
-        let scale = diff === 0 ? 1 : 0.75;
-        let zIndex = diff === 0 ? 10 : (isVisible ? 5 : 0);
+        let translateX = offset * 130; // Keeps images comfortably within the Profile card
+        let scale = offset === 0 ? 1 : 0.75;
+        let zIndex = offset === 0 ? 10 : (isVisible ? 5 : 0);
         let opacity = isVisible ? 1 : 0; // Keeping side images at 100% opacity
 
         return (
           <div
-            key={index}
+            key={absoluteIndex} // KEY MUST BE ABSOLUTE! React uses this to traverse the item from +2 to -2 independently without any visual resets/jumps!
             style={{
               position: 'absolute',
               bottom: '0px',
@@ -81,13 +71,13 @@ function ImageCarousel({ images }) {
               transform: `translateX(${translateX}px) scale(${scale})`,
               zIndex: zIndex,
               opacity: opacity,
-              transition: 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)',
+              transition: 'all 1.0s cubic-bezier(0.25, 1, 0.5, 1)',
               transformOrigin: 'bottom center'
             }}
           >
             <img
               src={img}
-              alt={`Profile Slide ${index}`}
+              alt={`Profile Slide ${absoluteIndex}`}
               className="floating-avatar"
               style={{
                 height: '320px',
@@ -395,6 +385,22 @@ function Home() {
           </div>
         </motion.div>
 
+        {/* SCROLL INDICATOR (ONLY IN HERO MODE) */}
+        <AnimatePresence>
+          {isHero && (
+            <motion.div
+              initial={{ opacity: 0, bottom: -50 }}
+              animate={{ opacity: 1, bottom: 20 }}
+              exit={{ opacity: 0, bottom: -50 }}
+              style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', color: subText, zIndex: 100 }}
+            >
+              <span style={{ fontSize: '0.8rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 'bold' }}>Scroll Down</span>
+              <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}>
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
